@@ -4,3 +4,8 @@ wrangler.toml
 wrangler.json
 wrangler.jsonc
 .DS_Store
+.env
+.env.*
+fantraxloggedin.cookie
+__pycache__/
+*.pyc
