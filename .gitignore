@@ -1,0 +1,6 @@
+node_modules
+.dist
+wrangler.toml
+wrangler.json
+wrangler.jsonc
+.DS_Store

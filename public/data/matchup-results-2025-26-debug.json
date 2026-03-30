@@ -1,0 +1,309 @@
+PS Y:\nbarrwstoi\NBAA-site> python export_matchup_results.py --output public/data/matchup-results-2025-26.json
+[warn] Skipped 151 scoring date(s) missing from period map: Dec 1, Dec 10, Dec 11, Dec 12, Dec 13, Dec 14, Dec 15, Dec 17, Dec 18, Dec 19
+[debug] tableList count: 21
+
+[debug] TABLE 1
+caption: Scoring Period 1
+title: None
+headers: None
+row count: 20
+
+[debug] row 1
+  cell 0: {"content": "6"}
+  cell 1: {"content": "7"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "6"}
+  cell 4: {"gainColor": -1, "content": "127", "toolTip": "127"}
+  cell 5: {"gainColor": 1, "content": ".464", "toolTip": "0.463504"}
+  cell 6: {"gainColor": -1, "content": "30", "toolTip": "30"}
+  cell 7: {"gainColor": -1, "content": ".291", "toolTip": "0.291262"}
+  cell 8: {"gainColor": -1, "content": ".743", "toolTip": "0.742574"}
+  cell 9: {"gainColor": -1, "content": "359", "toolTip": "359"}
+  cell 10: {"gainColor": 1, "content": "46", "toolTip": "46"}
+  cell 11: {"gainColor": -1, "content": "113", "toolTip": "113"}
+  cell 12: {"gainColor": 1, "content": "82", "toolTip": "82"}
+  cell 13: {"gainColor": 1, "content": "19", "toolTip": "19"}
+  cell 14: {"gainColor": -1, "content": "12", "toolTip": "12"}
+  cell 15: {"gainColor": 1, "content": "31", "toolTip": "31"}
+  cell 16: {"gainColor": 1, "content": "2.65", "toolTip": "2.645161"}
+
+[debug] row 2
+  cell 0: {"content": "7"}
+  cell 1: {"content": "6"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "7"}
+  cell 4: {"gainColor": 1, "content": "171", "toolTip": "171"}
+  cell 5: {"gainColor": -1, "content": ".460", "toolTip": "0.459677"}
+  cell 6: {"gainColor": 1, "content": "37", "toolTip": "37"}
+  cell 7: {"gainColor": 1, "content": ".291", "toolTip": "0.291339"}
+  cell 8: {"gainColor": 1, "content": ".816", "toolTip": "0.816456"}
+  cell 9: {"gainColor": 1, "content": "508", "toolTip": "508"}
+  cell 10: {"gainColor": -1, "content": "25", "toolTip": "25"}
+  cell 11: {"gainColor": 1, "content": "132", "toolTip": "132"}
+  cell 12: {"gainColor": -1, "content": "77", "toolTip": "77"}
+  cell 13: {"gainColor": -1, "content": "17", "toolTip": "17"}
+  cell 14: {"gainColor": 1, "content": "25", "toolTip": "25"}
+  cell 15: {"gainColor": -1, "content": "66", "toolTip": "66"}
+  cell 16: {"gainColor": -1, "content": "1.17", "toolTip": "1.166667"}
+
+[debug] row 3
+  cell 0: {"content": "3"}
+  cell 1: {"content": "10"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "3"}
+  cell 4: {"gainColor": -1, "content": "85", "toolTip": "85"}
+  cell 5: {"gainColor": -1, "content": ".436", "toolTip": "0.435897"}
+  cell 6: {"gainColor": -1, "content": "31", "toolTip": "31"}
+  cell 7: {"gainColor": -1, "content": ".365", "toolTip": "0.364706"}
+  cell 8: {"gainColor": -1, "content": ".766", "toolTip": "0.765625"}
+  cell 9: {"gainColor": -1, "content": "250", "toolTip": "250"}
+  cell 10: {"gainColor": 1, "content": "38", "toolTip": "38"}
+  cell 11: {"gainColor": -1, "content": "85", "toolTip": "85"}
+  cell 12: {"gainColor": -1, "content": "50", "toolTip": "50"}
+  cell 13: {"gainColor": -1, "content": "23", "toolTip": "23"}
+  cell 14: {"gainColor": -1, "content": "13", "toolTip": "13"}
+  cell 15: {"gainColor": 1, "content": "29", "toolTip": "29"}
+  cell 16: {"gainColor": 1, "content": "1.72", "toolTip": "1.724138"}
+
+[debug] row 4
+  cell 0: {"content": "10"}
+  cell 1: {"content": "3"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "10"}
+  cell 4: {"gainColor": 1, "content": "165", "toolTip": "165"}
+  cell 5: {"gainColor": 1, "content": ".493", "toolTip": "0.492537"}
+  cell 6: {"gainColor": 1, "content": "54", "toolTip": "54"}
+  cell 7: {"gainColor": 1, "content": ".394", "toolTip": "0.394161"}
+  cell 8: {"gainColor": 1, "content": ".817", "toolTip": "0.816514"}
+  cell 9: {"gainColor": 1, "content": "473", "toolTip": "473"}
+  cell 10: {"gainColor": -1, "content": "24", "toolTip": "24"}
+  cell 11: {"gainColor": 1, "content": "109", "toolTip": "109"}
+  cell 12: {"gainColor": 1, "content": "82", "toolTip": "82"}
+  cell 13: {"gainColor": 1, "content": "29", "toolTip": "29"}
+  cell 14: {"gainColor": 1, "content": "17", "toolTip": "17"}
+  cell 15: {"gainColor": -1, "content": "50", "toolTip": "50"}
+  cell 16: {"gainColor": -1, "content": "1.64", "toolTip": "1.64"}
+
+[debug] row 5
+  cell 0: {"content": "10"}
+  cell 1: {"content": "3"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "10"}
+  cell 4: {"gainColor": 1, "content": "165", "toolTip": "165"}
+  cell 5: {"gainColor": 1, "content": ".473", "toolTip": "0.472779"}
+  cell 6: {"gainColor": 1, "content": "38", "toolTip": "38"}
+  cell 7: {"gainColor": -1, "content": ".288", "toolTip": "0.287879"}
+  cell 8: {"gainColor": -1, "content": ".826", "toolTip": "0.825758"}
+  cell 9: {"gainColor": 1, "content": "477", "toolTip": "477"}
+  cell 10: {"gainColor": 1, "content": "41", "toolTip": "41"}
+  cell 11: {"gainColor": 1, "content": "122", "toolTip": "122"}
+  cell 12: {"gainColor": 1, "content": "89", "toolTip": "89"}
+  cell 13: {"gainColor": 1, "content": "29", "toolTip": "29"}
+  cell 14: {"gainColor": 1, "content": "20", "toolTip": "20"}
+  cell 15: {"gainColor": -1, "content": "46", "toolTip": "46"}
+  cell 16: {"gainColor": 1, "content": "1.93", "toolTip": "1.934783"}
+
+[debug] TABLE 2
+caption: Scoring Period 2
+title: None
+headers: None
+row count: 20
+
+[debug] row 1
+  cell 0: {"content": "7"}
+  cell 1: {"content": "6"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "7"}
+  cell 4: {"gainColor": 1, "content": "161", "toolTip": "161"}
+  cell 5: {"gainColor": -1, "content": ".503", "toolTip": "0.503125"}
+  cell 6: {"gainColor": 1, "content": "45", "toolTip": "45"}
+  cell 7: {"gainColor": 1, "content": ".429", "toolTip": "0.428571"}
+  cell 8: {"gainColor": -1, "content": ".729", "toolTip": "0.729323"}
+  cell 9: {"gainColor": 1, "content": "464", "toolTip": "464"}
+  cell 10: {"gainColor": -1, "content": "47", "toolTip": "47"}
+  cell 11: {"gainColor": -1, "content": "136", "toolTip": "136"}
+  cell 12: {"gainColor": -1, "content": "93", "toolTip": "93"}
+  cell 13: {"gainColor": 1, "content": "29", "toolTip": "29"}
+  cell 14: {"gainColor": 1, "content": "27", "toolTip": "27"}
+  cell 15: {"gainColor": 1, "content": "54", "toolTip": "54"}
+  cell 16: {"gainColor": -1, "content": "1.72", "toolTip": "1.722222"}
+
+[debug] row 2
+  cell 0: {"content": "6"}
+  cell 1: {"content": "7"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "6"}
+  cell 4: {"gainColor": -1, "content": "149", "toolTip": "149"}
+  cell 5: {"gainColor": 1, "content": ".527", "toolTip": "0.526502"}
+  cell 6: {"gainColor": -1, "content": "43", "toolTip": "43"}
+  cell 7: {"gainColor": -1, "content": ".406", "toolTip": "0.40566"}
+  cell 8: {"gainColor": 1, "content": ".812", "toolTip": "0.811594"}
+  cell 9: {"gainColor": -1, "content": "397", "toolTip": "397"}
+  cell 10: {"gainColor": 1, "content": "55", "toolTip": "55"}
+  cell 11: {"gainColor": 1, "content": "146", "toolTip": "146"}
+  cell 12: {"gainColor": 1, "content": "115", "toolTip": "115"}
+  cell 13: {"gainColor": -1, "content": "19", "toolTip": "19"}
+  cell 14: {"gainColor": -1, "content": "17", "toolTip": "17"}
+  cell 15: {"gainColor": -1, "content": "56", "toolTip": "56"}
+  cell 16: {"gainColor": 1, "content": "2.05", "toolTip": "2.053571"}
+
+[debug] row 3
+  cell 0: {"content": "3"}
+  cell 1: {"content": "10"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "3"}
+  cell 4: {"gainColor": -1, "content": "181", "toolTip": "181"}
+  cell 5: {"gainColor": -1, "content": ".469", "toolTip": "0.468912"}
+  cell 6: {"gainColor": -1, "content": "53", "toolTip": "53"}
+  cell 7: {"gainColor": -1, "content": ".346", "toolTip": "0.346405"}
+  cell 8: {"gainColor": -1, "content": ".828", "toolTip": "0.828125"}
+  cell 9: {"gainColor": -1, "content": "521", "toolTip": "521"}
+  cell 10: {"gainColor": 1, "content": "49", "toolTip": "49"}
+  cell 11: {"gainColor": -1, "content": "110", "toolTip": "110"}
+  cell 12: {"gainColor": -1, "content": "80", "toolTip": "80"}
+  cell 13: {"gainColor": -1, "content": "22", "toolTip": "22"}
+  cell 14: {"gainColor": 1, "content": "14", "toolTip": "14"}
+  cell 15: {"gainColor": 1, "content": "39", "toolTip": "39"}
+  cell 16: {"gainColor": -1, "content": "2.05", "toolTip": "2.051282"}
+
+[debug] row 4
+  cell 0: {"content": "10"}
+  cell 1: {"content": "3"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "10"}
+  cell 4: {"gainColor": 1, "content": "212", "toolTip": "212"}
+  cell 5: {"gainColor": 1, "content": ".470", "toolTip": "0.470067"}
+  cell 6: {"gainColor": 1, "content": "75", "toolTip": "75"}
+  cell 7: {"gainColor": 1, "content": ".359", "toolTip": "0.358852"}
+  cell 8: {"gainColor": 1, "content": ".895", "toolTip": "0.894737"}
+  cell 9: {"gainColor": 1, "content": "601", "toolTip": "601"}
+  cell 10: {"gainColor": -1, "content": "36", "toolTip": "36"}
+  cell 11: {"gainColor": 1, "content": "151", "toolTip": "151"}
+  cell 12: {"gainColor": 1, "content": "133", "toolTip": "133"}
+  cell 13: {"gainColor": 1, "content": "40", "toolTip": "40"}
+  cell 14: {"gainColor": -1, "content": "13", "toolTip": "13"}
+  cell 15: {"gainColor": -1, "content": "60", "toolTip": "60"}
+  cell 16: {"gainColor": 1, "content": "2.22", "toolTip": "2.216667"}
+
+[debug] row 5
+  cell 0: {"content": "8"}
+  cell 1: {"content": "5"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "8"}
+  cell 4: {"gainColor": 1, "content": "170", "toolTip": "170"}
+  cell 5: {"gainColor": -1, "content": ".449", "toolTip": "0.448549"}
+  cell 6: {"gainColor": 1, "content": "54", "toolTip": "54"}
+  cell 7: {"gainColor": 1, "content": ".338", "toolTip": "0.3375"}
+  cell 8: {"gainColor": -1, "content": ".724", "toolTip": "0.724409"}
+  cell 9: {"gainColor": 1, "content": "486", "toolTip": "486"}
+  cell 10: {"gainColor": 1, "content": "50", "toolTip": "50"}
+  cell 11: {"gainColor": 1, "content": "140", "toolTip": "140"}
+  cell 12: {"gainColor": -1, "content": "83", "toolTip": "83"}
+  cell 13: {"gainColor": 1, "content": "28", "toolTip": "28"}
+  cell 14: {"gainColor": -1, "content": "18", "toolTip": "18"}
+  cell 15: {"gainColor": 1, "content": "45", "toolTip": "45"}
+  cell 16: {"gainColor": -1, "content": "1.84", "toolTip": "1.844444"}
+
+[debug] TABLE 3
+caption: Scoring Period 3
+title: None
+headers: None
+row count: 20
+
+[debug] row 1
+  cell 0: {"content": "6"}
+  cell 1: {"content": "7"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "6"}
+  cell 4: {"gainColor": -1, "content": "133", "toolTip": "133"}
+  cell 5: {"gainColor": 1, "content": ".482", "toolTip": "0.481884"}
+  cell 6: {"gainColor": 1, "content": "56", "toolTip": "56"}
+  cell 7: {"gainColor": 1, "content": ".444", "toolTip": "0.444444"}
+  cell 8: {"gainColor": 1, "content": ".854", "toolTip": "0.854369"}
+  cell 9: {"gainColor": -1, "content": "410", "toolTip": "410"}
+  cell 10: {"gainColor": -1, "content": "29", "toolTip": "29"}
+  cell 11: {"gainColor": -1, "content": "91", "toolTip": "91"}
+  cell 12: {"gainColor": -1, "content": "87", "toolTip": "87"}
+  cell 13: {"gainColor": -1, "content": "21", "toolTip": "21"}
+  cell 14: {"gainColor": -1, "content": "15", "toolTip": "15"}
+  cell 15: {"gainColor": 1, "content": "44", "toolTip": "44"}
+  cell 16: {"gainColor": 1, "content": "1.98", "toolTip": "1.977273"}
+
+[debug] row 2
+  cell 0: {"content": "7"}
+  cell 1: {"content": "6"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "7"}
+  cell 4: {"gainColor": 1, "content": "184", "toolTip": "184"}
+  cell 5: {"gainColor": -1, "content": ".471", "toolTip": "0.470588"}
+  cell 6: {"gainColor": -1, "content": "43", "toolTip": "43"}
+  cell 7: {"gainColor": -1, "content": ".350", "toolTip": "0.349593"}
+  cell 8: {"gainColor": -1, "content": ".777", "toolTip": "0.777108"}
+  cell 9: {"gainColor": 1, "content": "540", "toolTip": "540"}
+  cell 10: {"gainColor": 1, "content": "52", "toolTip": "52"}
+  cell 11: {"gainColor": 1, "content": "187", "toolTip": "187"}
+  cell 12: {"gainColor": 1, "content": "120", "toolTip": "120"}
+  cell 13: {"gainColor": 1, "content": "35", "toolTip": "35"}
+  cell 14: {"gainColor": 1, "content": "33", "toolTip": "33"}
+  cell 15: {"gainColor": -1, "content": "71", "toolTip": "71"}
+  cell 16: {"gainColor": -1, "content": "1.69", "toolTip": "1.690141"}
+
+[debug] row 3
+  cell 0: {"content": "4"}
+  cell 1: {"content": "9"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "4"}
+  cell 4: {"gainColor": -1, "content": "137", "toolTip": "137"}
+  cell 5: {"gainColor": -1, "content": ".431", "toolTip": "0.430818"}
+  cell 6: {"gainColor": -1, "content": "32", "toolTip": "32"}
+  cell 7: {"gainColor": -1, "content": ".288", "toolTip": "0.288288"}
+  cell 8: {"gainColor": -1, "content": ".765", "toolTip": "0.765306"}
+  cell 9: {"gainColor": -1, "content": "381", "toolTip": "381"}
+  cell 10: {"gainColor": 1, "content": "51", "toolTip": "51"}
+  cell 11: {"gainColor": 1, "content": "147", "toolTip": "147"}
+  cell 12: {"gainColor": 1, "content": "109", "toolTip": "109"}
+  cell 13: {"gainColor": -1, "content": "33", "toolTip": "33"}
+  cell 14: {"gainColor": 1, "content": "29", "toolTip": "29"}
+  cell 15: {"gainColor": -1, "content": "77", "toolTip": "77"}
+  cell 16: {"gainColor": -1, "content": "1.42", "toolTip": "1.415584"}
+
+[debug] row 4
+  cell 0: {"content": "9"}
+  cell 1: {"content": "4"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "9"}
+  cell 4: {"gainColor": 1, "content": "159", "toolTip": "159"}
+  cell 5: {"gainColor": 1, "content": ".510", "toolTip": "0.509615"}
+  cell 6: {"gainColor": 1, "content": "49", "toolTip": "49"}
+  cell 7: {"gainColor": 1, "content": ".408", "toolTip": "0.408333"}
+  cell 8: {"gainColor": 1, "content": ".808", "toolTip": "0.807692"}
+  cell 9: {"gainColor": 1, "content": "430", "toolTip": "430"}
+  cell 10: {"gainColor": -1, "content": "42", "toolTip": "42"}
+  cell 11: {"gainColor": -1, "content": "121", "toolTip": "121"}
+  cell 12: {"gainColor": -1, "content": "91", "toolTip": "91"}
+  cell 13: {"gainColor": 1, "content": "41", "toolTip": "41"}
+  cell 14: {"gainColor": -1, "content": "16", "toolTip": "16"}
+  cell 15: {"gainColor": 1, "content": "46", "toolTip": "46"}
+  cell 16: {"gainColor": 1, "content": "1.98", "toolTip": "1.978261"}
+
+[debug] row 5
+  cell 0: {"content": "4"}
+  cell 1: {"content": "9"}
+  cell 2: {"content": "0"}
+  cell 3: {"content": "4"}
+  cell 4: {"gainColor": -1, "content": "108", "toolTip": "108"}
+  cell 5: {"gainColor": -1, "content": ".427", "toolTip": "0.426877"}
+  cell 6: {"gainColor": -1, "content": "49", "toolTip": "49"}
+  cell 7: {"gainColor": 1, "content": ".374", "toolTip": "0.374046"}
+  cell 8: {"gainColor": 1, "content": ".789", "toolTip": "0.789474"}
+  cell 9: {"gainColor": -1, "content": "310", "toolTip": "310"}
+  cell 10: {"gainColor": -1, "content": "40", "toolTip": "40"}
+  cell 11: {"gainColor": -1, "content": "101", "toolTip": "101"}
+  cell 12: {"gainColor": -1, "content": "72", "toolTip": "72"}
+  cell 13: {"gainColor": -1, "content": "24", "toolTip": "24"}
+  cell 14: {"gainColor": 1, "content": "18", "toolTip": "18"}
+  cell 15: {"gainColor": 1, "content": "57", "toolTip": "57"}
+  cell 16: {"gainColor": -1, "content": "1.26", "toolTip": "1.263158"}
+Wrote Y:\nbarrwstoi\NBAA-site\public\data\matchup-results-2025-26.json
+Periods: 21
+Matchups: 360
