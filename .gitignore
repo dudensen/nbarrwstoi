@@ -1,6 +1,9 @@
-node_modules
-.dist
-wrangler.toml
-wrangler.json
-wrangler.jsonc
+node_modules/
+dist/
+.wrangler/
 .DS_Store
+.env
+.env.*
+fantraxloggedin.cookie
+__pycache__/
+*.pyc
