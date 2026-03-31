@@ -3,6 +3,15 @@ import { Link } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
 import { extractTeamsFromLeagueInfo } from "../utils/fantrax"
 
+export function slugifyTeamName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
 export default function TeamsPage() {
   const { season } = useSeason()
   const [teams, setTeams] = useState([])
@@ -61,20 +70,20 @@ export default function TeamsPage() {
         <div style={grid}>
           {teams.map((team) => (
             <Link
-              key={team.id}
-              to={`/teams/${team.id}`}
-              style={teamCard}
-            >
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#111827" }}>
-                {team.name}
-              </div>
-              <div style={{ color: "#6b7280", marginTop: 6 }}>
-                {team.shortName || "—"}
-              </div>
-              <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
-                View team profile →
-              </div>
-            </Link>
+  key={team.id}
+  to={`/teams/${slugifyTeamName(team.name)}`}
+  style={teamCard}
+>
+  <div style={{ fontSize: 18, fontWeight: 700, color: "#111827" }}>
+    {team.name}
+  </div>
+  <div style={{ color: "#6b7280", marginTop: 6 }}>
+    {team.shortName || "—"}
+  </div>
+  <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
+    View team profile →
+  </div>
+</Link>
           ))}
         </div>
       )}

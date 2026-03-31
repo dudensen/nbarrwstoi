@@ -3,11 +3,18 @@ import { Link } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
 import {
   buildPlayerLookupFromAdp,
+  buildPlayerLookupFromCsvRows,
+  parsePlayerCsv,
+  mergePlayerLookups,
   enrichDraftPicks,
   getPlayerTeamMapFromRosters,
   getTeamNameMapFromRosters,
 } from "../utils/fantrax"
 
+const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
+  query: "?raw",
+  import: "default",
+})
 function formatDraftDate(value) {
   if (!value) return "—"
   const date = new Date(value)
@@ -88,6 +95,7 @@ export default function DraftResultsPage() {
 
   const [draftResults, setDraftResults] = useState(null)
   const [adpRows, setAdpRows] = useState([])
+  const [playerCsvRows, setPlayerCsvRows] = useState([])
   const [teamRosters, setTeamRosters] = useState(null)
   const [period17Rosters, setPeriod17Rosters] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -101,47 +109,52 @@ export default function DraftResultsPage() {
     let cancelled = false
 
     async function load() {
-      try {
-        setLoading(true)
-        setError("")
+  try {
+    setLoading(true)
+    setError("")
 
-        const [draftRes, adpRes, rostersRes, period17Res] = await Promise.all([
-          fetch(`/api/draft-results?season=${encodeURIComponent(season.key)}`),
-          fetch(`/api/adp`),
-          fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=1`),
-          fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=17`),
-        ])
+    const csvLoader = playerCsvFiles[`../config/playerCsv/${season.key}.csv`]
 
-        const [draftText, adpText, rostersText, period17Text] = await Promise.all([
-          draftRes.text(),
-          adpRes.text(),
-          rostersRes.text(),
-          period17Res.text(),
-        ])
+    const [draftRes, adpRes, rostersRes, period17Res, csvText] = await Promise.all([
+      fetch(`/api/draft-results?season=${encodeURIComponent(season.key)}`),
+      fetch(`/api/adp`),
+      fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=1`),
+      fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=17`),
+      csvLoader ? csvLoader() : Promise.resolve(""),
+    ])
 
-        if (!draftRes.ok) throw new Error(`Draft results failed (${draftRes.status}): ${draftText}`)
-        if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
-        if (!rostersRes.ok) throw new Error(`Team rosters failed (${rostersRes.status}): ${rostersText}`)
-        if (!period17Res.ok) throw new Error(`Period 17 rosters failed (${period17Res.status}): ${period17Text}`)
+    const [draftText, adpText, rostersText, period17Text] = await Promise.all([
+      draftRes.text(),
+      adpRes.text(),
+      rostersRes.text(),
+      period17Res.text(),
+    ])
 
-        if (!cancelled) {
-          setDraftResults(JSON.parse(draftText))
-          setAdpRows(JSON.parse(adpText))
-          setTeamRosters(JSON.parse(rostersText))
-          setPeriod17Rosters(JSON.parse(period17Text))
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Unknown error")
-          setDraftResults(null)
-          setAdpRows([])
-          setTeamRosters(null)
-          setPeriod17Rosters(null)
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
+    if (!draftRes.ok) throw new Error(`Draft results failed (${draftRes.status}): ${draftText}`)
+    if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+    if (!rostersRes.ok) throw new Error(`Team rosters failed (${rostersRes.status}): ${rostersText}`)
+    if (!period17Res.ok) throw new Error(`Period 17 rosters failed (${period17Res.status}): ${period17Text}`)
+
+    if (!cancelled) {
+      setDraftResults(JSON.parse(draftText))
+      setAdpRows(JSON.parse(adpText))
+      setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+      setTeamRosters(JSON.parse(rostersText))
+      setPeriod17Rosters(JSON.parse(period17Text))
     }
+  } catch (err) {
+    if (!cancelled) {
+      setError(err instanceof Error ? err.message : "Unknown error")
+      setDraftResults(null)
+      setAdpRows([])
+      setPlayerCsvRows([])
+      setTeamRosters(null)
+      setPeriod17Rosters(null)
+    }
+  } finally {
+    if (!cancelled) setLoading(false)
+  }
+}
 
     load()
 
@@ -150,7 +163,11 @@ export default function DraftResultsPage() {
     }
   }, [season.key])
 
-  const playerLookup = useMemo(() => buildPlayerLookupFromAdp(adpRows), [adpRows])
+  const playerLookup = useMemo(() => {
+  const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
+  const adpLookup = buildPlayerLookupFromAdp(adpRows)
+  return mergePlayerLookups(csvLookup, adpLookup)
+}, [playerCsvRows, adpRows])
   const teamNameMap = useMemo(() => getTeamNameMapFromRosters(teamRosters), [teamRosters])
   const playerTeamMapPeriod17 = useMemo(
     () => getPlayerTeamMapFromRosters(period17Rosters),

@@ -33,7 +33,7 @@ export default function App() {
           <Route path="/" element={<PlaceholderPage title="Home page" />} />
           <Route path="/standings" element={<StandingsPage />} />
           <Route path="/teams" element={<TeamsPage />} />
-          <Route path="/teams/:teamId" element={<TeamDetailPage />} />
+          <Route path="/teams/:teamSlug" element={<TeamDetailPage />} />
           <Route path="/draft-picks" element={<PlaceholderPage title="Draft Picks page" />} />
           <Route path="/history" element={<PlaceholderPage title="History page" />} />
           <Route path="/league-rules" element={<LeagueRulesPage />} />

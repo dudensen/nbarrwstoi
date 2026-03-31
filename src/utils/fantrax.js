@@ -83,6 +83,105 @@ export function buildPlayerLookupFromAdp(adpRows = []) {
   return map
 }
 
+export function parsePlayerCsv(text = "") {
+  const rows = []
+  let current = []
+  let value = ""
+  let inQuotes = false
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+
+    if (char === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        value += '"'
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (char === "," && !inQuotes) {
+      current.push(value)
+      value = ""
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && text[i + 1] === "\n") i++
+      current.push(value)
+      rows.push(current)
+      current = []
+      value = ""
+    } else {
+      value += char
+    }
+  }
+
+  if (value.length || current.length) {
+    current.push(value)
+    rows.push(current)
+  }
+
+  if (!rows.length) return []
+
+  const headers = rows[0].map((h) => String(h || "").trim())
+
+  return rows.slice(1).map((row) => {
+    const obj = {}
+    headers.forEach((header, idx) => {
+      obj[header] = row[idx] ?? ""
+    })
+    return obj
+  })
+}
+
+export function cleanFantraxPlayerId(value) {
+  return String(value ?? "").trim().replace(/^\*+|\*+$/g, "")
+}
+
+export function buildPlayerLookupFromCsvRows(csvRows = []) {
+  const map = new Map()
+
+  for (const row of csvRows) {
+    const id = cleanFantraxPlayerId(row?.ID)
+    if (!id) continue
+
+    map.set(id, {
+      id,
+      name: decodeMaybeBrokenText(row?.Player || id),
+      pos: row?.Position || "",
+      team: row?.Team || "",
+      raw: row,
+    })
+  }
+
+  return map
+}
+
+export function mergePlayerLookups(...maps) {
+  const merged = new Map()
+
+  for (const map of maps) {
+    if (!(map instanceof Map)) continue
+
+    for (const [id, player] of map.entries()) {
+      const existing = merged.get(id)
+
+      if (!existing) {
+        merged.set(id, player)
+        continue
+      }
+
+      merged.set(id, {
+        ...existing,
+        ...player,
+        id,
+        name: existing?.name || player?.name || id,
+        pos: existing?.pos || player?.pos || "",
+        adp: existing?.adp ?? player?.adp ?? null,
+      })
+    }
+  }
+
+  return merged
+}
+
 export function getRosterForTeam(teamRostersResponse, teamId) {
   return teamRostersResponse?.rosters?.[teamId]?.rosterItems || []
 }
@@ -144,4 +243,18 @@ export function getPlayerTeamMapFromRosters(teamRostersResponse) {
   }
 
   return map
+}
+
+export function slugifyTeamName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
+export function getTeamBySlugFromLeagueInfo(leagueInfo, teamSlug) {
+  const teams = extractTeamsFromLeagueInfo(leagueInfo)
+  return teams.find((team) => slugifyTeamName(team?.name) === teamSlug) || null
 }

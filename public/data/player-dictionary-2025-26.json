@@ -1,0 +1,3544 @@
+{
+  "05qtm": {
+    "name": "Achiuwa, Precious",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031lz": {
+    "name": "Adams, Steven",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewf": {
+    "name": "Adebayo, Bam",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621d": {
+    "name": "Agbaji, Ochai",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj4": {
+    "name": "Aldama, Santi",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051ox": {
+    "name": "Alexander-Walker, Nickeil",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qry": {
+    "name": "Allen, Grayson",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewm": {
+    "name": "Allen, Jarrett",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uul": {
+    "name": "Alvarado, Jose",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03aq3": {
+    "name": "Anderson, Kyle",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031m2": {
+    "name": "Antetokounmpo, Giannis",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e7e": {
+    "name": "Antetokounmpo, Thanasis",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtl": {
+    "name": "Anthony, Cole",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewn": {
+    "name": "Anunoby, OG",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtj": {
+    "name": "Avdija, Deni",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049kd": {
+    "name": "Ayton, Deandre",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049ki": {
+    "name": "Bagley, Marvin",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v57": {
+    "name": "Bailey, Ace",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621r": {
+    "name": "Baldwin, Patrick",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qto": {
+    "name": "Ball, LaMelo",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qz3": {
+    "name": "Ball, LiAngelo",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049ka": {
+    "name": "Ball, Lonzo",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06210": {
+    "name": "Banchero, Paolo",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qt3": {
+    "name": "Bane, Desmond",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0626t": {
+    "name": "Barlow, Dominick",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nf7": {
+    "name": "Barnes, Harrison",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uie": {
+    "name": "Barnes, Scottie",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8a": {
+    "name": "Barnhizer, Brooks",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051oj": {
+    "name": "Barrett, RJ",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06q2e": {
+    "name": "Battle, Jamison",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "005l0": {
+    "name": "Batum, Nicolas",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nf3": {
+    "name": "Beal, Bradley",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042ne": {
+    "name": "Beasley, Malik",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mmb": {
+    "name": "Beekman, Reece",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5m": {
+    "name": "Beringer, Joan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qt0": {
+    "name": "Bey, Saddiq",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051oy": {
+    "name": "Bitadze, Goga",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027oq": {
+    "name": "Biyombo, Bismack",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc5": {
+    "name": "Black, Anthony",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e6u": {
+    "name": "Bogdanovic, Bogdan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051po": {
+    "name": "Bol, Bol",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mln": {
+    "name": "Bona, Adem",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03nwm": {
+    "name": "Booker, Devin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04fj8": {
+    "name": "Boucher, Chris",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ews": {
+    "name": "Bradley, Tony",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621j": {
+    "name": "Branham, Malaki",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621k": {
+    "name": "Braun, Christian",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v87": {
+    "name": "Brea, Koby",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrn": {
+    "name": "Bridges, Mikal",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrp": {
+    "name": "Bridges, Miles",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042nw": {
+    "name": "Brogdon, Malcolm",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ex8": {
+    "name": "Brooks, Dillon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v81": {
+    "name": "Broome, Johni",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsj": {
+    "name": "Brown, Bruce",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03lls": {
+    "name": "Brown, Jaylen",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca2": {
+    "name": "Brown, Kobe",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsa": {
+    "name": "Brunson, Jalen",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5x": {
+    "name": "Bryant, Carter",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ex5": {
+    "name": "Bryant, Thomas",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca4": {
+    "name": "Bufkin, Kobe",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027ov": {
+    "name": "Burks, Alec",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uje": {
+    "name": "Butler, Jared",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027pe": {
+    "name": "Butler, Jimmy",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk3": {
+    "name": "Buzelis, Matas",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0661b": {
+    "name": "Cain, Jamal",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031lv": {
+    "name": "Caldwell-Pope, Kentavious",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cd4": {
+    "name": "Camara, Toumani",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e6s": {
+    "name": "Capela, Clint",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mmi": {
+    "name": "Carlson, Branden",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk6": {
+    "name": "Carrington, Carlton",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk5": {
+    "name": "Carter, Devin",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs9": {
+    "name": "Carter, Jevon",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrl": {
+    "name": "Carter, Wendell",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0496e": {
+    "name": "Caruso, Alex",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjw": {
+    "name": "Castle, Stephon",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cp2": {
+    "name": "Castleton, Colin",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "062dn": {
+    "name": "Champagnie, Julian",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uud": {
+    "name": "Champagnie, Justin",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06221": {
+    "name": "Chandler, Kennedy",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621y": {
+    "name": "Christie, Max",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cd9": {
+    "name": "Clark, Jaylen",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p1": {
+    "name": "Clarke, Brandon",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03byk": {
+    "name": "Clarkson, Jordan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051pb": {
+    "name": "Claxton, Nicolas",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v56": {
+    "name": "Clayton, Walter",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5w": {
+    "name": "Clifford, Nique",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjz": {
+    "name": "Clingan, Donovan",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccd": {
+    "name": "Clowney, Noah",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "059g0": {
+    "name": "Coffey, Amir",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkl": {
+    "name": "Collier, Isaiah",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewk": {
+    "name": "Collins, John",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewc": {
+    "name": "Collins, Zach",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0015e": {
+    "name": "Conley, Mike",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03r7v": {
+    "name": "Connaughton, Pat",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujm": {
+    "name": "Cooper, Sharife",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc1": {
+    "name": "Coulibaly, Bilal",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ceg": {
+    "name": "Council, Ricky",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5v": {
+    "name": "Coward, Cedric",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uib": {
+    "name": "Cunningham, Cade",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "038ia": {
+    "name": "Curry, Seth",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01enh": {
+    "name": "Curry, Stephen",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mka": {
+    "name": "da Silva, Tristan",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06217": {
+    "name": "Daniels, Dyson",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mm6": {
+    "name": "Dante, N'Faly",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nf1": {
+    "name": "Davis, Anthony",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622g": {
+    "name": "Davison, JD",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5r": {
+    "name": "Demin, Egor",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06pw1": {
+    "name": "Dennis, RayJ",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01eon": {
+    "name": "DeRozan, DeMar",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06226": {
+    "name": "Diabate, Moussa",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8h": {
+    "name": "Diawara, Mohamed",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc2": {
+    "name": "Dick, Gradey",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06vxw": {
+    "name": "Dickinson, Hunter",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621a": {
+    "name": "Dieng, Ousmane",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk0": {
+    "name": "Dillingham, Rob",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e74": {
+    "name": "Dinwiddie, Spencer",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qru": {
+    "name": "DiVincenzo, Donte",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04kj6": {
+    "name": "Doncic, Luka",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0527l": {
+    "name": "Dort, Luguentz",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujc": {
+    "name": "Dosunmu, Ayo",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nf9": {
+    "name": "Drummond, Andre",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n2": {
+    "name": "Dunn, Kris",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkk": {
+    "name": "Dunn, Ryan",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "001aw": {
+    "name": "Durant, Kevin",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621c": {
+    "name": "Duren, Jalen",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621g": {
+    "name": "Eason, Tari",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk1": {
+    "name": "Edey, Zach",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5k": {
+    "name": "Edgecombe, VJ",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qug": {
+    "name": "Edwards, Anthony",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mmc": {
+    "name": "Edwards, Justin",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uji": {
+    "name": "Edwards, Kessler",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0623m": {
+    "name": "Ellis, Keon",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03al2": {
+    "name": "Embiid, Joel",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5u": {
+    "name": "Essengue, Noa",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04xdu": {
+    "name": "Eubanks, Drew",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03acx": {
+    "name": "Exum, Dante",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5g": {
+    "name": "Fears, Jeremiah",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mle": {
+    "name": "Filipowski, Kyle",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "043ib": {
+    "name": "Finney-Smith, Dorian",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5l": {
+    "name": "Flagg, Cooper",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v72": {
+    "name": "Fleming, Rasheer",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "062pk": {
+    "name": "Fontecchio, Simone",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049kb": {
+    "name": "Fox, De'Aaron",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049s6": {
+    "name": "Fultz, Markelle",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlh": {
+    "name": "Furphy, Johnny",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051pi": {
+    "name": "Gafford, Daniel",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051ol": {
+    "name": "Garland, Darius",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujq": {
+    "name": "Garza, Luka",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cby": {
+    "name": "George, Keyonte",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkg": {
+    "name": "George, Kyshawn",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01uyj": {
+    "name": "George, Paul",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uig": {
+    "name": "Giddey, Josh",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qro": {
+    "name": "Gilgeous-Alexander, Shai",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qv9": {
+    "name": "Gill, Anthony",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0623e": {
+    "name": "Gillespie, Collin",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02xg9": {
+    "name": "Gobert, Rudy",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06vxy": {
+    "name": "Goldin, Vladislav",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5d": {
+    "name": "Gonzalez, Hugo",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ux3": {
+    "name": "Goodwin, Jordan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03al0": {
+    "name": "Gordon, Aaron",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "005kf": {
+    "name": "Gordon, Eric",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03aq2": {
+    "name": "Grant, Jerami",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06234": {
+    "name": "Green, AJ",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nfz": {
+    "name": "Green, Draymond",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uic": {
+    "name": "Green, Jalen",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0558v": {
+    "name": "Green, Javonte",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "001ax": {
+    "name": "Green, Jeff",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qti": {
+    "name": "Green, Josh",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uiz": {
+    "name": "Grimes, Quentin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccz": {
+    "name": "Gueye, Mouhamed",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051op": {
+    "name": "Hachimura, Rui",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtv": {
+    "name": "Haliburton, Tyrese",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mm5": {
+    "name": "Hall, PJ",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5e": {
+    "name": "Hansen, Yang",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031mb": {
+    "name": "Hardaway, Tim",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01eo6": {
+    "name": "Harden, James",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06220": {
+    "name": "Hardy, Jaden",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06qdz": {
+    "name": "Harkless, Elijah",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5y": {
+    "name": "Harper, Dylan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06233": {
+    "name": "Harper, Ron",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03apx": {
+    "name": "Harris, Gary",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027p4": {
+    "name": "Harris, Tobias",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewu": {
+    "name": "Hart, Josh",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ex6": {
+    "name": "Hartenstein, Isaiah",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uug": {
+    "name": "Hauser, Sam",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca9": {
+    "name": "Hawkins, Jordan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051oo": {
+    "name": "Hayes, Jaxson",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04k0q": {
+    "name": "Hayes-Davis, Nigel",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cdn": {
+    "name": "Henderson, Scoot",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc0": {
+    "name": "Hendricks, Taylor",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051ot": {
+    "name": "Herro, Tyler",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n3": {
+    "name": "Hield, Buddy",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04yk1": {
+    "name": "Highsmith, Haywood",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs0": {
+    "name": "Holiday, Aaron",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01eo9": {
+    "name": "Holiday, Jrue",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjx": {
+    "name": "Holland, Ron",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mke": {
+    "name": "Holmes, DaRon",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06211": {
+    "name": "Holmgren, Chet",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "000zv": {
+    "name": "Horford, Al",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621v": {
+    "name": "Houstan, Caleb",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc6": {
+    "name": "Howard, Jett",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrw": {
+    "name": "Huerter, Kevin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uup": {
+    "name": "Huff, Jay",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mm4": {
+    "name": "Hukporti, Ariel",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051ok": {
+    "name": "Hunter, De'Andre",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj0": {
+    "name": "Hyland, Bones",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlm": {
+    "name": "Ighodaro, Oso",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03kqi": {
+    "name": "Ingles, Joe",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n1": {
+    "name": "Ingram, Brandon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027oj": {
+    "name": "Irving, Kyrie",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewb": {
+    "name": "Isaac, Jonathan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06214": {
+    "name": "Ivey, Jaden",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cdd": {
+    "name": "Jackson, Andre",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cdh": {
+    "name": "Jackson, GG",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uiw": {
+    "name": "Jackson, Isaiah",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrj": {
+    "name": "Jackson, Jaren",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "064tp": {
+    "name": "Jackson, Quenton",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccv": {
+    "name": "Jackson-Davis, Trayce",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v55": {
+    "name": "Jakucionis, Kasparas",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mm1": {
+    "name": "James, Bronny",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0011e": {
+    "name": "James, LeBron",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v7z": {
+    "name": "James, Sion",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cbx": {
+    "name": "Jaquez, Jaime",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06him": {
+    "name": "Jemison, Trey",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p4": {
+    "name": "Jerome, Ty",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qsp": {
+    "name": "Joe, Isaiah",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkf": {
+    "name": "Johnson, AJ",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051or": {
+    "name": "Johnson, Cameron",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uiu": {
+    "name": "Johnson, Jalen",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p9": {
+    "name": "Johnson, Keldon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uiv": {
+    "name": "Johnson, Keon",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v58": {
+    "name": "Johnson, Tre",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e75": {
+    "name": "Jokic, Nikola",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "048zt": {
+    "name": "Jones, Derrick",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mki": {
+    "name": "Jones, Dillon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj9": {
+    "name": "Jones, Herbert",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mmh": {
+    "name": "Jones, Isaac",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06nv9": {
+    "name": "Jones, Spencer",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtq": {
+    "name": "Jones, Tre",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ad0": {
+    "name": "Jones, Tyus",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621q": {
+    "name": "Jovic, Nikola",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0623d": {
+    "name": "Juzang, Johnny",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v80": {
+    "name": "Kalkbrenner, Ryan",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06pvy": {
+    "name": "Kawamura, Yuki",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06pst": {
+    "name": "Kelley, Kylor",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewd": {
+    "name": "Kennard, Luke",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621l": {
+    "name": "Kessler, Walker",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uip": {
+    "name": "Kispert, Corey",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04jw4": {
+    "name": "Kleber, Maxi",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlj": {
+    "name": "Klintman, Bobi",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk9": {
+    "name": "Knecht, Dalton",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5n": {
+    "name": "Knueppel, Kon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlg": {
+    "name": "Kolek, Tyler",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621w": {
+    "name": "Koloko, Christian",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5b": {
+    "name": "Konan Niederhauser, Yanic",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05293": {
+    "name": "Konchar, John",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04jwb": {
+    "name": "Kornet, Luke",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtk": {
+    "name": "Krejci, Vit",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uih": {
+    "name": "Kuminga, Jonathan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewr": {
+    "name": "Kuzma, Kyle",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uuq": {
+    "name": "Landale, Jock",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v83": {
+    "name": "Lanier, Chaz",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621i": {
+    "name": "LaRavia, Jake",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlq": {
+    "name": "Larsson, Pelle",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ams": {
+    "name": "LaVine, Zach",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uwa": {
+    "name": "Lawson, A.J.",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031ls": {
+    "name": "Len, Alex",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027oz": {
+    "name": "Leonard, Kawhi",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042nf": {
+    "name": "LeVert, Caris",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06224": {
+    "name": "Liddell, E.J.",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02nf6": {
+    "name": "Lillard, Damian",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc8": {
+    "name": "Lively, Dereck",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ad7": {
+    "name": "Looney, Kevon",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "005ki": {
+    "name": "Lopez, Brook",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06vy3": {
+    "name": "Love, Caleb",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "005kd": {
+    "name": "Love, Kevin",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0015b": {
+    "name": "Lowry, Kyle",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04uq4": {
+    "name": "Loyd, Jordan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5f": {
+    "name": "Maluach, Khaman",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujs": {
+    "name": "Mamukelashvili, Sandro",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051ps": {
+    "name": "Mann, Terance",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uis": {
+    "name": "Mann, Tre",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04azw": {
+    "name": "Markkanen, Lauri",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8d": {
+    "name": "Markovic, Bogoljub",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qzh": {
+    "name": "Marshall, Naji",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v85": {
+    "name": "Martin, Alijah",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "055qo": {
+    "name": "Martin, Caleb",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qym": {
+    "name": "Martin, Kenyon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622e": {
+    "name": "Martin, Tyrese",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "052fs": {
+    "name": "Mathews, Garrison",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06215": {
+    "name": "Mathurin, Bennedict",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622f": {
+    "name": "Matkovic, Karlo",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qsq": {
+    "name": "Maxey, Tyrese",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uja": {
+    "name": "McBride, Miles",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk8": {
+    "name": "McCain, Jared",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031lx": {
+    "name": "McCollum, CJ",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03wr4": {
+    "name": "McConnell, T.J.",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qu0": {
+    "name": "McDaniels, Jaden",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03avi": {
+    "name": "McDermott, Doug",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06223": {
+    "name": "McGowens, Bryce",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04xhz": {
+    "name": "McLaughlin, Jordan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5o": {
+    "name": "McNeeley, Liam",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsm": {
+    "name": "Melton, De'Anthony",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtb": {
+    "name": "Merrill, Sam",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02ng3": {
+    "name": "Middleton, Khris",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0723h": {
+    "name": "Milicic, Igor",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cca": {
+    "name": "Miller, Brandon",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06pu0": {
+    "name": "Miller, Emanuel",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06228": {
+    "name": "Minott, Josh",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkd": {
+    "name": "Missi, Yves",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlk": {
+    "name": "Mitchell, Ajay",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uij": {
+    "name": "Mitchell, Davion",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewe": {
+    "name": "Mitchell, Donovan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uid": {
+    "name": "Mobley, Evan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mld": {
+    "name": "Mogbo, Jonathan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049kc": {
+    "name": "Monk, Malik",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uio": {
+    "name": "Moody, Moses",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051oi": {
+    "name": "Morant, Ja",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04exe": {
+    "name": "Morris, Monte",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uir": {
+    "name": "Murphy, Trey",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042nq": {
+    "name": "Murray, Dejounte",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n4": {
+    "name": "Murray, Jamal",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06213": {
+    "name": "Murray, Keegan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca5": {
+    "name": "Murray, Kris",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5a": {
+    "name": "Murray-Boyles, Collin",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsn": {
+    "name": "Mykhailiuk, Svi",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03r7l": {
+    "name": "Nance, Larry",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621u": {
+    "name": "Nembhard, Andrew",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06y3q": {
+    "name": "Nembhard, Ryan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qt4": {
+    "name": "Nesmith, Aaron",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5c": {
+    "name": "Newell, Asa",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042o9": {
+    "name": "Niang, Georges",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05quh": {
+    "name": "Nnaji, Zeke",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e6n": {
+    "name": "Nurkic, Jusuf",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qt6": {
+    "name": "Nwora, Jordan",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04jwd": {
+    "name": "O'Neale, Royce",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrx": {
+    "name": "Okogie, Josh",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtt": {
+    "name": "Okongwu, Onyeka",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qsk": {
+    "name": "Okoro, Isaac",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031lp": {
+    "name": "Oladipo, Victor",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031m0": {
+    "name": "Olynyk, Kelly",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03nwk": {
+    "name": "Oubre Jr., Kelly",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0017e": {
+    "name": "Paul, Chris",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03r7e": {
+    "name": "Payne, Cameron",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "043cj": {
+    "name": "Payton II, Gary",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v86": {
+    "name": "Peavy, Micah",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v7y": {
+    "name": "Penda, Noah",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06vxp": {
+    "name": "Peter, Taelon",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cdf": {
+    "name": "Phillips, Julian",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0623a": {
+    "name": "Pippen, Scotty",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031m9": {
+    "name": "Plumlee, Mason",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc7": {
+    "name": "Podziemski, Brandin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n6": {
+    "name": "Poeltl, Jakob",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p8": {
+    "name": "Poole, Jordan",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cp4": {
+    "name": "Porter, Craig",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051pa": {
+    "name": "Porter, Kevin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrr": {
+    "name": "Porter, Michael",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03nwn": {
+    "name": "Portis, Bobby",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03el5": {
+    "name": "Porzingis, Kristaps",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mly": {
+    "name": "Post, Quinten",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5s": {
+    "name": "Powell, Drake",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03e79": {
+    "name": "Powell, Dwight",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03r7z": {
+    "name": "Powell, Norman",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n8": {
+    "name": "Prince, Taurean",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qt1": {
+    "name": "Pritchard, Payton",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8f": {
+    "name": "Proctor, Tyrese",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cc9": {
+    "name": "Prosper, Olivier-Maxence",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5h": {
+    "name": "Queen, Derik",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujd": {
+    "name": "Queta, Neemias",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qu9": {
+    "name": "Quickley, Immanuel",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0623c": {
+    "name": "Quinones, Lester",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ajv": {
+    "name": "Randle, Julius",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v88": {
+    "name": "Raynaud, Maxime",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06gix": {
+    "name": "Reath, Duop",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uus": {
+    "name": "Reaves, Austin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qst": {
+    "name": "Reed, Paul",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0527h": {
+    "name": "Reid, Naz",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8p": {
+    "name": "Richard, Will",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtd": {
+    "name": "Richards, Nick",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5j": {
+    "name": "Richardson, Jase",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v59": {
+    "name": "Riley, Will",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjt": {
+    "name": "Risacher, Zaccharie",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04s00": {
+    "name": "Robinson, Duncan",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsd": {
+    "name": "Robinson, Mitchell",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622z": {
+    "name": "Robinson, Orlando",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06227": {
+    "name": "Rollins, Ryan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03nwl": {
+    "name": "Rozier, Terry",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ad4": {
+    "name": "Russell, D'Angelo",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042n7": {
+    "name": "Sabonis, Domantas",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjy": {
+    "name": "Salaun, Tidjane",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8g": {
+    "name": "Sanders, Kobe",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622i": {
+    "name": "Santos, Gui",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5t": {
+    "name": "Saraf, Ben",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03acy": {
+    "name": "Saric, Dario",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mju": {
+    "name": "Sarr, Alex",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05yab": {
+    "name": "Sarr, Olivier",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccg": {
+    "name": "Sasser, Marcus",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkm": {
+    "name": "Scheierman, Baylor",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "031m4": {
+    "name": "Schroder, Dennis",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uiq": {
+    "name": "Sengun, Alperen",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cbz": {
+    "name": "Sensabaugh, Brice",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrm": {
+    "name": "Sexton, Collin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs3": {
+    "name": "Shamet, Landry",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkj": {
+    "name": "Shannon, Terrence",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj3": {
+    "name": "Sharpe, Day'Ron",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06216": {
+    "name": "Sharpe, Shaedon",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlr": {
+    "name": "Shead, Jamal",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06caa": {
+    "name": "Sheppard, Ben",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mjv": {
+    "name": "Sheppard, Reed",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042nm": {
+    "name": "Siakam, Pascal",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03lg1": {
+    "name": "Simmons, Ben",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs1": {
+    "name": "Simons, Anfernee",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlo": {
+    "name": "Simpson, KJ",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujw": {
+    "name": "Sims, Jericho",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8e": {
+    "name": "Small, Javon",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03al1": {
+    "name": "Smart, Marcus",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "049s5": {
+    "name": "Smith, Dennis",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05wqo": {
+    "name": "Smith, Dru",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06212": {
+    "name": "Smith, Jabari",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qty": {
+    "name": "Smith, Jalen",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccb": {
+    "name": "Smith, Nick",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06pwq": {
+    "name": "Smith, Tolu",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06218": {
+    "name": "Sochan, Jeremy",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5i": {
+    "name": "Sorber, Thomas",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mlz": {
+    "name": "Spencer, Cam",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0633h": {
+    "name": "Spencer, Pat",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj2": {
+    "name": "Springer, Jaden",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mp0": {
+    "name": "Stevens, Isaiah",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qub": {
+    "name": "Stewart, Isaiah",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca3": {
+    "name": "Strawther, Julian",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0558t": {
+    "name": "Strus, Max",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uif": {
+    "name": "Suggs, Jalen",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qve": {
+    "name": "Tate, Jae'Sean",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03xmv": {
+    "name": "Tatum, Jayson",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "01ng2": {
+    "name": "Temple, Garrett",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621h": {
+    "name": "Terry, Dalen",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v82": {
+    "name": "Thiero, Adou",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uj1": {
+    "name": "Thomas, Cameron",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca8": {
+    "name": "Thompson, Amen",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccf": {
+    "name": "Thompson, Ausar",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027ou": {
+    "name": "Thompson, Klay",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p0": {
+    "name": "Thybulle, Matisse",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtf": {
+    "name": "Tillman, Xavier",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cf3": {
+    "name": "Timme, Drew",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06prl": {
+    "name": "Tomlin, Nae'Qwan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8i": {
+    "name": "Toohey, Alex",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk4": {
+    "name": "Topic, Nikola",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qsx": {
+    "name": "Toppin, Obi",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ad3": {
+    "name": "Towns, Karl-Anthony",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5p": {
+    "name": "Traore, Nolan",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qse": {
+    "name": "Trent, Gary",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cef": {
+    "name": "Tshiebwe, Oscar",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03ad2": {
+    "name": "Turner, Myles",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkc": {
+    "name": "Tyson, Jaylon",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027oo": {
+    "name": "Valanciunas, Jonas",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qsi": {
+    "name": "Vanderbilt, Jarred",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04848": {
+    "name": "VanVleet, Fred",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qtr": {
+    "name": "Vassell, Devin",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05g3q": {
+    "name": "Vincent, Gabe",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "027p0": {
+    "name": "Vucevic, Nikola",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ccu": {
+    "name": "Vukcevic, Tristan",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0529c": {
+    "name": "Wade, Dean",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uii": {
+    "name": "Wagner, Franz",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs2": {
+    "name": "Wagner, Moritz",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622k": {
+    "name": "Walker, Jabari",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cab": {
+    "name": "Walker, Jarace",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrv": {
+    "name": "Walker, Lonnie",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cac": {
+    "name": "Wallace, Cason",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "065b8": {
+    "name": "Wallace, Keaton",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cd1": {
+    "name": "Walsh, Jordan",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mkb": {
+    "name": "Walter, Ja'Kobe",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk7": {
+    "name": "Ware, Kel'el",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051os": {
+    "name": "Washington, P.J.",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05yoh": {
+    "name": "Waters, Lindy",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uuv": {
+    "name": "Watford, Trendon",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v89": {
+    "name": "Watkins, Jamir",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621t": {
+    "name": "Watson, Peyton",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mll": {
+    "name": "Wells, Jaylen",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cch": {
+    "name": "Wembanyama, Victor",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621o": {
+    "name": "Wesley, Blake",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "005kc": {
+    "name": "Westbrook, Russell",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051on": {
+    "name": "White, Coby",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04ewt": {
+    "name": "White, Derrick",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ca7": {
+    "name": "Whitmore, Cam",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05ujt": {
+    "name": "Wiggins, Aaron",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "02ym0": {
+    "name": "Wiggins, Andrew",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v8c": {
+    "name": "Williams, Amari",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05y9y": {
+    "name": "Williams, Brandon",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06mk2": {
+    "name": "Williams, Cody",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051p2": {
+    "name": "Williams, Grant",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621b": {
+    "name": "Williams, Jalen",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621x": {
+    "name": "Williams, Jaylin",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04t8w": {
+    "name": "Williams, Kenrich",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0621e": {
+    "name": "Williams, Mark",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qsl": {
+    "name": "Williams, Patrick",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qs4": {
+    "name": "Williams, Robert",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "0622a": {
+    "name": "Williams, Vince",
+    "shortName": "",
+    "pos": "SG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05uik": {
+    "name": "Williams, Ziaire",
+    "shortName": "",
+    "pos": "SF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "051oh": {
+    "name": "Williamson, Zion",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06cdc": {
+    "name": "Wilson, Jalen",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "05qu1": {
+    "name": "Wiseman, James",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06v5q": {
+    "name": "Wolf, Danny",
+    "shortName": "",
+    "pos": "PF",
+    "team": "",
+    "teamShortName": ""
+  },
+  "03xmt": {
+    "name": "Yabusele, Guerschon",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  },
+  "06ps5": {
+    "name": "Young, Jahmir",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "04qrk": {
+    "name": "Young, Trae",
+    "shortName": "",
+    "pos": "PG",
+    "team": "",
+    "teamShortName": ""
+  },
+  "042nt": {
+    "name": "Zubac, Ivica",
+    "shortName": "",
+    "pos": "C",
+    "team": "",
+    "teamShortName": ""
+  }
+}
