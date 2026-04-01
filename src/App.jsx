@@ -6,6 +6,8 @@ import TeamsPage from "./pages/TeamsPage"
 import TeamDetailPage from "./pages/TeamDetailPage"
 import LeagueRulesPage from "./pages/LeagueRulesPage"
 import DraftResultsPage from "./pages/DraftResultsPage"
+import PlayerDetailPage from "./pages/PlayerDetailPage"
+
 
 function PlaceholderPage({ title }) {
   return (
@@ -38,6 +40,7 @@ export default function App() {
           <Route path="/history" element={<PlaceholderPage title="History page" />} />
           <Route path="/league-rules" element={<LeagueRulesPage />} />
           <Route path="/draft-results" element={<DraftResultsPage />} />
+          <Route path="/players/:playerSlug" element={<PlayerDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

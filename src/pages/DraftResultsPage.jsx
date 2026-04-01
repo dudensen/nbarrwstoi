@@ -21,6 +21,15 @@ function formatDraftDate(value) {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
 }
 
+function slugifyPlayerName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
 function formatPickTimestamp(value) {
   if (!value) return "—"
   const date = new Date(value)
@@ -383,13 +392,24 @@ export default function DraftResultsPage() {
                         <td style={td}>{pick.round}</td>
                         <td style={td}>{pick.pickInRound}</td>
                         <td style={td}>
-                          <div style={{ fontWeight: 700 }}>{pick.playerName}</div>
-                          {!pick.madePick && (
-                            <div style={{ fontSize: 12, color: "#9a3412" }}>
-                              No player attached
-                            </div>
-                          )}
-                        </td>
+                      <div style={{ fontWeight: 700 }}>
+                        {pick.playerId ? (
+                          <Link
+                            to={`/players/${slugifyPlayerName(pick.playerName)}`}
+                            style={teamLink}
+                          >
+                            {pick.playerName}
+                          </Link>
+                        ) : (
+                          pick.playerName
+                        )}
+                      </div>
+                      {!pick.madePick && (
+                        <div style={{ fontSize: 12, color: "#9a3412" }}>
+                          No player attached
+                        </div>
+                      )}
+                    </td>
                         <td style={td}>{pick.playerPos || "—"}</td>
                         <td style={td}>
                           {typeof pick.playerAdp === "number" ? pick.playerAdp.toFixed(2) : "—"}

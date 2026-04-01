@@ -31,6 +31,50 @@ function formatScoreText(scoreText) {
   return `${formatScoreValue(parts[0])} - ${formatScoreValue(parts[1])}`
 }
 
+function slugifyPlayerName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
+function PlayerLinkCell({ playerName }) {
+  const cleanName = decodeMaybeBrokenText(playerName || "")
+  if (!cleanName) return <span>—</span>
+
+  return (
+    <Link to={`/players/${slugifyPlayerName(cleanName)}`} style={playerLink}>
+      {cleanName}
+    </Link>
+  )
+}
+
+function formatTransactionDate(value) {
+  if (!value) return "—"
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString()
+}
+
+function compareDescByDate(a, b) {
+  const aTime = new Date(a?.date || 0).getTime()
+  const bTime = new Date(b?.date || 0).getTime()
+  return bTime - aTime
+}
+
+function transactionTypeLabel(types = []) {
+  if (!Array.isArray(types) || types.length === 0) return "—"
+  return types.join(" + ")
+}
+
+function playerTypeColor(type) {
+  const t = String(type || "").toUpperCase()
+  if (t === "FA" || t === "WW") return "#15803d"
+  if (t === "DROP") return "#b91c1c"
+  return "#92400e"
+}
+
 export default function TeamDetailPage() {
   const { teamSlug } = useParams()
   const { season } = useSeason()
@@ -40,13 +84,12 @@ export default function TeamDetailPage() {
   const [adpRows, setAdpRows] = useState([])
   const [playerCsvRows, setPlayerCsvRows] = useState([])
   const [matchupResults, setMatchupResults] = useState(null)
+  const [transactionsData, setTransactionsData] = useState(null)
   const [period, setPeriod] = useState("1")
   const [activeTab, setActiveTab] = useState("results")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-
-  
   useEffect(() => {
     let cancelled = false
 
@@ -56,45 +99,54 @@ export default function TeamDetailPage() {
         setError("")
 
         const matchupFile = `/data/matchup-results-${encodeURIComponent(season.key)}.json`
-
+        const transactionsFile = `/data/transactions-${encodeURIComponent(season.key)}.json`
         const csvLoader = playerCsvFiles[`../config/playerCsv/${season.key}.csv`]
 
-const [leagueRes, rosterRes, adpRes, matchupRes, csvText] = await Promise.all([
-  fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
-  fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=${encodeURIComponent(period)}`),
-  fetch(`/api/adp`),
-  fetch(matchupFile),
-  csvLoader ? csvLoader() : Promise.resolve(""),
-])
+        const [leagueRes, rosterRes, adpRes, matchupRes, transactionsRes, csvText] = await Promise.all([
+          fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
+          fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=${encodeURIComponent(period)}`),
+          fetch(`/api/adp`),
+          fetch(matchupFile),
+          fetch(transactionsFile).catch(() => null),
+          csvLoader ? csvLoader() : Promise.resolve(""),
+        ])
 
-const [leagueText, rosterText, adpText, matchupText] = await Promise.all([
-  leagueRes.text(),
-  rosterRes.text(),
-  adpRes.text(),
-  matchupRes.text(),
-])
+        const [leagueText, rosterText, adpText, matchupText, transactionsText] = await Promise.all([
+          leagueRes.text(),
+          rosterRes.text(),
+          adpRes.text(),
+          matchupRes.text(),
+          transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+        ])
 
         if (!leagueRes.ok) throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
         if (!rosterRes.ok) throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
         if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
         if (!matchupRes.ok) throw new Error(`Matchup results failed (${matchupRes.status}): ${matchupText}`)
 
+        let parsedTransactions = null
+        if (transactionsRes && transactionsRes.ok && transactionsText) {
+          parsedTransactions = JSON.parse(transactionsText)
+        }
+
         if (!cancelled) {
-  setLeagueInfo(JSON.parse(leagueText))
-  setTeamRosters(JSON.parse(rosterText))
-  setAdpRows(JSON.parse(adpText))
-  setPlayerCsvRows(parsePlayerCsv(csvText || ""))
-  setMatchupResults(JSON.parse(matchupText))
-}
+          setLeagueInfo(JSON.parse(leagueText))
+          setTeamRosters(JSON.parse(rosterText))
+          setAdpRows(JSON.parse(adpText))
+          setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+          setMatchupResults(JSON.parse(matchupText))
+          setTransactionsData(parsedTransactions)
+        }
       } catch (err) {
         if (!cancelled) {
-  setError(err instanceof Error ? err.message : "Unknown error")
-  setLeagueInfo(null)
-  setTeamRosters(null)
-  setAdpRows([])
-  setPlayerCsvRows([])
-  setMatchupResults(null)
-}
+          setError(err instanceof Error ? err.message : "Unknown error")
+          setLeagueInfo(null)
+          setTeamRosters(null)
+          setAdpRows([])
+          setPlayerCsvRows([])
+          setMatchupResults(null)
+          setTransactionsData(null)
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -107,18 +159,17 @@ const [leagueText, rosterText, adpText, matchupText] = await Promise.all([
   }, [season.key, period])
 
   const team = useMemo(
-  () => getTeamBySlugFromLeagueInfo(leagueInfo, teamSlug),
-  [leagueInfo, teamSlug]
-)
+    () => getTeamBySlugFromLeagueInfo(leagueInfo, teamSlug),
+    [leagueInfo, teamSlug]
+  )
 
-const teamId = team?.id || ""
+  const teamId = team?.id || ""
 
   const playerLookup = useMemo(() => {
-  const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
-  const adpLookup = buildPlayerLookupFromAdp(adpRows)
-
-  return mergePlayerLookups(csvLookup, adpLookup)
-}, [playerCsvRows, adpRows])
+    const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
+    const adpLookup = buildPlayerLookupFromAdp(adpRows)
+    return mergePlayerLookups(csvLookup, adpLookup)
+  }, [playerCsvRows, adpRows])
 
   const rosterItems = useMemo(() => {
     const raw = getRosterForTeam(teamRosters, teamId)
@@ -191,6 +242,13 @@ const teamId = team?.id || ""
     return matchups.filter((row) => !completedPeriods.has(Number(row.period)))
   }, [matchups, completedPeriods])
 
+  const teamTransactions = useMemo(() => {
+    const rows = Array.isArray(transactionsData?.transactions) ? transactionsData.transactions : []
+    return rows
+      .filter((tx) => String(tx?.team?.id || "") === String(teamId))
+      .sort(compareDescByDate)
+  }, [transactionsData, teamId])
+
   if (loading) return <main style={main}><div>Loading team profile...</div></main>
   if (error) return <main style={main}><div style={errorBox}>{error}</div></main>
   if (!team) return <main style={main}><div style={errorBox}>Team not found for this season.</div></main>
@@ -241,6 +299,13 @@ const teamId = team?.id || ""
           >
             Schedule
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("transactions")}
+            style={activeTab === "transactions" ? activeTabBtn : tabBtn}
+          >
+            Transactions
+          </button>
         </div>
 
         {activeTab === "results" ? (
@@ -263,8 +328,8 @@ const teamId = team?.id || ""
                       <td style={td}>
                         {row.opponentId ? (
                           <Link to={`/teams/${slugifyTeamName(row.opponentName)}`} style={teamLink}>
-  {row.opponentName}
-</Link>
+                            {row.opponentName}
+                          </Link>
                         ) : (
                           row.opponentName
                         )}
@@ -279,7 +344,7 @@ const teamId = team?.id || ""
               </table>
             </div>
           </>
-        ) : (
+        ) : activeTab === "schedule" ? (
           <>
             <h3 style={sectionTitle}>Schedule</h3>
             <div style={{ overflowX: "auto" }}>
@@ -299,8 +364,8 @@ const teamId = team?.id || ""
                       <td style={td}>
                         {row.opponentId ? (
                           <Link to={`/teams/${slugifyTeamName(row.opponentName)}`} style={teamLink}>
-                          {row.opponentName}
-                        </Link>
+                            {row.opponentName}
+                          </Link>
                         ) : (
                           row.opponentName
                         )}
@@ -310,6 +375,51 @@ const teamId = team?.id || ""
                 </tbody>
               </table>
             </div>
+          </>
+        ) : (
+          <>
+            <h3 style={sectionTitle}>Transactions</h3>
+            {teamTransactions.length === 0 ? (
+              <div>No transactions found for this team in {season.label}.</div>
+            ) : (
+              <div style={transactionsList}>
+                {teamTransactions.map((tx) => (
+                  <div key={tx.id} style={transactionCard}>
+                    <div style={transactionHeader}>
+                      <div>
+                        <div style={transactionDate}>{formatTransactionDate(tx.date)}</div>
+                        <div style={transactionTypes}>{transactionTypeLabel(tx.types)}</div>
+                      </div>
+                      <div style={transactionTeam}>
+                        {decodeMaybeBrokenText(tx?.team?.name || "—")}
+                      </div>
+                    </div>
+
+                    <div style={transactionPlayers}>
+                      {(tx.players || []).map((player) => (
+                        <div key={`${tx.id}-${player.id}-${player.type}`} style={transactionPlayerRow}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                            <span
+                              style={{
+                                ...playerTypeBadge,
+                                color: playerTypeColor(player.type),
+                                borderColor: playerTypeColor(player.type),
+                              }}
+                            >
+                              {player.type || "—"}
+                            </span>
+                            <PlayerLinkCell playerName={player.name || player.playerName || "—"} />
+                            <span style={transactionPlayerMeta}>
+                              {player.pos_short_name || "—"} · {player.team_name || "—"}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
@@ -337,7 +447,9 @@ function RosterSection({ title, rows }) {
             <tbody>
               {rows.map((row) => (
                 <tr key={`${row.id}-${row.position}-${row.status}`}>
-                  <td style={td}>{row.playerName}</td>
+                  <td style={td}>
+                    <PlayerLinkCell playerName={row.playerName} />
+                  </td>
                   <td style={td}>{row.playerPos || "—"}</td>
                   <td style={td}>{row.position || "—"}</td>
                   <td style={td}>
@@ -449,4 +561,83 @@ const teamLink = {
   color: "#9a3412",
   textDecoration: "none",
   fontWeight: 600,
+}
+
+const transactionsList = {
+  display: "grid",
+  gap: 14,
+}
+
+const transactionCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 18,
+  padding: 18,
+}
+
+const transactionHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  gap: 12,
+  flexWrap: "wrap",
+  marginBottom: 14,
+}
+
+const transactionDate = {
+  color: "#111827",
+  fontWeight: 800,
+  marginBottom: 6,
+}
+
+const transactionTypes = {
+  color: "#9a3412",
+  fontWeight: 700,
+  fontSize: 14,
+}
+
+const transactionTeam = {
+  color: "#6b7280",
+  fontWeight: 600,
+}
+
+const transactionPlayers = {
+  display: "grid",
+  gap: 10,
+}
+
+const transactionPlayerRow = {
+  background: "#ffffff",
+  border: "1px solid #ffedd5",
+  borderRadius: 14,
+  padding: "12px 14px",
+}
+
+const playerTypeBadge = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  minWidth: 52,
+  padding: "4px 9px",
+  borderRadius: 999,
+  border: "1px solid currentColor",
+  fontSize: 12,
+  fontWeight: 800,
+  background: "#fff",
+}
+
+const transactionPlayerName = {
+  color: "#111827",
+  fontWeight: 700,
+}
+
+const transactionPlayerMeta = {
+  color: "#6b7280",
+  fontSize: 14,
+}
+
+const playerLink = {
+  color: "#111827",
+  fontWeight: 700,
+  textDecoration: "none",
 }

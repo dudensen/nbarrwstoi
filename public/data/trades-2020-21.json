@@ -1,0 +1,12 @@
+{
+  "season": "2020-21",
+  "label": "2020-21",
+  "league_id": "mpda9aprkh7tali6",
+  "league_name": "NBArrwstoi Fantasy League",
+  "league_year": "2020-21 NBA",
+  "exported_at": "2026-04-01T15:17:06.031781",
+  "note": "fantraxapi exposes pending_trades(); this file contains pending trades only. Use trade_like_transactions from transactions-<season>.json for completed/history-like trade rows.",
+  "pending_trades_error": null,
+  "count_returned": 0,
+  "pending_trades": []
+}
