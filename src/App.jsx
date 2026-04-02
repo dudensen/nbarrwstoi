@@ -7,6 +7,7 @@ import TeamDetailPage from "./pages/TeamDetailPage"
 import LeagueRulesPage from "./pages/LeagueRulesPage"
 import DraftResultsPage from "./pages/DraftResultsPage"
 import PlayerDetailPage from "./pages/PlayerDetailPage"
+import HistoryPage from "./pages/HistoryPage"
 
 
 function PlaceholderPage({ title }) {
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/teams" element={<TeamsPage />} />
           <Route path="/teams/:teamSlug" element={<TeamDetailPage />} />
           <Route path="/draft-picks" element={<PlaceholderPage title="Draft Picks page" />} />
+          <Route path="/history" element={<HistoryPage />} />
           <Route path="/history" element={<PlaceholderPage title="History page" />} />
           <Route path="/league-rules" element={<LeagueRulesPage />} />
           <Route path="/draft-results" element={<DraftResultsPage />} />

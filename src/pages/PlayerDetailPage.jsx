@@ -10,6 +10,7 @@ import {
   decodeMaybeBrokenText,
 } from "../utils/fantrax"
 import { SEASONS } from "../config/seasons"
+
 const LATEST_SEASON =
   SEASONS.find((s) => s.isCurrent) ||
   SEASONS[0]
@@ -46,31 +47,37 @@ function formatTransactionDate(value) {
   return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString()
 }
 
-function matchesPlayerValue(value, player) {
-  const raw = decodeMaybeBrokenText(value)
-  const text = String(raw ?? "").trim().toLowerCase()
-  if (!text) return false
+function normalizeNameLoose(value) {
+  return String(decodeMaybeBrokenText(value) || "")
+    .toLowerCase()
+    .replace(/,/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
 
-  const playerId = String(player?.id || "").trim().toLowerCase()
-  const playerName = String(player?.name || "").trim().toLowerCase()
-  const playerSlug = slugifyPlayerName(player?.name || "")
-
-  return (
-    text === playerId ||
-    text === playerName ||
-    slugifyPlayerName(text) === playerSlug
-  )
+function normalizeIdLoose(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^\*+|\*+$/g, "")
+    .toLowerCase()
 }
 
 function transactionPlayerMatches(playerRow, player) {
   if (!playerRow || !player) return false
 
-  return (
-    matchesPlayerValue(playerRow.id, player) ||
-    matchesPlayerValue(playerRow.playerId, player) ||
-    matchesPlayerValue(playerRow.name, player) ||
-    matchesPlayerValue(playerRow.playerName, player)
+  const playerId = normalizeIdLoose(player.id)
+  const targetA = normalizeNameLoose(player.name)
+  const targetB = targetA.split(" ").reverse().join(" ").trim()
+
+  const rowId = normalizeIdLoose(playerRow.id || playerRow.playerId)
+  const rowName = normalizeNameLoose(
+    playerRow.name ||
+      playerRow.playerName ||
+      playerRow.short_name ||
+      ""
   )
+
+  return rowId === playerId || rowName === targetA || rowName === targetB
 }
 
 function normalizeTransactionRows(raw, player, seasonKey) {
@@ -265,7 +272,9 @@ function normalizeDraftRows(draftResults, teamNameMap, mergedPlayerLookup, seaso
 
   return picks.map((pick) => {
     const player = pick?.playerId ? mergedPlayerLookup.get(String(pick.playerId)) : null
-    const playerName = decodeMaybeBrokenText(player?.name || (pick?.playerId ? String(pick.playerId) : "No selection"))
+    const playerName = decodeMaybeBrokenText(
+      player?.name || (pick?.playerId ? String(pick.playerId) : "No selection")
+    )
 
     return {
       seasonKey,
@@ -283,90 +292,32 @@ function normalizeDraftRows(draftResults, teamNameMap, mergedPlayerLookup, seaso
   })
 }
 
-function readDetails(row) {
-  if (row.details) return row.details
-  if (row.description) return row.description
-  if (row.note) return row.note
-  if (row.text) return row.text
-  if (row.summary) return row.summary
+function findAdpRowForPlayer(adpRows, player) {
+  if (!player) return null
 
-  if (Array.isArray(row.moves)) {
-    const text = row.moves
-      .map((m) => m?.description || m?.text || m?.type || m?.playerName || m?.name || null)
-      .filter(Boolean)
-      .join(" • ")
-    if (text) return text
-  }
-
-  return "—"
-}
-
-function rowMatchesPlayer(row, player) {
-  if (!row || !player) return false
-
-  const playerId = String(player.id || "").trim().toLowerCase()
-  const playerName = String(player.name || "").trim().toLowerCase()
+  const playerId = String(player.id || "")
   const playerSlug = slugifyPlayerName(player.name || "")
 
-  const matchesValue = (value) => {
-    const decoded = decodeMaybeBrokenText(value)
-    const text = String(decoded ?? "").trim().toLowerCase()
-    if (!text) return false
-
-    return text === playerId || text === playerName || slugifyPlayerName(text) === playerSlug
-  }
-
-  if (
-    matchesValue(row.playerId) ||
-    matchesValue(row.id) ||
-    matchesValue(row.name) ||
-    matchesValue(row.playerName) ||
-    matchesValue(row.player?.id) ||
-    matchesValue(row.player?.name)
-  ) {
-    return true
-  }
-
-  const arraysToCheck = [
-    row.players,
-    row.items,
-    row.moves,
-    row.assets,
-    row.claims,
-    row.adds,
-    row.drops,
-  ]
-
-  for (const arr of arraysToCheck) {
-    if (!Array.isArray(arr)) continue
-
-    for (const item of arr) {
-      if (
-        matchesValue(item?.playerId) ||
-        matchesValue(item?.id) ||
-        matchesValue(item?.name) ||
-        matchesValue(item?.playerName) ||
-        matchesValue(item?.player?.id) ||
-        matchesValue(item?.player?.name)
-      ) {
-        return true
-      }
-    }
-  }
-
-  return false
+  return (
+    adpRows.find((row) => String(row?.id || row?.playerId || row?.player?.id || "") === playerId) ||
+    adpRows.find((row) => slugifyPlayerName(getPlayerNameFromAnyRow(row)) === playerSlug) ||
+    null
+  )
 }
 
-
-function TeamLinkCell({ teamId, teamName }) {
+function TeamLinkCell({ teamId, teamName, seasonKey }) {
   if (!teamName) return <span>—</span>
 
   if (!teamId || teamName === "Free Agent" || teamName === "Retired") {
     return <span>{teamName}</span>
   }
 
+  const href = seasonKey
+    ? `/teams/${slugifyTeamName(teamName)}?season=${encodeURIComponent(seasonKey)}`
+    : `/teams/${slugifyTeamName(teamName)}`
+
   return (
-    <Link to={`/teams/${slugifyTeamName(teamName)}`} style={teamLink}>
+    <Link to={href} style={teamLink}>
       {teamName}
     </Link>
   )
@@ -416,8 +367,8 @@ export default function PlayerDetailPage() {
         })
 
         const currentRostersPromise = fetch(
-  `/api/team-rosters?season=${encodeURIComponent(LATEST_SEASON.key)}&period=1`
-).then(async (res) => {
+          `/api/team-rosters?season=${encodeURIComponent(LATEST_SEASON.key)}&period=1`
+        ).then(async (res) => {
           const text = await res.text()
           if (!res.ok) throw new Error(`Current season rosters failed (${res.status}): ${text}`)
           return JSON.parse(text)
@@ -568,6 +519,15 @@ export default function PlayerDetailPage() {
 
   const nameParts = useMemo(() => splitName(player?.name || ""), [player])
 
+  const currentAdpRow = useMemo(() => {
+    return findAdpRowForPlayer(currentAdpRows, player)
+  }, [currentAdpRows, player])
+
+  const currentAdpValue = useMemo(() => {
+    const value = currentAdpRow?.ADP ?? currentAdpRow?.adp ?? player?.adp ?? null
+    return typeof value === "number" ? value : Number.isFinite(Number(value)) ? Number(value) : null
+  }, [currentAdpRow, player])
+
   const currentRosterSpot = useMemo(() => {
     return findCurrentRosterSpot(currentSeasonRosters, player)
   }, [currentSeasonRosters, player])
@@ -599,6 +559,22 @@ export default function PlayerDetailPage() {
 
     return matches[0] || null
   }, [player, allDraftRows])
+
+  const earliestTrackedSeason = SEASONS[SEASONS.length - 1]?.label || "2020-21"
+
+  const draftInfoUnavailable = !originalDraft && Boolean(player)
+
+  const draftedSeasonText = originalDraft
+    ? originalDraft.seasonLabel
+    : draftInfoUnavailable
+    ? `Data not available (before ${earliestTrackedSeason})`
+    : "—"
+
+  const draftedByText = originalDraft
+    ? null
+    : draftInfoUnavailable
+    ? `Data not available (before ${earliestTrackedSeason})`
+    : "—"
 
   if (loading) {
     return (
@@ -645,7 +621,7 @@ export default function PlayerDetailPage() {
           <StatCard label="Position" value={player.pos || "—"} />
           <StatCard
             label="ADP"
-            value={typeof player.adp === "number" ? player.adp.toFixed(2) : "—"}
+            value={typeof currentAdpValue === "number" ? currentAdpValue.toFixed(2) : "—"}
           />
           <StatCard label="Current Team" value={currentFantasyTeam} />
         </div>
@@ -662,7 +638,7 @@ export default function PlayerDetailPage() {
         <div style={detailGrid}>
           <DetailRow
             label="Season Drafted"
-            value={originalDraft?.seasonLabel || "Undrafted / unavailable"}
+            value={draftedSeasonText}
           />
           <DetailRow
             label="Drafted By"
@@ -671,9 +647,10 @@ export default function PlayerDetailPage() {
                 <TeamLinkCell
                   teamId={originalDraft.teamId}
                   teamName={originalDraft.teamName}
+                  seasonKey={originalDraft.seasonKey}
                 />
               ) : (
-                "Undrafted / unavailable"
+                draftedByText
               )
             }
           />
@@ -695,67 +672,69 @@ export default function PlayerDetailPage() {
       </section>
 
       <section style={section}>
-  <div style={sectionTop}>
-    <div>
-      <h2 style={sectionTitle}>League Career</h2>
-      <p style={sectionSub}>
-        All transactions involving this player across all seasons.
-      </p>
-    </div>
-  </div>
-
-  {careerRows.length === 0 ? (
-    <div style={emptyBox}>No transactions found for this player.</div>
-  ) : (
-    <div style={transactionsList}>
-      {careerRows.map((tx) => (
-        <div key={`${tx.season}-${tx.id}`} style={transactionCard}>
-          <div style={transactionHeader}>
-            <div>
-              <div style={transactionDate}>
-                {formatTransactionDate(tx.date)}
-              </div>
-              <div style={transactionTypes}>
-                {tx.season} · {transactionTypeLabel(tx.types)}
-              </div>
-            </div>
-            <div style={transactionTeam}>
-              {tx.teamId ? (
-                <TeamLinkCell teamId={tx.teamId} teamName={tx.teamName} />
-              ) : (
-                tx.teamName
-              )}
-            </div>
+        <div style={sectionTop}>
+          <div>
+            <h2 style={sectionTitle}>League Career</h2>
+            <p style={sectionSub}>
+              All transactions involving this player across all seasons.
+            </p>
           </div>
+        </div>
 
-          <div style={transactionPlayers}>
-            {tx.matchedPlayers.map((p, idx) => (
-              <div key={`${tx.id}-${p.id || idx}-${p.type || "x"}`} style={transactionPlayerRow}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <span
-                    style={{
-                      ...playerTypeBadge,
-                      color: playerTypeColor(p.type),
-                      borderColor: playerTypeColor(p.type),
-                    }}
-                  >
-                    {p.type || "—"}
-                  </span>
-                  <span style={transactionPlayerName}>
-                    {decodeMaybeBrokenText(p.name || p.playerName || "—")}
-                  </span>
-                  <span style={transactionPlayerMeta}>
-                    {p.pos_short_name || "—"} · {decodeMaybeBrokenText(p.team_name || "—")}
-                  </span>
+        {careerRows.length === 0 ? (
+          <div style={emptyBox}>No transactions found for this player.</div>
+        ) : (
+          <div style={transactionsList}>
+            {careerRows.map((tx) => (
+              <div key={`${tx.season}-${tx.id}`} style={transactionCard}>
+                <div style={transactionHeader}>
+                  <div>
+                    <div style={transactionDate}>{formatTransactionDate(tx.date)}</div>
+                    <div style={transactionTypes}>
+                      {tx.season} · {transactionTypeLabel(tx.types)}
+                    </div>
+                  </div>
+                  <div style={transactionTeam}>
+                    {tx.teamId ? (
+                      <TeamLinkCell
+                        teamId={tx.teamId}
+                        teamName={tx.teamName}
+                        seasonKey={tx.season}
+                      />
+                    ) : (
+                      tx.teamName
+                    )}
+                  </div>
+                </div>
+
+                <div style={transactionPlayers}>
+                  {tx.matchedPlayers.map((p, idx) => (
+                    <div key={`${tx.id}-${p.id || idx}-${p.type || "x"}`} style={transactionPlayerRow}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                        <span
+                          style={{
+                            ...playerTypeBadge,
+                            color: playerTypeColor(p.type),
+                            borderColor: playerTypeColor(p.type),
+                          }}
+                        >
+                          {p.type || "—"}
+                        </span>
+                        <span style={transactionPlayerName}>
+                          {decodeMaybeBrokenText(p.name || p.playerName || "—")}
+                        </span>
+                        <span style={transactionPlayerMeta}>
+                          {p.pos_short_name || "—"} · {decodeMaybeBrokenText(p.team_name || "—")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      ))}
-    </div>
-  )}
-</section>
+        )}
+      </section>
     </main>
   )
 }
@@ -885,34 +864,6 @@ const detailValue = {
   fontWeight: 700,
   color: "#111827",
   wordBreak: "break-word",
-}
-
-const tableWrap = {
-  overflowX: "auto",
-}
-
-const table = {
-  width: "100%",
-  borderCollapse: "collapse",
-}
-
-const theadRow = {
-  background: "#fff7ed",
-}
-
-const th = {
-  textAlign: "left",
-  padding: "14px 16px",
-  borderBottom: "1px solid #fed7aa",
-  color: "#9a3412",
-  fontSize: 14,
-}
-
-const td = {
-  padding: "14px 16px",
-  borderBottom: "1px solid #ffedd5",
-  fontSize: 14,
-  verticalAlign: "top",
 }
 
 const backLink = {

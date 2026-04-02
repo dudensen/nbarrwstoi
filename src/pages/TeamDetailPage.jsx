@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useParams, useSearchParams } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
+import { getSeasonByKey } from "../config/seasons"
 import {
   decodeMaybeBrokenText,
   getTeamBySlugFromLeagueInfo,
@@ -13,6 +14,12 @@ import {
   enrichRosterItems,
   slugifyTeamName,
 } from "../utils/fantrax"
+
+import {
+  buildRecords,
+  canonicalTeamName,
+  formatNumber,
+} from "../utils/history"
 
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
@@ -78,6 +85,10 @@ function playerTypeColor(type) {
 export default function TeamDetailPage() {
   const { teamSlug } = useParams()
   const { season } = useSeason()
+  const [searchParams] = useSearchParams()
+
+  const overrideSeasonKey = searchParams.get("season") || ""
+  const effectiveSeason = overrideSeasonKey ? getSeasonByKey(overrideSeasonKey) : season
 
   const [leagueInfo, setLeagueInfo] = useState(null)
   const [teamRosters, setTeamRosters] = useState(null)
@@ -89,6 +100,7 @@ export default function TeamDetailPage() {
   const [activeTab, setActiveTab] = useState("results")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [historyPayload, setHistoryPayload] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -98,25 +110,27 @@ export default function TeamDetailPage() {
         setLoading(true)
         setError("")
 
-        const matchupFile = `/data/matchup-results-${encodeURIComponent(season.key)}.json`
-        const transactionsFile = `/data/transactions-${encodeURIComponent(season.key)}.json`
-        const csvLoader = playerCsvFiles[`../config/playerCsv/${season.key}.csv`]
+        const matchupFile = `/data/matchup-results-${encodeURIComponent(effectiveSeason.key)}.json`
+        const transactionsFile = `/data/transactions-${encodeURIComponent(effectiveSeason.key)}.json`
+        const csvLoader = playerCsvFiles[`../config/playerCsv/${effectiveSeason.key}.csv`]
 
-        const [leagueRes, rosterRes, adpRes, matchupRes, transactionsRes, csvText] = await Promise.all([
-          fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
-          fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=${encodeURIComponent(period)}`),
+        const [leagueRes, rosterRes, adpRes, matchupRes, transactionsRes, historyRes, csvText] = await Promise.all([
+          fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
+          fetch(`/api/team-rosters?season=${encodeURIComponent(effectiveSeason.key)}&period=${encodeURIComponent(period)}`),
           fetch(`/api/adp`),
           fetch(matchupFile),
           fetch(transactionsFile).catch(() => null),
+          fetch("/data/history-data.json").catch(() => null),
           csvLoader ? csvLoader() : Promise.resolve(""),
         ])
 
-        const [leagueText, rosterText, adpText, matchupText, transactionsText] = await Promise.all([
+        const [leagueText, rosterText, adpText, matchupText, transactionsText, historyText] = await Promise.all([
           leagueRes.text(),
           rosterRes.text(),
           adpRes.text(),
           matchupRes.text(),
           transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+          historyRes ? historyRes.text() : Promise.resolve(""),
         ])
 
         if (!leagueRes.ok) throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
@@ -128,6 +142,10 @@ export default function TeamDetailPage() {
         if (transactionsRes && transactionsRes.ok && transactionsText) {
           parsedTransactions = JSON.parse(transactionsText)
         }
+        let parsedHistory = null
+        if (historyRes && historyRes.ok && historyText) {
+          parsedHistory = JSON.parse(historyText)
+        }
 
         if (!cancelled) {
           setLeagueInfo(JSON.parse(leagueText))
@@ -136,6 +154,7 @@ export default function TeamDetailPage() {
           setPlayerCsvRows(parsePlayerCsv(csvText || ""))
           setMatchupResults(JSON.parse(matchupText))
           setTransactionsData(parsedTransactions)
+          setHistoryPayload(parsedHistory)
         }
       } catch (err) {
         if (!cancelled) {
@@ -146,6 +165,7 @@ export default function TeamDetailPage() {
           setPlayerCsvRows([])
           setMatchupResults(null)
           setTransactionsData(null)
+          setHistoryPayload(null)
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -156,12 +176,36 @@ export default function TeamDetailPage() {
     return () => {
       cancelled = true
     }
-  }, [season.key, period])
+  }, [effectiveSeason.key, period])
 
-  const team = useMemo(
-    () => getTeamBySlugFromLeagueInfo(leagueInfo, teamSlug),
-    [leagueInfo, teamSlug]
-  )
+ const team = useMemo(() => {
+  const teams = leagueInfo ? (leagueInfo?.matchups ? null : null) : null
+  const resolved = getTeamBySlugFromLeagueInfo(leagueInfo, teamSlug)
+  if (resolved) return resolved
+
+  const allTeams = []
+  const seen = new Map()
+
+  for (const period of leagueInfo?.matchups || []) {
+    for (const matchup of period?.matchupList || []) {
+      for (const side of [matchup?.away, matchup?.home]) {
+        if (!side?.id) continue
+        if (seen.has(side.id)) continue
+        seen.set(side.id, side)
+        allTeams.push(side)
+      }
+    }
+  }
+
+  const targetSlug = String(teamSlug || "").trim().toLowerCase()
+
+  const matched = allTeams.find((candidate) => {
+    const name = decodeMaybeBrokenText(candidate?.name || "")
+    return slugifyTeamName(canonicalTeamName(name)) === targetSlug
+  })
+
+  return matched || null
+}, [leagueInfo, teamSlug])
 
   const teamId = team?.id || ""
 
@@ -170,6 +214,19 @@ export default function TeamDetailPage() {
     const adpLookup = buildPlayerLookupFromAdp(adpRows)
     return mergePlayerLookups(csvLookup, adpLookup)
   }, [playerCsvRows, adpRows])
+
+
+  const teamManagerName = useMemo(() => {
+  const raw =
+    team?.manager ||
+    team?.owner ||
+    team?.managerName ||
+    team?.ownerName ||
+    team?.managers?.[0]?.name ||
+    ""
+
+  return decodeMaybeBrokenText(raw || "")
+}, [team])
 
   const rosterItems = useMemo(() => {
     const raw = getRosterForTeam(teamRosters, teamId)
@@ -249,6 +306,55 @@ export default function TeamDetailPage() {
       .sort(compareDescByDate)
   }, [transactionsData, teamId])
 
+  const canonicalTeam = useMemo(() => {
+    return canonicalTeamName(decodeMaybeBrokenText(team?.name || ""))
+    }, [team])
+
+    const franchiseManagerName = useMemo(() => {
+  const rows = historyPayload?.rows || []
+  if (!canonicalTeam) return ""
+
+  const matchingRows = rows.filter(
+    (row) => canonicalTeamName(row?.team || row?.Team || "") === canonicalTeam
+  )
+
+  if (!matchingRows.length) return ""
+
+  const byManager = new Map()
+
+  for (const row of matchingRows) {
+    const manager = decodeMaybeBrokenText(
+      row?.manager || row?.Manager || ""
+    ).trim()
+
+    if (!manager) continue
+    byManager.set(manager, (byManager.get(manager) || 0) + 1)
+  }
+
+  let bestManager = ""
+  let bestCount = -1
+
+  for (const [manager, count] of byManager.entries()) {
+    if (count > bestCount) {
+      bestManager = manager
+      bestCount = count
+    }
+  }
+
+  return bestManager
+}, [historyPayload, canonicalTeam])
+
+  const franchiseRecordRows = useMemo(() => {
+    const rows = historyPayload?.rows || []
+    const allRecords = buildRecords(rows)
+
+    return allRecords
+      .filter((record) => record?.top?.team === canonicalTeam)
+      .sort((a, b) => String(a.label || "").localeCompare(String(b.label || "")))
+  }, [historyPayload, canonicalTeam])
+
+const franchiseRecordCount = franchiseRecordRows.length
+
   if (loading) return <main style={main}><div>Loading team profile...</div></main>
   if (error) return <main style={main}><div style={errorBox}>{error}</div></main>
   if (!team) return <main style={main}><div style={errorBox}>Team not found for this season.</div></main>
@@ -259,9 +365,69 @@ export default function TeamDetailPage() {
 
       <div style={card}>
         <div style={eyebrow}>Team Profile</div>
-        <h1 style={{ margin: "0 0 10px" }}>{decodeMaybeBrokenText(team.name)}</h1>
-        <div style={{ color: "#6b7280" }}>Season: {season.label}</div>
+        <h1 style={{ margin: "0 0 10px" }}>{canonicalTeam}</h1>
+        <div style={{ color: "#6b7280" }}>Season: {effectiveSeason.label}</div>
+          <div style={{ color: "#6b7280", marginTop: 6 }}>
+          Manager / Owner: {franchiseManagerName || teamManagerName || "—"}
+        </div>
       </div>
+
+      <div style={card}>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      gap: 12,
+      flexWrap: "wrap",
+      alignItems: "center",
+      marginBottom: 14,
+    }}
+  >
+    <h3 style={{ margin: 0 }}>Franchise Records</h3>
+    <div style={{ color: "#9a3412", fontWeight: 700 }}>
+      {formatNumber(franchiseRecordCount)} all-time records
+    </div>
+  </div>
+
+  {!historyPayload ? (
+    <div style={{ color: "#6b7280" }}>History data not available.</div>
+  ) : franchiseRecordRows.length === 0 ? (
+    <div style={{ color: "#6b7280" }}>No all-time records found for this franchise.</div>
+  ) : (
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <thead>
+          <tr style={{ background: "#fff7ed" }}>
+            <th style={th}>Record</th>
+            <th style={th}>Value</th>
+            <th style={th}>Year</th>
+            <th style={th}>Phase</th>
+            <th style={th}>Opponent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {franchiseRecordRows.map((record) => (
+            <tr key={record.key}>
+              <td style={td}>{record.label}</td>
+              <td style={td}>{String(record.top?.[record.key] ?? "—")}</td>
+              <td style={td}>{record.top?.year ?? "—"}</td>
+              <td style={td}>{record.top?.phase ?? "—"}</td>
+              <td style={td}>
+                {record.top?.opponent ? (
+                  <Link to={`/teams/${slugifyTeamName(record.top.opponent)}`} style={teamLink}>
+                    {record.top.opponent}
+                  </Link>
+                ) : (
+                  "—"
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
 
       <div style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
@@ -278,10 +444,12 @@ export default function TeamDetailPage() {
       </div>
 
       <div style={rosterGrid}>
-        <RosterSection title="Active" rows={active} />
-        <RosterSection title="Reserve" rows={reserve} />
-        <RosterSection title="Injured Reserve" rows={ir} />
-      </div>
+  <RosterSection title="Active" rows={active} />
+  <RosterSection title="Reserve" rows={reserve} />
+  <RosterSection title="Injured Reserve" rows={ir} />
+</div>
+
+
 
       <div style={card}>
         <div style={tabRow}>
@@ -380,7 +548,7 @@ export default function TeamDetailPage() {
           <>
             <h3 style={sectionTitle}>Transactions</h3>
             {teamTransactions.length === 0 ? (
-              <div>No transactions found for this team in {season.label}.</div>
+              <div>No transactions found for this team in {effectiveSeason.label}.</div>
             ) : (
               <div style={transactionsList}>
                 {teamTransactions.map((tx) => (
@@ -426,6 +594,8 @@ export default function TeamDetailPage() {
     </main>
   )
 }
+
+
 
 function RosterSection({ title, rows }) {
   return (
