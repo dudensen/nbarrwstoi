@@ -11,6 +11,8 @@ import {
 } from "../utils/fantrax"
 import { SEASONS } from "../config/seasons"
 
+
+
 const LATEST_SEASON =
   SEASONS.find((s) => s.isCurrent) ||
   SEASONS[0]

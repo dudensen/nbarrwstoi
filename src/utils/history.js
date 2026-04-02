@@ -32,6 +32,91 @@ function compareText(a, b) {
   })
 }
 
+export function getHistoricalTeamProfile(rows = [], teamSlug = "") {
+  const normalizedRows = normalizeHistoryRows(rows)
+  const targetSlug = String(teamSlug || "").trim().toLowerCase()
+  if (!targetSlug) return null
+
+  const matchingRows = normalizedRows.filter(
+    (row) => slugifyTeamName(canonicalTeamName(row.team)) === targetSlug
+  )
+
+  if (!matchingRows.length) return null
+
+  const team = canonicalTeamName(matchingRows[0].team)
+
+  const firstYear = Math.min(...matchingRows.map((row) => row.year))
+  const lastYear = Math.max(...matchingRows.map((row) => row.year))
+
+  const managerCounts = new Map()
+  for (const row of matchingRows) {
+    const manager = s(row.manager)
+    if (!manager) continue
+    managerCounts.set(manager, (managerCounts.get(manager) || 0) + 1)
+  }
+
+  let manager = ""
+  let bestCount = -1
+  for (const [name, count] of managerCounts.entries()) {
+    if (count > bestCount) {
+      manager = name
+      bestCount = count
+    }
+  }
+
+  const totalMatches = matchingRows.length
+  const totalGamesWon = matchingRows.reduce((sum, row) => sum + row.gamesWon, 0)
+  const totalWins = matchingRows.reduce((sum, row) => sum + row.wins, 0)
+  const totalLosses = matchingRows.reduce((sum, row) => sum + row.losses, 0)
+  const totalTies = matchingRows.reduce((sum, row) => sum + row.ties, 0)
+
+  const regularRows = matchingRows.filter((row) => row.phase === "Regular")
+  const playoffRows = matchingRows.filter((row) => row.phase === "Playoffs")
+
+  const seasonMap = new Map()
+  for (const row of matchingRows) {
+    if (!seasonMap.has(row.year)) {
+      seasonMap.set(row.year, {
+        year: row.year,
+        matches: 0,
+        gamesWon: 0,
+        wins: 0,
+        losses: 0,
+        ties: 0,
+        regularMatches: 0,
+        playoffMatches: 0,
+      })
+    }
+
+    const item = seasonMap.get(row.year)
+    item.matches += 1
+    item.gamesWon += row.gamesWon
+    item.wins += row.wins
+    item.losses += row.losses
+    item.ties += row.ties
+    if (row.phase === "Regular") item.regularMatches += 1
+    if (row.phase === "Playoffs") item.playoffMatches += 1
+  }
+
+  const seasons = Array.from(seasonMap.values()).sort((a, b) => a.year - b.year)
+
+  return {
+    team,
+    manager,
+    firstYear,
+    lastYear,
+    matches: totalMatches,
+    gamesWon: totalGamesWon,
+    wins: totalWins,
+    losses: totalLosses,
+    ties: totalTies,
+    regularMatches: regularRows.length,
+    playoffMatches: playoffRows.length,
+    seasons,
+    rows: matchingRows,
+  }
+}
+
 function normalizeAliasKey(value) {
   return s(value)
     .toLowerCase()

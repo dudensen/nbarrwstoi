@@ -8,6 +8,7 @@ import LeagueRulesPage from "./pages/LeagueRulesPage"
 import DraftResultsPage from "./pages/DraftResultsPage"
 import PlayerDetailPage from "./pages/PlayerDetailPage"
 import HistoryPage from "./pages/HistoryPage"
+import HomePage from "./pages/HomePage"
 
 
 function PlaceholderPage({ title }) {
@@ -33,7 +34,7 @@ export default function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<PlaceholderPage title="Home page" />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/standings" element={<StandingsPage />} />
           <Route path="/teams" element={<TeamsPage />} />
           <Route path="/teams/:teamSlug" element={<TeamDetailPage />} />

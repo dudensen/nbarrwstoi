@@ -1,59 +1,128 @@
-import StatCard from '../components/StatCard'
-import LoadingState from '../components/LoadingState'
-import ErrorState from '../components/ErrorState'
-import { useLeagueInfo } from '../hooks/useLeagueInfo'
-import { useStandings } from '../hooks/useStandings'
-import { useSeason } from '../hooks/useSeason'
-import { normalizeTeams } from '../utils/fantrax'
+import { useSeason } from "../context/SeasonContext"
+
+function InfoCard({ label, value, note }) {
+  return (
+    <div
+      style={{
+        background: "#ffffff",
+        border: "1px solid #fed7aa",
+        borderRadius: 20,
+        padding: 20,
+      }}
+    >
+      <div
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: "#f97316",
+          textTransform: "uppercase",
+          letterSpacing: "0.04em",
+          marginBottom: 8,
+        }}
+      >
+        {label}
+      </div>
+      <div
+        style={{
+          fontSize: 24,
+          fontWeight: 800,
+          color: "#111827",
+          lineHeight: 1.1,
+        }}
+      >
+        {value}
+      </div>
+      {note ? (
+        <div style={{ marginTop: 8, color: "#6b7280", fontSize: 14 }}>{note}</div>
+      ) : null}
+    </div>
+  )
+}
 
 export default function HomePage() {
   const { season } = useSeason()
-  const leagueInfo = useLeagueInfo()
-  const standings = useStandings()
-
-  if (leagueInfo.loading || standings.loading) return <LoadingState message="Loading league dashboard..." />
-  if (leagueInfo.error) return <ErrorState message={leagueInfo.error} />
-  if (standings.error) return <ErrorState message={standings.error} />
-
-  const teams = normalizeTeams(leagueInfo.data)
-  const leader = standings.data?.[0]
 
   return (
-    <div className="stack">
-      <section className="hero">
-        <div className="card">
-          <span className="eyebrow">Season {season.label}</span>
-          <h2 className="page-title">Fantrax-powered league hub</h2>
-          <p className="lead">
-            This starter combines live Fantrax endpoints with spreadsheet-driven history.
-            Swap season IDs in one file, and the whole site follows that selected season.
-          </p>
-          <div className="kpi-row" style={{ marginTop: 16 }}>
-            <div className="kpi">League ID: {season.leagueId}</div>
-            <div className="kpi">Teams detected: {teams.length || 0}</div>
-            <div className="kpi">Current leader: {leader?.teamName || '—'}</div>
-          </div>
+    <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
+      <section
+        style={{
+          background: "linear-gradient(135deg, #f97316 0%, #fb923c 100%)",
+          color: "#ffffff",
+          borderRadius: 24,
+          padding: "28px 28px 30px",
+          marginBottom: 24,
+          boxShadow: "0 18px 40px rgba(249,115,22,0.18)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 800,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            opacity: 0.95,
+            marginBottom: 10,
+          }}
+        >
+          Season {season.label}
         </div>
 
-        <div className="grid cols-1">
-          <StatCard label="Teams" value={teams.length || 0} note="From getLeagueInfo" />
-          <StatCard label="Leader" value={leader?.teamName || '—'} note={`Record: ${leader?.record || '—'}`} />
-        </div>
-      </section>
+        <h1
+          style={{
+            margin: 0,
+            fontSize: "clamp(28px, 4vw, 40px)",
+            lineHeight: 1.05,
+          }}
+        >
+          NBArrwstoi Fantasy League
+        </h1>
 
-      <section className="grid cols-3">
-        <StatCard label="First Place Points" value={leader?.points || '—'} />
-        <StatCard label="First Place GB" value={leader?.gamesBack || '0'} />
-        <StatCard label="Season Key" value={season.key} />
-      </section>
-
-      <section className="card soft">
-        <h2 className="section-title">Suggested next additions</h2>
-        <p className="footer-note">
-          Add logos, matchup views, player pages, transactions, charts, playoff brackets, and any custom spreadsheet
-          blocks you already maintain publicly in Google Sheets.
+        <p
+          style={{
+            margin: "12px 0 0",
+            fontSize: 16,
+            opacity: 0.96,
+            maxWidth: 760,
+          }}
+        >
+          Live Fantrax data, historical records, team pages, draft results, and
+          league history for the NBArrwstoi Fantasy League.
         </p>
       </section>
-    </div>
+
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 16,
+          marginBottom: 22,
+        }}
+      >
+        <InfoCard label="Season" value={season.label} />
+        <InfoCard label="League ID" value={season.leagueId} note="Loaded from seasons.js" />
+        <InfoCard label="Routing" value="Season-aware" note="Pages read the selected season automatically" />
+      </section>
+
+      <section
+        style={{
+          background: "#ffffff",
+          border: "1px solid #fed7aa",
+          borderRadius: 24,
+          padding: 24,
+        }}
+      >
+        <h2 style={{ margin: "0 0 12px", fontSize: 24, color: "#111827" }}>
+          What this site includes
+        </h2>
+
+        <div style={{ color: "#374151", lineHeight: 1.7 }}>
+          <div>• Standings by season</div>
+          <div>• Team pages and franchise history</div>
+          <div>• Draft results</div>
+          <div>• League rules and settings</div>
+          <div>• Historical database from your exported records</div>
+        </div>
+      </section>
+    </main>
   )
 }
