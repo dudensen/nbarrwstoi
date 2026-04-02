@@ -12,6 +12,26 @@ export function slugifyTeamName(value) {
     .replace(/^-+|-+$/g, "")
 }
 
+function TeamLogo({ teamName, size = 72 }) {
+  const slug = slugifyTeamName(teamName)
+
+  return (
+    <img
+      src={`/team-logos/${slug}.png`}
+      alt={`${teamName} logo`}
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        flexShrink: 0,
+      }}
+      onError={(e) => {
+        e.currentTarget.style.display = "none"
+      }}
+    />
+  )
+}
+
 export default function TeamsPage() {
   const { season } = useSeason()
   const [teams, setTeams] = useState([])
@@ -68,23 +88,49 @@ export default function TeamsPage() {
         <div style={errorBox}>{error}</div>
       ) : (
         <div style={grid}>
-          {teams.map((team) => (
-            <Link
-  key={team.id}
-  to={`/teams/${slugifyTeamName(team.name)}`}
-  style={teamCard}
->
-  <div style={{ fontSize: 18, fontWeight: 700, color: "#111827" }}>
-    {team.name}
-  </div>
-  <div style={{ color: "#6b7280", marginTop: 6 }}>
-    {team.shortName || "—"}
-  </div>
-  <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
-    View team profile →
-  </div>
-</Link>
-          ))}
+          {teams.map((team) => {
+            const teamSlug = slugifyTeamName(team.name)
+
+            return (
+              <Link
+                key={team.id}
+                to={`/teams/${teamSlug}`}
+                style={teamCard}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 14,
+                    marginBottom: 12,
+                  }}
+                >
+                  <TeamLogo teamName={team.name} size={72} />
+
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: "#111827",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {team.name}
+                    </div>
+
+                    <div style={{ color: "#6b7280", marginTop: 6 }}>
+                      {team.shortName || "—"}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
+                  View team profile →
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </main>

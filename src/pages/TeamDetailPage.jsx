@@ -59,6 +59,24 @@ function PlayerLinkCell({ playerName }) {
   )
 }
 
+function TeamLogo({ teamSlug, teamName, size = 180 }) {
+  return (
+    <img
+      src={`/team-logos/${teamSlug}.png`}
+      alt={`${teamName} logo`}
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        flexShrink: 0,
+      }}
+      onError={(e) => {
+        e.currentTarget.style.display = "none"
+      }}
+    />
+  )
+}
+
 function formatTransactionDate(value) {
   if (!value) return "—"
   const date = new Date(value)
@@ -202,6 +220,7 @@ function HistoricalTeamMode({
   historyPayload,
   franchiseRecordRows,
   franchiseRecordCount,
+  teamSlug,
 }) {
   return (
     <main style={main}>
@@ -210,13 +229,31 @@ function HistoricalTeamMode({
       </Link>
 
       <div style={card}>
-        <div style={eyebrow}>Historical Team Profile</div>
-        <h1 style={{ margin: "0 0 10px" }}>{historicalProfile.team}</h1>
-        <div style={{ color: "#6b7280" }}>
-          Years active: {historicalProfile.firstYear} - {historicalProfile.lastYear}
-        </div>
-        <div style={{ color: "#6b7280", marginTop: 6 }}>
-          Manager / Owner: {teamManagerName || "—"}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 24,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ minWidth: 0, flex: "1 1 320px" }}>
+            <div style={eyebrow}>Historical Team Profile</div>
+            <h1 style={{ margin: "0 0 10px" }}>{historicalProfile.team}</h1>
+            <div style={{ color: "#6b7280" }}>
+              Years active: {historicalProfile.firstYear} - {historicalProfile.lastYear}
+            </div>
+            <div style={{ color: "#6b7280", marginTop: 6 }}>
+              Manager / Owner: {teamManagerName || "—"}
+            </div>
+          </div>
+
+          <TeamLogo
+            teamSlug={teamSlug}
+            teamName={historicalProfile.team}
+            size={180}
+          />
         </div>
       </div>
 
@@ -629,6 +666,7 @@ export default function TeamDetailPage() {
         historyPayload={historyPayload}
         franchiseRecordRows={franchiseRecordRows}
         franchiseRecordCount={franchiseRecordCount}
+        teamSlug={teamSlug}
       />
     )
   }
@@ -640,11 +678,29 @@ export default function TeamDetailPage() {
       </Link>
 
       <div style={card}>
-        <div style={eyebrow}>Team Profile</div>
-        <h1 style={{ margin: "0 0 10px" }}>{canonicalTeam}</h1>
-        <div style={{ color: "#6b7280" }}>Season: {effectiveSeason.label}</div>
-        <div style={{ color: "#6b7280", marginTop: 6 }}>
-          Manager / Owner: {teamManagerName || "—"}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 24,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ minWidth: 0, flex: "1 1 320px" }}>
+            <div style={eyebrow}>Team Profile</div>
+            <h1 style={{ margin: "0 0 10px" }}>{canonicalTeam}</h1>
+            <div style={{ color: "#6b7280" }}>Season: {effectiveSeason.label}</div>
+            <div style={{ color: "#6b7280", marginTop: 6 }}>
+              Manager / Owner: {teamManagerName || "—"}
+            </div>
+          </div>
+
+          <TeamLogo
+            teamSlug={teamSlug}
+            teamName={canonicalTeam}
+            size={220}
+          />
         </div>
       </div>
 

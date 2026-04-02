@@ -2,6 +2,8 @@ const TEAM_ALIASES = {
   "samarina dudenbros2": "Samarina Dudenbros",
   "karafli saita": "Karafli Saita",
   "karafli shaita": "Karafli Saita",
+  "ta poutanakia tou nouli!!!!": "Tsarlatans",
+  "purple fuzzy apache higheads": "purple fuzzy apache pirates",
 }
 
 const PHASE_ALIASES = {

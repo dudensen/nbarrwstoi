@@ -11,6 +11,12 @@ import {
 } from "../utils/fantrax"
 import { SEASONS } from "../config/seasons"
 
+import {
+  CONTRACTS_CSV_URL,
+  parseContractsCsv,
+  normalizeContractPlayerName,
+} from "../utils/contracts"
+
 
 
 const LATEST_SEASON =
@@ -353,6 +359,7 @@ export default function PlayerDetailPage() {
   const [careerRows, setCareerRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [contracts, setContracts] = useState([])
 
   useEffect(() => {
     let cancelled = false
@@ -366,6 +373,12 @@ export default function PlayerDetailPage() {
           const text = await res.text()
           if (!res.ok) throw new Error(`ADP failed (${res.status}): ${text}`)
           return JSON.parse(text)
+        })
+
+        const contractsPromise = fetch(CONTRACTS_CSV_URL).then(async (res) => {
+        const text = await res.text()
+        if (!res.ok) throw new Error(`Contracts sheet failed (${res.status}): ${text}`)
+        return parseContractsCsv(text)
         })
 
         const currentRostersPromise = fetch(
@@ -432,11 +445,12 @@ export default function PlayerDetailPage() {
           }
         })
 
-        const [adpRowsRaw, currentRosters, csvGroups, seasonData] = await Promise.all([
-          adpPromise,
-          currentRostersPromise,
-          Promise.all(csvPromises),
-          Promise.all(seasonPromises),
+        const [adpRowsRaw, currentRosters, csvGroups, seasonData, contractsRows] = await Promise.all([
+        adpPromise,
+        currentRostersPromise,
+        Promise.all(csvPromises),
+        Promise.all(seasonPromises),
+        contractsPromise,
         ])
 
         const adpRows = Array.isArray(adpRowsRaw) ? adpRowsRaw : []
@@ -494,6 +508,7 @@ export default function PlayerDetailPage() {
           setAllDraftRows(draftRows)
           setCurrentSeasonRosters(currentRosters)
           setCareerRows(normalizedCareer)
+          setContracts(contractsRows)
         }
       } catch (err) {
         if (!cancelled) {
@@ -503,6 +518,7 @@ export default function PlayerDetailPage() {
           setAllDraftRows([])
           setCurrentSeasonRosters(null)
           setCareerRows([])
+          setContracts([])
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -516,10 +532,22 @@ export default function PlayerDetailPage() {
   }, [playerSlug])
 
   const player = useMemo(() => {
-    return findPlayerBySlug(playerSlug, currentAdpRows, historicalCsvRows, allDraftRows)
-  }, [playerSlug, currentAdpRows, historicalCsvRows, allDraftRows])
+  return findPlayerBySlug(playerSlug, currentAdpRows, historicalCsvRows, allDraftRows)
+}, [playerSlug, currentAdpRows, historicalCsvRows, allDraftRows])
 
-  const nameParts = useMemo(() => splitName(player?.name || ""), [player])
+const playerContract = useMemo(() => {
+  if (!player) return null
+
+  const target = normalizeContractPlayerName(player.name)
+
+  return (
+    contracts.find(
+      (row) => normalizeContractPlayerName(row.player) === target
+    ) || null
+  )
+}, [contracts, player])
+
+const nameParts = useMemo(() => splitName(player?.name || ""), [player])
 
   const currentAdpRow = useMemo(() => {
     return findAdpRowForPlayer(currentAdpRows, player)
@@ -618,16 +646,17 @@ export default function PlayerDetailPage() {
 
       <section style={section}>
         <div style={summaryGrid}>
-          <StatCard label="First Name" value={nameParts.firstName} />
-          <StatCard label="Last Name" value={nameParts.lastName} />
-          <StatCard label="Position" value={player.pos || "—"} />
-          <StatCard
+            <StatCard label="First Name" value={nameParts.firstName} />
+            <StatCard label="Last Name" value={nameParts.lastName} />
+            <StatCard label="Position" value={player.pos || "—"} />
+            <StatCard
             label="ADP"
             value={typeof currentAdpValue === "number" ? currentAdpValue.toFixed(2) : "—"}
-          />
-          <StatCard label="Current Team" value={currentFantasyTeam} />
+            />
+            <StatCard label="Current Team" value={currentFantasyTeam} />
+            <StatCard label="Contract Expiry" value={playerContract?.expiryYear ?? "—"} />
         </div>
-      </section>
+        </section>
 
       <section style={section}>
         <div style={sectionTop}>

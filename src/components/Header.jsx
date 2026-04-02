@@ -8,6 +8,7 @@ const LINKS = [
   ["/league-rules", "League Rules"],
   ["/draft-results", "Draft Results"],
   ["/history", "History"],
+  ["/contracts", "Contracts"],
 ]
 
 export default function Header() {
