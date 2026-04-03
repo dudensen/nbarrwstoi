@@ -9,6 +9,7 @@ import {
   enrichDraftPicks,
   getPlayerTeamMapFromRosters,
   getTeamNameMapFromRosters,
+  slugifyTeamName,
 } from "../utils/fantrax"
 
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
@@ -93,7 +94,7 @@ function TeamLinkCell({ teamId, teamName }) {
   }
 
   return (
-    <Link to={`/teams/${teamId}`} style={teamLink}>
+    <Link to={`/teams/${slugifyTeamName(teamName)}`} style={teamLink}>
       {teamName}
     </Link>
   )

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link, useParams, useSearchParams } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
-import { getSeasonByKey } from "../config/seasons"
+import { SEASONS, getSeasonByKey } from "../config/seasons"
 import {
   decodeMaybeBrokenText,
   getTeamMatchups,
@@ -24,6 +24,161 @@ const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
   import: "default",
 })
+
+const LATEST_SEASON =
+  SEASONS.find((s) => s.isCurrent) ||
+  SEASONS[0]
+
+function buildGoogleSheetCsvUrl(sheetId, gid) {
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
+}
+
+function parseCsvMatrix(text = "") {
+  const rows = []
+  let current = []
+  let value = ""
+  let inQuotes = false
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+
+    if (char === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        value += '"'
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (char === "," && !inQuotes) {
+      current.push(value)
+      value = ""
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && text[i + 1] === "\n") i++
+      current.push(value)
+      rows.push(current)
+      current = []
+      value = ""
+    } else {
+      value += char
+    }
+  }
+
+  if (value.length || current.length) {
+    current.push(value)
+    rows.push(current)
+  }
+
+  return rows
+}
+
+function normalizeFutureSheetPickRows(csvText = "") {
+  const matrix = parseCsvMatrix(csvText)
+  if (!matrix.length) return []
+
+  const year = String(matrix?.[0]?.[0] || "").trim() || "—"
+
+  const ROUND_BLOCKS = [
+    { round: 1, cols: [1, 2, 3] }, // B,C,D
+    { round: 2, cols: [4, 5, 6] }, // E,F,G
+    { round: 3, cols: [7, 8, 9] }, // H,I,J
+  ]
+
+  const dataRows = matrix.slice(2)
+
+  const rows = []
+
+  for (let rowIndex = 0; rowIndex < dataRows.length; rowIndex++) {
+    const row = dataRows[rowIndex] || []
+
+    const originalOwnerRaw = decodeMaybeBrokenText(String(row[0] || "").trim())
+    const originalOwner = canonicalTeamName(originalOwnerRaw)
+    if (!originalOwner) continue
+
+    for (const block of ROUND_BLOCKS) {
+      let currentOwner = ""
+
+      for (let searchRowIndex = 0; searchRowIndex < dataRows.length; searchRowIndex++) {
+        const searchRow = dataRows[searchRowIndex] || []
+
+        const candidateOwnerRaw = decodeMaybeBrokenText(
+          String(searchRow[0] || "").trim()
+        )
+        const candidateOwner = canonicalTeamName(candidateOwnerRaw)
+        if (!candidateOwner) continue
+
+        const blockValues = block.cols
+          .map((colIndex) =>
+            canonicalTeamName(
+              decodeMaybeBrokenText(String(searchRow[colIndex] || "").trim())
+            )
+          )
+          .filter(Boolean)
+
+        if (blockValues.includes(originalOwner)) {
+          currentOwner = candidateOwner
+          break
+        }
+      }
+
+      if (!currentOwner) continue
+
+      rows.push({
+        id: `sheet-${year}-${block.round}-${slugifyTeamName(originalOwner)}-${slugifyTeamName(currentOwner)}-${rowIndex}`,
+        season: year,
+        round: block.round,
+        originalOwnerTeamId: "",
+        currentOwnerTeamId: "",
+        originalOwner,
+        currentOwner,
+      })
+    }
+  }
+
+  return rows
+}
+
+
+function normalizeDraftPickRows(payload, teamIdToName) {
+  const futureRows = Array.isArray(payload?.futureDraftPicks)
+    ? payload.futureDraftPicks.map((pick, index) => ({
+        id: `future-${pick?.year ?? "x"}-${pick?.round ?? "x"}-${pick?.originalOwnerTeamId ?? index}-${pick?.currentOwnerTeamId ?? index}`,
+        season: String(pick?.year ?? "—"),
+        round: pick?.round ?? "—",
+        overall: "—",
+        originalOwnerTeamId: String(pick?.originalOwnerTeamId || ""),
+        currentOwnerTeamId: String(pick?.currentOwnerTeamId || ""),
+        originalOwner:
+          teamIdToName.get(String(pick?.originalOwnerTeamId || "")) ||
+          pick?.originalOwnerTeamId ||
+          "—",
+        currentOwner:
+          teamIdToName.get(String(pick?.currentOwnerTeamId || "")) ||
+          pick?.currentOwnerTeamId ||
+          "—",
+      }))
+    : []
+
+  const currentRows = Array.isArray(payload?.currentDraftPicks)
+    ? payload.currentDraftPicks.map((pick, index) => ({
+        id: `current-${pick?.round ?? "x"}-${pick?.pick ?? "x"}-${pick?.teamId ?? index}`,
+        season: LATEST_SEASON.label,
+        round: pick?.round ?? "—",
+        overall: pick?.pick ?? "—",
+        originalOwnerTeamId: String(pick?.teamId || ""),
+        currentOwnerTeamId: String(pick?.teamId || ""),
+        originalOwner:
+          teamIdToName.get(String(pick?.teamId || "")) ||
+          pick?.teamId ||
+          "—",
+        currentOwner:
+          teamIdToName.get(String(pick?.teamId || "")) ||
+          pick?.teamId ||
+          "—",
+      }))
+    : []
+
+  return [...currentRows, ...futureRows]
+}
 
 function formatScoreValue(value) {
   const n = Number(value)
@@ -195,6 +350,92 @@ function FranchiseRecordsCard({
                       "—"
                     )}
                   </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DraftPicksSection({ rows, latestSeasonLabel, countsBySeason }) {
+  return (
+    <div style={card}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 12,
+          flexWrap: "wrap",
+          marginBottom: 14,
+        }}
+      >
+        <div>
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      flexWrap: "wrap",
+    }}
+  >
+    <h3 style={{ margin: 0 }}>Draft Picks</h3>
+
+    {countsBySeason?.length ? (
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          flexWrap: "wrap",
+        }}
+      >
+        {countsBySeason.map((item) => (
+          <span
+            key={item.season}
+            style={{
+              padding: "4px 10px",
+              borderRadius: 999,
+              background: "#fff7ed",
+              border: "1px solid #fed7aa",
+              color: "#9a3412",
+              fontWeight: 700,
+              fontSize: 13,
+            }}
+          >
+            {item.season}: {item.count}
+          </span>
+        ))}
+      </div>
+    ) : null}
+  </div>
+
+  <div style={{ color: "#6b7280", marginTop: 6 }}>
+    Current and future picks owned by this team ({latestSeasonLabel} league).
+  </div>
+</div>
+      </div>
+
+      {rows.length === 0 ? (
+        <div style={{ color: "#6b7280" }}>No draft picks found for this team.</div>
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#fff7ed" }}>
+                <th style={th}>Season</th>
+                <th style={th}>Round</th>
+                <th style={th}>Original Owner</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((pick) => (
+                <tr key={pick.id}>
+                  <td style={td}>{pick.season}</td>
+                  <td style={td}>{pick.round}</td>
+                  <td style={td}>{pick.originalOwner}</td>
                 </tr>
               ))}
             </tbody>
@@ -382,6 +623,8 @@ export default function TeamDetailPage() {
   const [matchupResults, setMatchupResults] = useState(null)
   const [transactionsData, setTransactionsData] = useState(null)
   const [historyPayload, setHistoryPayload] = useState(null)
+  const [draftPicksData, setDraftPicksData] = useState(null)
+  const [extraFuturePickRows, setExtraFuturePickRows] = useState([])
   const [period, setPeriod] = useState("1")
   const [activeTab, setActiveTab] = useState("results")
   const [loading, setLoading] = useState(true)
@@ -396,88 +639,123 @@ export default function TeamDetailPage() {
         setError("")
 
         const matchupFile = `/data/matchup-results-${encodeURIComponent(
-          effectiveSeason.key
-        )}.json`
-        const transactionsFile = `/data/transactions-${encodeURIComponent(
-          effectiveSeason.key
-        )}.json`
-        const csvLoader =
-          playerCsvFiles[`../config/playerCsv/${effectiveSeason.key}.csv`]
+  effectiveSeason.key
+)}.json`
+const transactionsFile = `/data/transactions-${encodeURIComponent(
+  effectiveSeason.key
+)}.json`
+const csvLoader =
+  playerCsvFiles[`../config/playerCsv/${effectiveSeason.key}.csv`]
 
-        const [
-          leagueRes,
-          rosterRes,
-          adpRes,
-          matchupRes,
-          transactionsRes,
-          historyRes,
-          csvText,
-        ] = await Promise.all([
-          fetch(
-            `/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`
-          ),
-          fetch(
-            `/api/team-rosters?season=${encodeURIComponent(
-              effectiveSeason.key
-            )}&period=${encodeURIComponent(period)}`
-          ),
-          fetch(`/api/adp`),
-          fetch(matchupFile),
-          fetch(transactionsFile).catch(() => null),
-          fetch("/data/history-data.json").catch(() => null),
-          csvLoader ? csvLoader() : Promise.resolve(""),
-        ])
+const latestFuturePicksSheetId =
+  LATEST_SEASON.spreadsheets?.futurePicksSheetId || ""
+const latestFuturePicksGid =
+  LATEST_SEASON.spreadsheets?.futurePicksGid || ""
 
-        const [
-          leagueText,
-          rosterText,
-          adpText,
-          matchupText,
-          transactionsText,
-          historyText,
-        ] = await Promise.all([
-          leagueRes.text(),
-          rosterRes.text(),
-          adpRes.text(),
-          matchupRes.text(),
-          transactionsRes ? transactionsRes.text() : Promise.resolve(""),
-          historyRes ? historyRes.text() : Promise.resolve(""),
-        ])
+const extraFuturePicksUrl =
+  latestFuturePicksSheetId && latestFuturePicksGid
+    ? buildGoogleSheetCsvUrl(latestFuturePicksSheetId, latestFuturePicksGid)
+    : ""
 
-        if (!leagueRes.ok) {
-          throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
-        }
-        if (!rosterRes.ok) {
-          throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
-        }
-        if (!adpRes.ok) {
-          throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
-        }
-        if (!matchupRes.ok) {
-          throw new Error(
-            `Matchup results failed (${matchupRes.status}): ${matchupText}`
-          )
-        }
+const [
+  leagueRes,
+  rosterRes,
+  adpRes,
+  matchupRes,
+  transactionsRes,
+  historyRes,
+  draftPicksRes,
+  extraFuturePicksRes,
+  csvText,
+] = await Promise.all([
+  fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
+  fetch(
+    `/api/team-rosters?season=${encodeURIComponent(
+      effectiveSeason.key
+    )}&period=${encodeURIComponent(period)}`
+  ),
+  fetch(`/api/adp`),
+  fetch(matchupFile),
+  fetch(transactionsFile).catch(() => null),
+  fetch("/data/history-data.json").catch(() => null),
+  fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+  extraFuturePicksUrl ? fetch(extraFuturePicksUrl).catch(() => null) : Promise.resolve(null),
+  csvLoader ? csvLoader() : Promise.resolve(""),
+])
 
-        let parsedTransactions = null
-        if (transactionsRes && transactionsRes.ok && transactionsText) {
-          parsedTransactions = JSON.parse(transactionsText)
-        }
+const [
+  leagueText,
+  rosterText,
+  adpText,
+  matchupText,
+  transactionsText,
+  historyText,
+  draftPicksText,
+  extraFuturePicksText,
+] = await Promise.all([
+  leagueRes.text(),
+  rosterRes.text(),
+  adpRes.text(),
+  matchupRes.text(),
+  transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+  historyRes ? historyRes.text() : Promise.resolve(""),
+  draftPicksRes.text(),
+  extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
+])
 
-        let parsedHistory = null
-        if (historyRes && historyRes.ok && historyText) {
-          parsedHistory = JSON.parse(historyText)
-        }
+if (!leagueRes.ok) {
+  throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
+}
+if (!rosterRes.ok) {
+  throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
+}
+if (!adpRes.ok) {
+  throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+}
+if (!matchupRes.ok) {
+  throw new Error(
+    `Matchup results failed (${matchupRes.status}): ${matchupText}`
+  )
+}
+if (!draftPicksRes.ok) {
+  throw new Error(`Draft picks failed (${draftPicksRes.status}): ${draftPicksText}`)
+}
 
-        if (!cancelled) {
-          setLeagueInfo(JSON.parse(leagueText))
-          setTeamRosters(JSON.parse(rosterText))
-          setAdpRows(JSON.parse(adpText))
-          setPlayerCsvRows(parsePlayerCsv(csvText || ""))
-          setMatchupResults(JSON.parse(matchupText))
-          setTransactionsData(parsedTransactions)
-          setHistoryPayload(parsedHistory)
-        }
+let parsedTransactions = null
+if (transactionsRes && transactionsRes.ok && transactionsText) {
+  parsedTransactions = JSON.parse(transactionsText)
+}
+
+let parsedHistory = null
+if (historyRes && historyRes.ok && historyText) {
+  parsedHistory = JSON.parse(historyText)
+}
+
+let parsedDraftPicks = null
+try {
+  parsedDraftPicks = JSON.parse(draftPicksText)
+} catch {
+  throw new Error(
+    `Draft picks did not return JSON. Response starts with: ${draftPicksText.slice(0, 120)}`
+  )
+}
+
+const parsedExtraFuturePickRows =
+  extraFuturePicksRes && extraFuturePicksRes.ok && extraFuturePicksText
+    ? normalizeFutureSheetPickRows(extraFuturePicksText)
+    : []
+
+if (!cancelled) {
+  setLeagueInfo(JSON.parse(leagueText))
+  setTeamRosters(JSON.parse(rosterText))
+  setAdpRows(JSON.parse(adpText))
+  setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+  setMatchupResults(JSON.parse(matchupText))
+  setTransactionsData(parsedTransactions)
+  setHistoryPayload(parsedHistory)
+  setDraftPicksData(parsedDraftPicks)
+  setExtraFuturePickRows(parsedExtraFuturePickRows)
+}
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Unknown error")
@@ -488,6 +766,8 @@ export default function TeamDetailPage() {
           setMatchupResults(null)
           setTransactionsData(null)
           setHistoryPayload(null)
+          setDraftPicksData(null)
+          setExtraFuturePickRows([])
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -537,6 +817,19 @@ export default function TeamDetailPage() {
     const adpLookup = buildPlayerLookupFromAdp(adpRows)
     return mergePlayerLookups(csvLookup, adpLookup)
   }, [playerCsvRows, adpRows])
+
+  const teamIdToName = useMemo(() => {
+  const map = new Map()
+
+  for (const candidate of extractTeamsFromLeagueInfoSafe(leagueInfo || {})) {
+    map.set(
+      String(candidate.id),
+      canonicalTeamName(decodeMaybeBrokenText(candidate.name || ""))
+    )
+  }
+
+  return map
+}, [leagueInfo])
 
   const rosterItems = useMemo(() => {
     const raw = getRosterForTeam(teamRosters, teamId)
@@ -630,6 +923,71 @@ export default function TeamDetailPage() {
       )
   }, [historyPayload, canonicalTeam])
 
+  const teamDraftPicks = useMemo(() => {
+  const targetTeamId = String(teamId || "")
+  const targetTeamName = canonicalTeamName(canonicalTeam || "")
+
+  const fantraxRows = normalizeDraftPickRows(draftPicksData, teamIdToName)
+  const allRows = [...fantraxRows, ...extraFuturePickRows]
+
+  return allRows
+    .filter((pick) => {
+      const byId =
+        targetTeamId && String(pick.currentOwnerTeamId || "") === targetTeamId
+
+      const byName =
+        canonicalTeamName(decodeMaybeBrokenText(pick.currentOwner || "")) ===
+        targetTeamName
+
+      return byId || byName
+    })
+    .sort((a, b) => {
+      const seasonCompare = String(a.season).localeCompare(String(b.season), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+      if (seasonCompare !== 0) return seasonCompare
+
+      const roundA = Number(a.round)
+      const roundB = Number(b.round)
+      if (Number.isFinite(roundA) && Number.isFinite(roundB) && roundA !== roundB) {
+        return roundA - roundB
+      }
+
+      const overallA = Number(a.overall)
+      const overallB = Number(b.overall)
+      if (Number.isFinite(overallA) && Number.isFinite(overallB)) {
+        return overallA - overallB
+      }
+
+      return String(a.originalOwner).localeCompare(String(b.originalOwner), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    })
+}, [draftPicksData, extraFuturePickRows, teamIdToName, teamId, canonicalTeam])
+
+const draftPickCountsBySeason = useMemo(() => {
+  const counts = new Map()
+
+  for (const pick of teamDraftPicks) {
+    const seasonKey = String(pick.season || "—")
+    counts.set(seasonKey, (counts.get(seasonKey) || 0) + 1)
+  }
+
+  return Array.from(counts.entries())
+    .sort((a, b) =>
+      String(a[0]).localeCompare(String(b[0]), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    )
+    .map(([seasonKey, count]) => ({
+      season: seasonKey,
+      count,
+    }))
+}, [teamDraftPicks])
+
   const franchiseRecordCount = franchiseRecordRows.length
 
   if (loading) {
@@ -704,11 +1062,19 @@ export default function TeamDetailPage() {
         </div>
       </div>
 
-      <FranchiseRecordsCard
-        historyPayload={historyPayload}
-        franchiseRecordRows={franchiseRecordRows}
-        franchiseRecordCount={franchiseRecordCount}
-      />
+      <div style={topInfoGrid}>
+  <FranchiseRecordsCard
+    historyPayload={historyPayload}
+    franchiseRecordRows={franchiseRecordRows}
+    franchiseRecordCount={franchiseRecordCount}
+  />
+
+  <DraftPicksSection
+  rows={teamDraftPicks}
+  latestSeasonLabel={LATEST_SEASON.label}
+  countsBySeason={draftPickCountsBySeason}
+/>
+</div>
 
       <div style={card}>
         <div
@@ -1116,4 +1482,11 @@ const playerLink = {
   color: "#111827",
   fontWeight: 700,
   textDecoration: "none",
+}
+
+const topInfoGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
+  gap: 16,
+  alignItems: "start",
 }

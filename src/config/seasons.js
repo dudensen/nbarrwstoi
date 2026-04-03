@@ -4,7 +4,10 @@ export const SEASONS = [
     label: "2025-26",
     leagueId: "tl6muagkmafhimxi",
     isCurrent: true,
-    spreadsheets: {},
+    spreadsheets: {
+      futurePicksSheetId: "178c8EuOzomntGys9O6zKpZ2LcNokUwh1UM7XKc7PMfc",
+      futurePicksGid: "760894881",
+    },
   },
   {
     key: "2024-25",
@@ -12,13 +15,13 @@ export const SEASONS = [
     leagueId: "ux9wq6lalw7irn5t",
     spreadsheets: {},
   },
-    {
+  {
     key: "2023-24",
     label: "2023-24",
     leagueId: "g2tge98klgb1r4ml",
     spreadsheets: {},
   },
-    {
+  {
     key: "2022-23",
     label: "2022-23",
     leagueId: "2slnesrbl1umsts1",

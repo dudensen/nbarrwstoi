@@ -538,12 +538,23 @@ export default function PlayerDetailPage() {
 const playerContract = useMemo(() => {
   if (!player) return null
 
-  const target = normalizeContractPlayerName(player.name)
+  const directTarget = normalizeContractPlayerName(player.name)
+
+  const flippedName = player.name?.includes(",")
+    ? player.name
+        .split(",")
+        .map((x) => x.trim())
+        .reverse()
+        .join(" ")
+    : ""
+
+  const flippedTarget = normalizeContractPlayerName(flippedName)
 
   return (
-    contracts.find(
-      (row) => normalizeContractPlayerName(row.player) === target
-    ) || null
+    contracts.find((row) => {
+      const rowName = normalizeContractPlayerName(row.player)
+      return rowName === directTarget || rowName === flippedTarget
+    }) || null
   )
 }, [contracts, player])
 
