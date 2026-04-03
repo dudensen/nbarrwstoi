@@ -9,6 +9,7 @@ const LINKS = [
   ["/draft-results", "Draft Results"],
   ["/history", "History"],
   ["/contracts", "Contracts"],
+  ["/war-room", "The War Room"],
 ]
 
 export default function Header() {

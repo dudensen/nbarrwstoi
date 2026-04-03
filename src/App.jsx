@@ -10,6 +10,7 @@ import PlayerDetailPage from "./pages/PlayerDetailPage"
 import HistoryPage from "./pages/HistoryPage"
 import HomePage from "./pages/HomePage"
 import ContractsPage from "./pages/ContractsPage"
+import ThemeAwardsPage from "./pages/ThemeAwardsPage"
 
 
 function PlaceholderPage({ title }) {
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/players/:playerSlug" element={<PlayerDetailPage />} />
           <Route path="/contracts" element={<ContractsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/war-room" element={<ThemeAwardsPage />} />
         </Routes>
       </BrowserRouter>
     </SeasonProvider>
