@@ -403,7 +403,9 @@ export default function PlayerDetailPage() {
           }))
         })
 
-        const seasonPromises = SEASONS.map(async (seasonEntry) => {
+        const seasonPromises = SEASONS
+            .filter((seasonEntry) => seasonEntry.leagueId)
+            .map(async (seasonEntry) => {
           const [draftRes, rostersRes, transactionsRes] = await Promise.all([
             fetch(`/api/draft-results?season=${encodeURIComponent(seasonEntry.key)}`),
             fetch(`/api/team-rosters?season=${encodeURIComponent(seasonEntry.key)}&period=1`),
@@ -601,7 +603,8 @@ const nameParts = useMemo(() => splitName(player?.name || ""), [player])
     return matches[0] || null
   }, [player, allDraftRows])
 
-  const earliestTrackedSeason = SEASONS[SEASONS.length - 1]?.label || "2020-21"
+  const earliestTrackedSeason =
+  SEASONS.filter((s) => s.leagueId).slice(-1)[0]?.label || "2020-21"
 
   const draftInfoUnavailable = !originalDraft && Boolean(player)
 
