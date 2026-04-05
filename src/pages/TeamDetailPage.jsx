@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useParams, useSearchParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
-import { SEASONS, getSeasonByKey } from "../config/seasons"
+import { SEASONS } from "../config/seasons"
 import {
   decodeMaybeBrokenText,
   getTeamMatchups,
@@ -29,8 +29,139 @@ const LATEST_SEASON =
   SEASONS.find((s) => s.isCurrent) ||
   SEASONS[0]
 
+const PLAYOFFS_SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/1DEXCIZjzFP6WZUM0LoPP_LVjC1RVFYkTV3gizVxd0ps/export?format=csv&gid=0"
+
 function buildGoogleSheetCsvUrl(sheetId, gid) {
   return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
+}
+
+function s(value) {
+  return String(value ?? "").trim()
+}
+
+function normalizeName(value) {
+  return s(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+}
+
+
+function toNumberOrNull(value) {
+  const n = Number(String(value ?? "").replace(",", "."))
+  return Number.isFinite(n) ? n : null
+}
+
+function getSeasonEndYear(seasonKey) {
+  const m = String(seasonKey || "").match(/^(\d{4})-(\d{2})$/)
+  if (!m) return null
+  return Number(String(m[1]).slice(0, 2) + m[2])
+}
+
+
+function isHistoricalSeason(season) {
+  return !season?.leagueId
+}
+
+function buildChampionMapFromSheet(csvText = "") {
+  const matrix = parseCsvMatrix(csvText)
+  if (!Array.isArray(matrix) || matrix.length < 2) return new Map()
+
+  const dataRows = matrix.slice(1)
+  const rowsByYear = new Map()
+
+  for (const row of dataRows) {
+    const year = toNumberOrNull(row?.[0]) // col A
+    const phase = normalizeName(row?.[1]) // col B
+    const roundLabel = normalizeName(row?.[2]) // col C
+
+    if (!year || phase !== "playoffs" || roundLabel !== "final") continue
+
+    if (!rowsByYear.has(year)) rowsByYear.set(year, [])
+    rowsByYear.get(year).push(row)
+  }
+
+  const champions = new Map()
+
+  for (const [year, finalRows] of rowsByYear.entries()) {
+    const championRow =
+      finalRows.find((row) => toNumberOrNull(row?.[6]) === 1) || null // col G
+
+    const runnerUpRow =
+      finalRows.find((row) => toNumberOrNull(row?.[6]) === 0) || null // col G
+
+    if (!championRow) continue
+
+    const championTeam = canonicalTeamName(
+      decodeMaybeBrokenText(s(championRow?.[4])) // col E
+    )
+
+    const runnerUpTeam = canonicalTeamName(
+      decodeMaybeBrokenText(s(runnerUpRow?.[4])) // col E
+    )
+
+    if (!championTeam) continue
+
+    if (!champions.has(championTeam)) champions.set(championTeam, [])
+    champions.get(championTeam).push({
+      year,
+      season: `${year - 1}-${String(year).slice(-2)}`,
+      runnerUp: runnerUpTeam || "—",
+    })
+  }
+
+  for (const entries of champions.values()) {
+    entries.sort((a, b) => b.year - a.year)
+  }
+
+  return champions
+}
+
+function TrophyCabinetCard({ trophies = [] }) {
+  if (!trophies.length) return null
+
+  return (
+    <div style={card}>
+      <h3 style={{ margin: "0 0 14px" }}>Trophy Cabinet</h3>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gap: 12,
+        }}
+      >
+        {trophies.map((item) => (
+          <div
+            key={item.year}
+            style={{
+              background: "#fff7ed",
+              border: "1px solid #fed7aa",
+              borderRadius: 16,
+              padding: 14,
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: 30, lineHeight: 1 }}>🏆</div>
+            <div
+              style={{
+                fontWeight: 800,
+                color: "#111827",
+                marginTop: 8,
+              }}
+            >
+              {item.season}
+            </div>
+            <div style={{ color: "#6b7280", marginTop: 6 }}>
+              vs {item.runnerUp}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function parseCsvMatrix(text = "") {
@@ -78,13 +209,12 @@ function normalizeFutureSheetPickRows(csvText = "") {
   const year = String(matrix?.[0]?.[0] || "").trim() || "—"
 
   const ROUND_BLOCKS = [
-    { round: 1, cols: [1, 2, 3] }, // B,C,D
-    { round: 2, cols: [4, 5, 6] }, // E,F,G
-    { round: 3, cols: [7, 8, 9] }, // H,I,J
+    { round: 1, cols: [1, 2, 3] },
+    { round: 2, cols: [4, 5, 6] },
+    { round: 3, cols: [7, 8, 9] },
   ]
 
   const dataRows = matrix.slice(2)
-
   const rows = []
 
   for (let rowIndex = 0; rowIndex < dataRows.length; rowIndex++) {
@@ -137,6 +267,82 @@ function normalizeFutureSheetPickRows(csvText = "") {
   return rows
 }
 
+function getPlayoffRoundRank(label) {
+  const text = normalizeName(label)
+
+  if (text.includes("final")) return 400
+  if (text.includes("semi")) return 300
+  if (text.includes("quarter")) return 200
+  if (text.includes("round 1")) return 100
+  if (text === "round 1") return 100
+
+  return 0
+}
+
+function buildPlayoffRowsFromSheet(csvText, seasonKey, teamSlug, canonicalTeam) {
+  const matrix = parseCsvMatrix(csvText)
+  if (!matrix.length) return []
+
+  const seasonEndYear = getSeasonEndYear(seasonKey)
+  if (!seasonEndYear) return []
+
+  const targetSlug = String(teamSlug || "").trim().toLowerCase()
+  const targetCanonicalName = canonicalTeamName(canonicalTeam || "")
+  const dataRows = matrix.slice(1)
+  const rows = []
+
+  for (let index = 0; index < dataRows.length; index++) {
+    const row = dataRows[index] || []
+
+    const year = toNumberOrNull(row[0])
+    const phase = normalizeName(row[1])
+    if (year !== seasonEndYear) continue
+    if (phase !== "playoffs") continue
+
+    const roundLabel = decodeMaybeBrokenText(s(row[2])) || "Playoffs"
+    const matchNo = toNumberOrNull(row[3])
+    const rowTeam = canonicalTeamName(decodeMaybeBrokenText(s(row[4])))
+    if (!rowTeam) continue
+
+    const rowTeamSlug = slugifyTeamName(rowTeam)
+    const isTargetTeam =
+      (targetSlug && rowTeamSlug === targetSlug) ||
+      (targetCanonicalName && rowTeam === targetCanonicalName)
+
+    if (!isTargetTeam) continue
+
+    const gamesWon = toNumberOrNull(row[6])
+    const wins = toNumberOrNull(row[7]) ?? 0
+    const losses = toNumberOrNull(row[8]) ?? 0
+    const ties = toNumberOrNull(row[9]) ?? 0
+
+    const opponentName = canonicalTeamName(
+      decodeMaybeBrokenText(s(row[10]).replace(/^vs\s+/i, ""))
+    )
+
+    rows.push({
+      period: roundLabel,
+      sortPeriod: Number.isFinite(matchNo) ? matchNo : 999,
+      roundRank: getPlayoffRoundRank(roundLabel),
+      matchupId: `playoffs-${seasonEndYear}-${matchNo ?? index}-${rowTeamSlug}`,
+      opponentId: "",
+      opponentName: opponentName || "—",
+      result:
+        gamesWon == null ? "T" : gamesWon === 1 ? "W" : gamesWon === 0 ? "L" : "T",
+      score: `${wins} - ${losses} - ${ties}`,
+      isPlayoff: true,
+    })
+  }
+
+  return rows.sort((a, b) => {
+    if (a.roundRank !== b.roundRank) return b.roundRank - a.roundRank
+    if (a.sortPeriod !== b.sortPeriod) return b.sortPeriod - a.sortPeriod
+    return String(a.period).localeCompare(String(b.period), undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
+  })
+}
 
 function normalizeDraftPickRows(payload, teamIdToName) {
   const futureRows = Array.isArray(payload?.futureDraftPicks)
@@ -374,48 +580,48 @@ function DraftPicksSection({ rows, latestSeasonLabel, countsBySeason }) {
         }}
       >
         <div>
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      flexWrap: "wrap",
-    }}
-  >
-    <h3 style={{ margin: 0 }}>Draft Picks</h3>
-
-    {countsBySeason?.length ? (
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          flexWrap: "wrap",
-        }}
-      >
-        {countsBySeason.map((item) => (
-          <span
-            key={item.season}
+          <div
             style={{
-              padding: "4px 10px",
-              borderRadius: 999,
-              background: "#fff7ed",
-              border: "1px solid #fed7aa",
-              color: "#9a3412",
-              fontWeight: 700,
-              fontSize: 13,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              flexWrap: "wrap",
             }}
           >
-            {item.season}: {item.count}
-          </span>
-        ))}
-      </div>
-    ) : null}
-  </div>
+            <h3 style={{ margin: 0 }}>Draft Picks</h3>
 
-  <div style={{ color: "#6b7280", marginTop: 6 }}>
-    Current and future picks owned by this team ({latestSeasonLabel} league).
-  </div>
-</div>
+            {countsBySeason?.length ? (
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  flexWrap: "wrap",
+                }}
+              >
+                {countsBySeason.map((item) => (
+                  <span
+                    key={item.season}
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: 999,
+                      background: "#fff7ed",
+                      border: "1px solid #fed7aa",
+                      color: "#9a3412",
+                      fontWeight: 700,
+                      fontSize: 13,
+                    }}
+                  >
+                    {item.season}: {item.count}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div style={{ color: "#6b7280", marginTop: 6 }}>
+            Current and future picks owned by this team ({latestSeasonLabel} league).
+          </div>
+        </div>
       </div>
 
       {rows.length === 0 ? (
@@ -462,10 +668,17 @@ function HistoricalTeamMode({
   franchiseRecordRows,
   franchiseRecordCount,
   teamSlug,
+  trophies,
+  teamDraftPicks,
+  draftPickCountsBySeason,
+  effectiveSeason,
 }) {
-  return (
+    return (
     <main style={main}>
-      <Link to="/teams" style={backLink}>
+      <Link
+        to="/teams"
+        style={backLink}
+      >
         ← Back to teams
       </Link>
 
@@ -482,7 +695,8 @@ function HistoricalTeamMode({
           <div style={{ minWidth: 0, flex: "1 1 320px" }}>
             <div style={eyebrow}>Historical Team Profile</div>
             <h1 style={{ margin: "0 0 10px" }}>{historicalProfile.team}</h1>
-            <div style={{ color: "#6b7280" }}>
+            <div style={{ color: "#6b7280" }}>Season: {effectiveSeason.label}</div>
+            <div style={{ color: "#6b7280", marginTop: 6 }}>
               Years active: {historicalProfile.firstYear} - {historicalProfile.lastYear}
             </div>
             <div style={{ color: "#6b7280", marginTop: 6 }}>
@@ -498,11 +712,21 @@ function HistoricalTeamMode({
         </div>
       </div>
 
-      <FranchiseRecordsCard
-        historyPayload={historyPayload}
-        franchiseRecordRows={franchiseRecordRows}
-        franchiseRecordCount={franchiseRecordCount}
-      />
+      <TrophyCabinetCard trophies={trophies} />
+
+      <div style={topInfoGrid}>
+        <FranchiseRecordsCard
+          historyPayload={historyPayload}
+          franchiseRecordRows={franchiseRecordRows}
+          franchiseRecordCount={franchiseRecordCount}
+        />
+
+        <DraftPicksSection
+          rows={teamDraftPicks}
+          latestSeasonLabel={LATEST_SEASON.label}
+          countsBySeason={draftPickCountsBySeason}
+        />
+      </div>
 
       <div style={card}>
         <div style={summaryGrid}>
@@ -609,14 +833,12 @@ function RosterSection({ title, rows }) {
 export default function TeamDetailPage() {
   const { teamSlug } = useParams()
   const { season } = useSeason()
-  const [searchParams] = useSearchParams()
+  const effectiveSeason = season || LATEST_SEASON
 
-  const overrideSeasonKey = searchParams.get("season") || ""
-  const effectiveSeason = overrideSeasonKey
-    ? getSeasonByKey(overrideSeasonKey)
-    : season
+  const historicalSeason = isHistoricalSeason(effectiveSeason)
 
   const [leagueInfo, setLeagueInfo] = useState(null)
+  const [latestLeagueInfo, setLatestLeagueInfo] = useState(null)
   const [teamRosters, setTeamRosters] = useState(null)
   const [adpRows, setAdpRows] = useState([])
   const [playerCsvRows, setPlayerCsvRows] = useState([])
@@ -625,141 +847,235 @@ export default function TeamDetailPage() {
   const [historyPayload, setHistoryPayload] = useState(null)
   const [draftPicksData, setDraftPicksData] = useState(null)
   const [extraFuturePickRows, setExtraFuturePickRows] = useState([])
+  const [playoffSheetText, setPlayoffSheetText] = useState("")
   const [period, setPeriod] = useState("1")
   const [activeTab, setActiveTab] = useState("results")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [championMap, setChampionMap] = useState(new Map())
 
   useEffect(() => {
     let cancelled = false
 
-    async function load() {
+        async function load() {
       try {
         setLoading(true)
         setError("")
 
         const matchupFile = `/data/matchup-results-${encodeURIComponent(
-  effectiveSeason.key
-)}.json`
-const transactionsFile = `/data/transactions-${encodeURIComponent(
-  effectiveSeason.key
-)}.json`
-const csvLoader =
-  playerCsvFiles[`../config/playerCsv/${effectiveSeason.key}.csv`]
+          effectiveSeason.key
+        )}.json`
+        const transactionsFile = `/data/transactions-${encodeURIComponent(
+          effectiveSeason.key
+        )}.json`
+        const csvLoader =
+          playerCsvFiles[`../config/playerCsv/${effectiveSeason.key}.csv`]
 
-const latestFuturePicksSheetId =
-  LATEST_SEASON.spreadsheets?.futurePicksSheetId || ""
-const latestFuturePicksGid =
-  LATEST_SEASON.spreadsheets?.futurePicksGid || ""
+        const latestFuturePicksSheetId =
+          LATEST_SEASON.spreadsheets?.futurePicksSheetId || ""
+        const latestFuturePicksGid =
+          LATEST_SEASON.spreadsheets?.futurePicksGid || ""
 
-const extraFuturePicksUrl =
-  latestFuturePicksSheetId && latestFuturePicksGid
-    ? buildGoogleSheetCsvUrl(latestFuturePicksSheetId, latestFuturePicksGid)
-    : ""
+        const extraFuturePicksUrl =
+          latestFuturePicksSheetId && latestFuturePicksGid
+            ? buildGoogleSheetCsvUrl(latestFuturePicksSheetId, latestFuturePicksGid)
+            : ""
 
-const [
-  leagueRes,
-  rosterRes,
-  adpRes,
-  matchupRes,
-  transactionsRes,
-  historyRes,
-  draftPicksRes,
-  extraFuturePicksRes,
-  csvText,
-] = await Promise.all([
-  fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
-  fetch(
-    `/api/team-rosters?season=${encodeURIComponent(
-      effectiveSeason.key
-    )}&period=${encodeURIComponent(period)}`
-  ),
-  fetch(`/api/adp`),
-  fetch(matchupFile),
-  fetch(transactionsFile).catch(() => null),
-  fetch("/data/history-data.json").catch(() => null),
-  fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
-  extraFuturePicksUrl ? fetch(extraFuturePicksUrl).catch(() => null) : Promise.resolve(null),
-  csvLoader ? csvLoader() : Promise.resolve(""),
-])
+        if (historicalSeason) {
+          const [
+          historyRes,
+          latestLeagueRes,
+          draftPicksRes,
+          extraFuturePicksRes,
+          playoffsRes,
+        ] = await Promise.all([
+          fetch("/data/history-data.json").catch(() => null),
+          fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
+          fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+          extraFuturePicksUrl
+            ? fetch(extraFuturePicksUrl).catch(() => null)
+            : Promise.resolve(null),
+          fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+        ])
 
-const [
-  leagueText,
-  rosterText,
-  adpText,
-  matchupText,
-  transactionsText,
-  historyText,
-  draftPicksText,
-  extraFuturePicksText,
-] = await Promise.all([
-  leagueRes.text(),
-  rosterRes.text(),
-  adpRes.text(),
-  matchupRes.text(),
-  transactionsRes ? transactionsRes.text() : Promise.resolve(""),
-  historyRes ? historyRes.text() : Promise.resolve(""),
-  draftPicksRes.text(),
-  extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
-])
+          const [
+            historyText,
+            latestLeagueText,
+            draftPicksText,
+            extraFuturePicksText,
+            playoffsText,
+          ] = await Promise.all([
+            historyRes ? historyRes.text() : Promise.resolve(""),
+            latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
+            draftPicksRes.text(),
+            extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
+            playoffsRes ? playoffsRes.text() : Promise.resolve(""),
+          ])
 
-if (!leagueRes.ok) {
-  throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
-}
-if (!rosterRes.ok) {
-  throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
-}
-if (!adpRes.ok) {
-  throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
-}
-if (!matchupRes.ok) {
-  throw new Error(
-    `Matchup results failed (${matchupRes.status}): ${matchupText}`
-  )
-}
-if (!draftPicksRes.ok) {
-  throw new Error(`Draft picks failed (${draftPicksRes.status}): ${draftPicksText}`)
-}
+          if (!historyRes || !historyRes.ok) {
+            throw new Error(`History data failed (${historyRes?.status || "?"}): ${historyText}`)
+          }
 
-let parsedTransactions = null
-if (transactionsRes && transactionsRes.ok && transactionsText) {
-  parsedTransactions = JSON.parse(transactionsText)
-}
+          if (!draftPicksRes.ok) {
+            throw new Error(`Draft picks failed (${draftPicksRes.status}): ${draftPicksText}`)
+          }
 
-let parsedHistory = null
-if (historyRes && historyRes.ok && historyText) {
-  parsedHistory = JSON.parse(historyText)
-}
+          const parsedHistory = JSON.parse(historyText)
+          const parsedDraftPicks = JSON.parse(draftPicksText)
+          const parsedExtraFuturePickRows =
+            extraFuturePicksRes && extraFuturePicksRes.ok
+              ? normalizeFutureSheetPickRows(extraFuturePicksText)
+              : []
 
-let parsedDraftPicks = null
-try {
-  parsedDraftPicks = JSON.parse(draftPicksText)
-} catch {
-  throw new Error(
-    `Draft picks did not return JSON. Response starts with: ${draftPicksText.slice(0, 120)}`
-  )
-}
+          if (!cancelled) {
+            setLeagueInfo(null)
+            setLatestLeagueInfo(
+              latestLeagueRes && latestLeagueRes.ok && latestLeagueText
+                ? JSON.parse(latestLeagueText)
+                : null
+            )
+            setTeamRosters(null)
+            setAdpRows([])
+            setPlayerCsvRows([])
+            setMatchupResults(null)
+            setTransactionsData(null)
+            setHistoryPayload(parsedHistory)
+            setDraftPicksData(parsedDraftPicks)
+            setExtraFuturePickRows(parsedExtraFuturePickRows)
+            setPlayoffSheetText(playoffsRes && playoffsRes.ok ? playoffsText : "")
+            setChampionMap(
+              playoffsRes && playoffsRes.ok ? buildChampionMapFromSheet(playoffsText) : new Map()
+            )
+          }
 
-const parsedExtraFuturePickRows =
-  extraFuturePicksRes && extraFuturePicksRes.ok && extraFuturePicksText
-    ? normalizeFutureSheetPickRows(extraFuturePicksText)
-    : []
+          return
+        }
 
-if (!cancelled) {
-  setLeagueInfo(JSON.parse(leagueText))
-  setTeamRosters(JSON.parse(rosterText))
-  setAdpRows(JSON.parse(adpText))
-  setPlayerCsvRows(parsePlayerCsv(csvText || ""))
-  setMatchupResults(JSON.parse(matchupText))
-  setTransactionsData(parsedTransactions)
-  setHistoryPayload(parsedHistory)
-  setDraftPicksData(parsedDraftPicks)
-  setExtraFuturePickRows(parsedExtraFuturePickRows)
-}
+        const [
+        leagueRes,
+        latestLeagueRes,
+        rosterRes,
+        adpRes,
+        matchupRes,
+        transactionsRes,
+        historyRes,
+        draftPicksRes,
+        extraFuturePicksRes,
+        playoffsRes,
+        csvText,
+      ] = await Promise.all([
+        fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
+        fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
+        fetch(
+          `/api/team-rosters?season=${encodeURIComponent(
+            effectiveSeason.key
+          )}&period=${encodeURIComponent(period)}`
+        ),
+        fetch(`/api/adp`),
+        fetch(matchupFile),
+        fetch(transactionsFile).catch(() => null),
+        fetch("/data/history-data.json").catch(() => null),
+        fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+        extraFuturePicksUrl
+          ? fetch(extraFuturePicksUrl).catch(() => null)
+          : Promise.resolve(null),
+        fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+        csvLoader ? csvLoader() : Promise.resolve(""),
+      ])
+
+        const [
+        leagueText,
+        latestLeagueText,
+        rosterText,
+        adpText,
+        matchupText,
+        transactionsText,
+        historyText,
+        draftPicksText,
+        extraFuturePicksText,
+        playoffsText,
+      ] = await Promise.all([
+        leagueRes.text(),
+        latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
+        rosterRes.text(),
+        adpRes.text(),
+        matchupRes.text(),
+        transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+        historyRes ? historyRes.text() : Promise.resolve(""),
+        draftPicksRes.text(),
+        extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
+        playoffsRes ? playoffsRes.text() : Promise.resolve(""),
+      ])
+
+        if (!leagueRes.ok) {
+          throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
+          
+        }
+        if (!rosterRes.ok) {
+          throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
+        }
+        if (!adpRes.ok) {
+          throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+        }
+        if (!matchupRes.ok) {
+          throw new Error(
+            `Matchup results failed (${matchupRes.status}): ${matchupText}`
+          )
+        }
+        if (!draftPicksRes.ok) {
+          throw new Error(`Draft picks failed (${draftPicksRes.status}): ${draftPicksText}`)
+        }
+
+        let parsedTransactions = null
+        if (transactionsRes && transactionsRes.ok && transactionsText) {
+          parsedTransactions = JSON.parse(transactionsText)
+        }
+
+        let parsedHistory = null
+        if (historyRes && historyRes.ok && historyText) {
+          parsedHistory = JSON.parse(historyText)
+        }
+
+        let parsedDraftPicks = null
+        try {
+          parsedDraftPicks = JSON.parse(draftPicksText)
+        } catch {
+          throw new Error(
+            `Draft picks did not return JSON. Response starts with: ${draftPicksText.slice(0, 120)}`
+          )
+        }
+
+        const nextChampionMap =
+          playoffsRes && playoffsRes.ok ? buildChampionMapFromSheet(playoffsText) : new Map()
+
+        const parsedExtraFuturePickRows =
+          extraFuturePicksRes && extraFuturePicksRes.ok && extraFuturePicksText
+            ? normalizeFutureSheetPickRows(extraFuturePicksText)
+            : []
+
+        if (!cancelled) {
+          setLeagueInfo(JSON.parse(leagueText))
+          setTeamRosters(JSON.parse(rosterText))
+          setAdpRows(JSON.parse(adpText))
+          setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+          setMatchupResults(JSON.parse(matchupText))
+          setTransactionsData(parsedTransactions)
+          setHistoryPayload(parsedHistory)
+          setDraftPicksData(parsedDraftPicks)
+          setExtraFuturePickRows(parsedExtraFuturePickRows)
+          setPlayoffSheetText(playoffsRes && playoffsRes.ok ? playoffsText : "")
+          setChampionMap(nextChampionMap)
+          setLatestLeagueInfo(
+            latestLeagueRes && latestLeagueRes.ok && latestLeagueText
+              ? JSON.parse(latestLeagueText)
+              : null
+          )
+        }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Unknown error")
           setLeagueInfo(null)
+          setLatestLeagueInfo(null)
           setTeamRosters(null)
           setAdpRows([])
           setPlayerCsvRows([])
@@ -768,6 +1084,8 @@ if (!cancelled) {
           setHistoryPayload(null)
           setDraftPicksData(null)
           setExtraFuturePickRows([])
+          setPlayoffSheetText("")
+          setChampionMap(new Map())
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -778,7 +1096,7 @@ if (!cancelled) {
     return () => {
       cancelled = true
     }
-  }, [effectiveSeason.key, period])
+  }, [effectiveSeason.key, historicalSeason, period])
 
   const team = useMemo(() => {
     return getTeamByFranchiseSlugFromLeagueInfo(leagueInfo, teamSlug)
@@ -797,6 +1115,10 @@ if (!cancelled) {
     }
     return canonicalTeamName(historicalProfile?.team || "")
   }, [team, historicalProfile])
+
+  const teamTrophies = useMemo(() => {
+  return championMap.get(canonicalTeam) || []
+}, [championMap, canonicalTeam])
 
   const teamManagerName = useMemo(() => {
     if (historicalProfile?.manager) return historicalProfile.manager
@@ -821,7 +1143,7 @@ if (!cancelled) {
   const teamIdToName = useMemo(() => {
   const map = new Map()
 
-  for (const candidate of extractTeamsFromLeagueInfoSafe(leagueInfo || {})) {
+  for (const candidate of extractTeamsFromLeagueInfoSafe(latestLeagueInfo || {})) {
     map.set(
       String(candidate.id),
       canonicalTeamName(decodeMaybeBrokenText(candidate.name || ""))
@@ -829,7 +1151,7 @@ if (!cancelled) {
   }
 
   return map
-}, [leagueInfo])
+}, [latestLeagueInfo])
 
   const rosterItems = useMemo(() => {
     const raw = getRosterForTeam(teamRosters, teamId)
@@ -869,7 +1191,7 @@ if (!cancelled) {
     [leagueInfo, teamId]
   )
 
-  const matchupRows = useMemo(() => {
+  const regularMatchupRows = useMemo(() => {
     const rows = []
 
     for (const matchup of matchupResults?.matchups || []) {
@@ -882,21 +1204,56 @@ if (!cancelled) {
 
       rows.push({
         period: matchup.period,
+        sortPeriod: Number(matchup.period) || 0,
         matchupId: matchup.matchupId,
         opponentId: opponent?.id || "",
         opponentName: decodeMaybeBrokenText(opponent?.name || "—"),
         result:
           matchup?.winnerTeamId == null ? "T" : isWinner ? "W" : "L",
         score: formatScoreText(matchup?.scoreText),
+        isPlayoff: false,
       })
     }
 
-    return rows.sort((a, b) => a.period - b.period)
+    return rows.sort((a, b) => a.sortPeriod - b.sortPeriod)
   }, [matchupResults, teamId])
 
+  const playoffMatchupRows = useMemo(() => {
+    return buildPlayoffRowsFromSheet(
+      playoffSheetText,
+      effectiveSeason.key,
+      teamSlug,
+      canonicalTeam
+    )
+  }, [playoffSheetText, effectiveSeason.key, teamSlug, canonicalTeam])
+
+  const matchupRows = useMemo(() => {
+  return [...regularMatchupRows, ...playoffMatchupRows].sort((a, b) => {
+    const aPlayoff = Boolean(a.isPlayoff)
+    const bPlayoff = Boolean(b.isPlayoff)
+
+    if (aPlayoff && !bPlayoff) return -1
+    if (!aPlayoff && bPlayoff) return 1
+
+    if (aPlayoff && bPlayoff) {
+      if ((a.roundRank || 0) !== (b.roundRank || 0)) {
+        return (b.roundRank || 0) - (a.roundRank || 0)
+      }
+      return (b.sortPeriod || 0) - (a.sortPeriod || 0)
+    }
+
+    return (Number(b.sortPeriod) || 0) - (Number(a.sortPeriod) || 0)
+  })
+}, [regularMatchupRows, playoffMatchupRows])
+
   const completedPeriods = useMemo(
-    () => new Set(matchupRows.map((row) => Number(row.period))),
-    [matchupRows]
+    () =>
+      new Set(
+        regularMatchupRows
+          .map((row) => Number(row.period))
+          .filter((value) => Number.isFinite(value))
+      ),
+    [regularMatchupRows]
   )
 
   const upcomingScheduleRows = useMemo(() => {
@@ -924,69 +1281,69 @@ if (!cancelled) {
   }, [historyPayload, canonicalTeam])
 
   const teamDraftPicks = useMemo(() => {
-  const targetTeamId = String(teamId || "")
-  const targetTeamName = canonicalTeamName(canonicalTeam || "")
+    const targetTeamId = String(teamId || "")
+    const targetTeamName = canonicalTeamName(canonicalTeam || "")
 
-  const fantraxRows = normalizeDraftPickRows(draftPicksData, teamIdToName)
-  const allRows = [...fantraxRows, ...extraFuturePickRows]
+    const fantraxRows = normalizeDraftPickRows(draftPicksData, teamIdToName)
+    const allRows = [...fantraxRows, ...extraFuturePickRows]
 
-  return allRows
-    .filter((pick) => {
-      const byId =
-        targetTeamId && String(pick.currentOwnerTeamId || "") === targetTeamId
+    return allRows
+      .filter((pick) => {
+        const byId =
+          targetTeamId && String(pick.currentOwnerTeamId || "") === targetTeamId
 
-      const byName =
-        canonicalTeamName(decodeMaybeBrokenText(pick.currentOwner || "")) ===
-        targetTeamName
+        const byName =
+          canonicalTeamName(decodeMaybeBrokenText(pick.currentOwner || "")) ===
+          targetTeamName
 
-      return byId || byName
-    })
-    .sort((a, b) => {
-      const seasonCompare = String(a.season).localeCompare(String(b.season), undefined, {
-        numeric: true,
-        sensitivity: "base",
+        return byId || byName
       })
-      if (seasonCompare !== 0) return seasonCompare
+      .sort((a, b) => {
+        const seasonCompare = String(a.season).localeCompare(String(b.season), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+        if (seasonCompare !== 0) return seasonCompare
 
-      const roundA = Number(a.round)
-      const roundB = Number(b.round)
-      if (Number.isFinite(roundA) && Number.isFinite(roundB) && roundA !== roundB) {
-        return roundA - roundB
-      }
+        const roundA = Number(a.round)
+        const roundB = Number(b.round)
+        if (Number.isFinite(roundA) && Number.isFinite(roundB) && roundA !== roundB) {
+          return roundA - roundB
+        }
 
-      const overallA = Number(a.overall)
-      const overallB = Number(b.overall)
-      if (Number.isFinite(overallA) && Number.isFinite(overallB)) {
-        return overallA - overallB
-      }
+        const overallA = Number(a.overall)
+        const overallB = Number(b.overall)
+        if (Number.isFinite(overallA) && Number.isFinite(overallB)) {
+          return overallA - overallB
+        }
 
-      return String(a.originalOwner).localeCompare(String(b.originalOwner), undefined, {
-        numeric: true,
-        sensitivity: "base",
+        return String(a.originalOwner).localeCompare(String(b.originalOwner), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
       })
-    })
-}, [draftPicksData, extraFuturePickRows, teamIdToName, teamId, canonicalTeam])
+  }, [draftPicksData, extraFuturePickRows, teamIdToName, teamId, canonicalTeam])
 
-const draftPickCountsBySeason = useMemo(() => {
-  const counts = new Map()
+  const draftPickCountsBySeason = useMemo(() => {
+    const counts = new Map()
 
-  for (const pick of teamDraftPicks) {
-    const seasonKey = String(pick.season || "—")
-    counts.set(seasonKey, (counts.get(seasonKey) || 0) + 1)
-  }
+    for (const pick of teamDraftPicks) {
+      const seasonKey = String(pick.season || "—")
+      counts.set(seasonKey, (counts.get(seasonKey) || 0) + 1)
+    }
 
-  return Array.from(counts.entries())
-    .sort((a, b) =>
-      String(a[0]).localeCompare(String(b[0]), undefined, {
-        numeric: true,
-        sensitivity: "base",
-      })
-    )
-    .map(([seasonKey, count]) => ({
-      season: seasonKey,
-      count,
-    }))
-}, [teamDraftPicks])
+    return Array.from(counts.entries())
+      .sort((a, b) =>
+        String(a[0]).localeCompare(String(b[0]), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      )
+      .map(([seasonKey, count]) => ({
+        season: seasonKey,
+        count,
+      }))
+  }, [teamDraftPicks])
 
   const franchiseRecordCount = franchiseRecordRows.length
 
@@ -1017,17 +1374,21 @@ const draftPickCountsBySeason = useMemo(() => {
   }
 
   if (!team && historicalProfile) {
-    return (
-      <HistoricalTeamMode
-        historicalProfile={historicalProfile}
-        teamManagerName={teamManagerName}
-        historyPayload={historyPayload}
-        franchiseRecordRows={franchiseRecordRows}
-        franchiseRecordCount={franchiseRecordCount}
-        teamSlug={teamSlug}
-      />
-    )
-  }
+  return (
+    <HistoricalTeamMode
+      historicalProfile={historicalProfile}
+      teamManagerName={teamManagerName}
+      historyPayload={historyPayload}
+      franchiseRecordRows={franchiseRecordRows}
+      franchiseRecordCount={franchiseRecordCount}
+      teamSlug={teamSlug}
+      trophies={teamTrophies}
+      teamDraftPicks={teamDraftPicks}
+      draftPickCountsBySeason={draftPickCountsBySeason}
+      effectiveSeason={effectiveSeason}
+    />
+  )
+}
 
   return (
     <main style={main}>
@@ -1062,49 +1423,23 @@ const draftPickCountsBySeason = useMemo(() => {
         </div>
       </div>
 
-      <div style={topInfoGrid}>
-  <FranchiseRecordsCard
-    historyPayload={historyPayload}
-    franchiseRecordRows={franchiseRecordRows}
-    franchiseRecordCount={franchiseRecordCount}
-  />
+      <>
+  <TrophyCabinetCard trophies={teamTrophies} />
 
-  <DraftPicksSection
-  rows={teamDraftPicks}
-  latestSeasonLabel={LATEST_SEASON.label}
-  countsBySeason={draftPickCountsBySeason}
-/>
-</div>
+  <div style={topInfoGrid}>
+    <FranchiseRecordsCard
+      historyPayload={historyPayload}
+      franchiseRecordRows={franchiseRecordRows}
+      franchiseRecordCount={franchiseRecordCount}
+    />
 
-      <div style={card}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 12,
-            flexWrap: "wrap",
-            alignItems: "center",
-          }}
-        >
-          <h3 style={{ margin: 0 }}>Roster</h3>
-          <label>
-            Period{" "}
-            <select value={period} onChange={(e) => setPeriod(e.target.value)}>
-              {Array.from({ length: 22 }, (_, i) => String(i + 1)).map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </div>
-
-      <div style={rosterGrid}>
-        <RosterSection title="Active" rows={active} />
-        <RosterSection title="Reserve" rows={reserve} />
-        <RosterSection title="Injured Reserve" rows={ir} />
-      </div>
+    <DraftPicksSection
+      rows={teamDraftPicks}
+      latestSeasonLabel={LATEST_SEASON.label}
+      countsBySeason={draftPickCountsBySeason}
+    />
+  </div>
+</>
 
       <div style={card}>
         <div style={tabRow}>
@@ -1138,7 +1473,7 @@ const draftPickCountsBySeason = useMemo(() => {
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#fff7ed" }}>
-                    <th style={th}>Period</th>
+                    <th style={th}>Period / Round</th>
                     <th style={th}>Opponent</th>
                     <th style={th}>Result</th>
                     <th style={th}>Score</th>
@@ -1146,10 +1481,10 @@ const draftPickCountsBySeason = useMemo(() => {
                 </thead>
                 <tbody>
                   {matchupRows.map((row) => (
-                    <tr key={`${row.period}-${row.matchupId}-${row.opponentId}`}>
+                    <tr key={`${row.period}-${row.matchupId}-${row.opponentName}`}>
                       <td style={td}>{row.period}</td>
                       <td style={td}>
-                        {row.opponentId ? (
+                        {row.opponentName && row.opponentName !== "—" ? (
                           <Link
                             to={`/teams/${slugifyTeamName(row.opponentName)}`}
                             style={teamLink}
@@ -1281,6 +1616,36 @@ const draftPickCountsBySeason = useMemo(() => {
             )}
           </>
         )}
+      </div>
+
+      <div style={card}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <h3 style={{ margin: 0 }}>Roster</h3>
+          <label>
+            Period{" "}
+            <select value={period} onChange={(e) => setPeriod(e.target.value)}>
+              {Array.from({ length: 22 }, (_, i) => String(i + 1)).map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div style={rosterGrid}>
+        <RosterSection title="Active" rows={active} />
+        <RosterSection title="Reserve" rows={reserve} />
+        <RosterSection title="Injured Reserve" rows={ir} />
       </div>
     </main>
   )

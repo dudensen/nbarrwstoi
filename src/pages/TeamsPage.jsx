@@ -1,18 +1,80 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
 import { extractTeamsFromLeagueInfo } from "../utils/fantrax"
+import { canonicalTeamName, slugifyTeamName } from "../utils/history"
 
-export function slugifyTeamName(value) {
-  return String(value ?? "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+function s(value) {
+  return String(value ?? "").trim()
 }
 
-function TeamLogo({ teamName, size = 72 }) {
+function getSeasonEndYear(seasonKey) {
+  const match = String(seasonKey || "").match(/^(\d{4})-(\d{2})$/)
+  if (!match) return null
+  return Number(`${match[1].slice(0, 2)}${match[2]}`)
+}
+
+function isHistoricalSeason(season) {
+  return !season?.leagueId
+}
+
+function buildHistoricalTeams(rows = [], seasonKey = "") {
+  const seasonEndYear = getSeasonEndYear(seasonKey)
+  if (!seasonEndYear) return []
+
+  const filtered = rows.filter(
+    (row) => Number(row?.year) === seasonEndYear && s(row?.team)
+  )
+
+  const byTeam = new Map()
+
+  for (const row of filtered) {
+    const canonical = canonicalTeamName(row.team)
+    if (!canonical) continue
+
+    if (!byTeam.has(canonical)) {
+      byTeam.set(canonical, {
+        id: canonical,
+        name: canonical,
+        shortName: "",
+        managerCounts: new Map(),
+      })
+    }
+
+    const entry = byTeam.get(canonical)
+    const manager = s(row?.manager)
+    if (manager) {
+      entry.managerCounts.set(manager, (entry.managerCounts.get(manager) || 0) + 1)
+    }
+  }
+
+  return Array.from(byTeam.values())
+    .map((entry) => {
+      let manager = ""
+      let bestCount = -1
+
+      for (const [name, count] of entry.managerCounts.entries()) {
+        if (count > bestCount) {
+          manager = name
+          bestCount = count
+        }
+      }
+
+      return {
+        id: entry.id,
+        name: entry.name,
+        shortName: manager || "Historical team",
+      }
+    })
+    .sort((a, b) =>
+      String(a.name).localeCompare(String(b.name), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    )
+}
+
+function TeamLogo({ teamName }) {
   const slug = slugifyTeamName(teamName)
 
   return (
@@ -20,8 +82,8 @@ function TeamLogo({ teamName, size = 72 }) {
       src={`/team-logos/${slug}.png`}
       alt={`${teamName} logo`}
       style={{
-        width: size,
-        height: size,
+        width: 72,
+        height: 72,
         objectFit: "contain",
         flexShrink: 0,
       }}
@@ -38,6 +100,8 @@ export default function TeamsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
+  const historical = useMemo(() => isHistoricalSeason(season), [season])
+
   useEffect(() => {
     let cancelled = false
 
@@ -45,6 +109,23 @@ export default function TeamsPage() {
       try {
         setLoading(true)
         setError("")
+
+        if (historical) {
+          const res = await fetch("/data/history-data.json")
+          const text = await res.text()
+
+          if (!res.ok) {
+            throw new Error(`History data failed (${res.status}): ${text}`)
+          }
+
+          const json = JSON.parse(text)
+          const historicalTeams = buildHistoricalTeams(json?.rows || [], season.key)
+
+          if (!cancelled) {
+            setTeams(historicalTeams)
+          }
+          return
+        }
 
         const res = await fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`)
         const text = await res.text()
@@ -73,13 +154,18 @@ export default function TeamsPage() {
     return () => {
       cancelled = true
     }
-  }, [season.key])
+  }, [season.key, historical])
+
+  const subtitle = historical
+    ? "Historical teams from the pre-Fantrax database"
+    : "Live teams from the selected Fantrax season"
 
   return (
     <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
       <div style={card}>
         <div style={eyebrow}>Teams</div>
         <h2 style={{ margin: 0 }}>{season.label} teams</h2>
+        <div style={{ color: "#6b7280", marginTop: 8 }}>{subtitle}</div>
       </div>
 
       {loading ? (
@@ -88,49 +174,31 @@ export default function TeamsPage() {
         <div style={errorBox}>{error}</div>
       ) : (
         <div style={grid}>
-          {teams.map((team) => {
-            const teamSlug = slugifyTeamName(team.name)
+          {teams.map((team) => (
+            <Link
+              key={team.id || team.name}
+              to={`/teams/${slugifyTeamName(team.name)}?season=${encodeURIComponent(season.key)}`}
+              style={teamCard}
+            >
+              <div style={teamTopRow}>
+                <TeamLogo teamName={team.name} />
 
-            return (
-              <Link
-                key={team.id}
-                to={`/teams/${teamSlug}`}
-                style={teamCard}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 14,
-                    marginBottom: 12,
-                  }}
-                >
-                  <TeamLogo teamName={team.name} size={72} />
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: "#111827" }}>
+                    {team.name}
+                  </div>
 
-                  <div style={{ minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: "#111827",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {team.name}
-                    </div>
-
-                    <div style={{ color: "#6b7280", marginTop: 6 }}>
-                      {team.shortName || "—"}
-                    </div>
+                  <div style={{ color: "#6b7280", marginTop: 6 }}>
+                    {team.shortName || "—"}
                   </div>
                 </div>
+              </div>
 
-                <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
-                  View team profile →
-                </div>
-              </Link>
-            )
-          })}
+              <div style={{ color: "#f97316", marginTop: 14, fontWeight: 600 }}>
+                View team profile →
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </main>
@@ -161,7 +229,7 @@ const errorBox = {
 
 const grid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
   gap: 16,
 }
 
@@ -172,4 +240,10 @@ const teamCard = {
   border: "1px solid #fed7aa",
   borderRadius: 20,
   padding: 20,
+}
+
+const teamTopRow = {
+  display: "flex",
+  alignItems: "center",
+  gap: 14,
 }
