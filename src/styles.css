@@ -128,3 +128,85 @@ button, select { font: inherit; }
 @media (max-width: 980px) {
   .hero, .grid.cols-3, .grid.cols-2, .team-grid { grid-template-columns: 1fr; }
 }
+
+.constitution-doc h1,
+.constitution-doc h2,
+.constitution-doc h3,
+.constitution-doc h4 {
+  color: #111827;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+}
+
+.constitution-doc p,
+.constitution-doc li {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.constitution-doc ol,
+.constitution-doc ul {
+  margin: 0.75rem 0;
+}
+
+.constitution-doc ol {
+  list-style-position: outside !important;
+  padding-left: 1.75rem !important;
+}
+
+.constitution-doc ul {
+  padding-left: 1.75rem !important;
+}
+
+.constitution-doc > ol {
+  list-style-type: decimal !important;
+}
+
+.constitution-doc ol ol {
+  list-style-type: lower-alpha !important;
+  padding-left: 2rem !important;
+  margin-top: 0.35rem;
+}
+
+.constitution-doc ol ol ol {
+  list-style-type: lower-roman !important;
+  padding-left: 2rem !important;
+}
+
+.constitution-doc ol ol ol ol {
+  list-style-type: decimal !important;
+}
+
+.constitution-doc li {
+  margin: 0.35rem 0;
+}
+
+.constitution-doc li > ol,
+.constitution-doc li > ul {
+  margin-top: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+
+.constitution-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.constitution-doc td,
+.constitution-doc th {
+  border: 1px solid #fed7aa;
+  padding: 0.6rem;
+}
+
+.constitution-doc ol[type="a"] {
+  list-style-type: lower-alpha !important;
+}
+
+.constitution-doc ol[type="i"] {
+  list-style-type: lower-roman !important;
+}
+
+.constitution-doc ol[type="1"] {
+  list-style-type: decimal !important;
+}

@@ -1,14 +1,156 @@
 import { useEffect, useMemo, useState } from "react"
 import { useSeason } from "../context/SeasonContext"
 
+const KNOWN_TITLES = new Set([
+  "Δομή",
+  "Συνθέσεις",
+  "Πρόγραμμα",
+  "Offseason Keepers",
+  "Draft",
+  "Waiver wire/ Free Agency",
+  "Παίκτες 5ετίας",
+  "Trades – Vetos",
+  "Polls",
+  "Tie Brakers",
+  "League Managers",
+  "Manager Veto",
+  "Επίλογος",
+])
+
 function formatValue(value) {
   if (value == null || value === "") return "—"
   return String(value)
 }
 
+function slugifyHeading(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9α-ωάέήίόύώϊΐϋΰ]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+}
+
+function normalizeLine(value = "") {
+  return String(value || "")
+    .replace(/\u00a0/g, " ")
+    .replace(/[ \t]+/g, " ")
+    .trim()
+}
+
+function isNoiseLine(line = "") {
+  const clean = normalizeLine(line).toLowerCase()
+  if (!clean) return true
+
+  return [
+    "publicada con documentos de google",
+    "published using google docs",
+    "actualizado automáticamente cada 5 minutos",
+    "updated automatically every 5 minutes",
+    "denunciar uso inadecuado",
+    "report abuse",
+    "más información",
+    "learn more",
+    "nbarrwstoi-const.docx",
+  ].includes(clean)
+}
+
+function extractConstitutionLines(text = "") {
+  return String(text || "")
+    .split(/\r?\n/)
+    .map((line) => normalizeLine(line))
+    .filter((line) => !isNoiseLine(line))
+}
+
+function isHeadingLine(line = "") {
+  return KNOWN_TITLES.has(normalizeLine(line))
+}
+
+function parseConstitutionSections(text = "") {
+  const lines = extractConstitutionLines(text)
+  if (!lines.length) return []
+
+  const sections = []
+  let currentSection = null
+
+  const flushSection = () => {
+    if (!currentSection) return
+
+    currentSection.items = currentSection.items
+      .map((item) => normalizeLine(item))
+      .filter(Boolean)
+
+    if (currentSection.title && currentSection.items.length) {
+      sections.push(currentSection)
+    }
+
+    currentSection = null
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = normalizeLine(lines[i])
+    if (!line) continue
+
+    if (line.toLowerCase() === "nba arrwstoi league rules and regulations") {
+      continue
+    }
+
+    if (isHeadingLine(line)) {
+      flushSection()
+      currentSection = {
+        id: slugifyHeading(line),
+        title: line,
+        items: [],
+      }
+      continue
+    }
+
+    if (!currentSection) continue
+    currentSection.items.push(line)
+  }
+
+  flushSection()
+  return sections
+}
+
+function ConstitutionMenu({ sections = [] }) {
+  if (!sections.length) return null
+
+  return (
+    <aside style={constitutionMenu}>
+      <div style={constitutionMenuTitle}>Articles</div>
+      <nav style={constitutionMenuList}>
+        {sections.map((section) => (
+          <a key={section.id} href={`#${section.id}`} style={constitutionMenuLink}>
+            {section.title}
+          </a>
+        ))}
+      </nav>
+    </aside>
+  )
+}
+
+function ConstitutionSectionCard({ section }) {
+  return (
+    <section id={section.id} style={constitutionSectionCard}>
+      <h3 style={constitutionSectionTitle}>{section.title}</h3>
+
+      <div style={constitutionItemsWrap}>
+        {section.items.map((item, idx) => (
+          <div key={`${section.id}-${idx}`} style={constitutionItemCard}>
+            <div style={constitutionItemText}>{item}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 export default function LeagueRulesPage() {
   const { season } = useSeason()
+
   const [leagueInfo, setLeagueInfo] = useState(null)
+  const [constitutionText, setConstitutionText] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
@@ -20,22 +162,33 @@ export default function LeagueRulesPage() {
         setLoading(true)
         setError("")
 
-        const res = await fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`)
-        const text = await res.text()
+        const [leagueRes, constitutionRes] = await Promise.all([
+          fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
+          fetch(`/api/constitution`),
+        ])
 
-        if (!res.ok) {
-          throw new Error(`League info failed (${res.status}): ${text}`)
+        const [leagueText, constitutionPlainText] = await Promise.all([
+          leagueRes.text(),
+          constitutionRes.text(),
+        ])
+
+        if (!leagueRes.ok) {
+          throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
         }
 
-        const json = JSON.parse(text)
+        if (!constitutionRes.ok) {
+          throw new Error(`Constitution failed (${constitutionRes.status}): ${constitutionPlainText}`)
+        }
 
         if (!cancelled) {
-          setLeagueInfo(json)
+          setLeagueInfo(JSON.parse(leagueText))
+          setConstitutionText(constitutionPlainText)
         }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Unknown error")
           setLeagueInfo(null)
+          setConstitutionText("")
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -43,15 +196,18 @@ export default function LeagueRulesPage() {
     }
 
     load()
-
     return () => {
       cancelled = true
     }
   }, [season.key])
 
+  const constitutionSections = useMemo(
+    () => parseConstitutionSections(constitutionText),
+    [constitutionText]
+  )
+
   const data = useMemo(() => {
     const rosterInfo = leagueInfo?.rosterInfo || {}
-    const poolSettings = leagueInfo?.poolSettings || {}
     const scoringSystem = leagueInfo?.scoringSystem || {}
 
     const slots = Object.entries(rosterInfo.positionConstraints || {})
@@ -69,16 +225,7 @@ export default function LeagueRulesPage() {
       })) || []
 
     return {
-      leagueName: leagueInfo?.leagueName || "League",
-      seasonYear: leagueInfo?.seasonYear || "—",
-      draftType: leagueInfo?.draftType || leagueInfo?.draftSettings?.draftType || "—",
-      scoringType: scoringSystem?.type || "—",
-      startDate: leagueInfo?.startDate || "—",
-      endDate: leagueInfo?.endDate || "—",
-      maxTotalPlayers: rosterInfo?.maxTotalPlayers ?? "—",
-      maxTotalActivePlayers: rosterInfo?.maxTotalActivePlayers ?? "—",
-      duplicatePlayerType: poolSettings?.duplicatePlayerType ?? "—",
-      playerSourceType: poolSettings?.playerSourceType ?? "—",
+      leagueName: leagueInfo?.leagueName || "League Rules",
       slots,
       categories,
     }
@@ -90,7 +237,7 @@ export default function LeagueRulesPage() {
         <div style={eyebrow}>League Rules</div>
         <h1 style={heroTitle}>{data.leagueName}</h1>
         <p style={heroSub}>
-          {season.label} · Season year {data.seasonYear}
+          Active lineup slots, scoring categories, and constitution.
         </p>
       </section>
 
@@ -102,26 +249,10 @@ export default function LeagueRulesPage() {
         <>
           <section style={section}>
             <div style={sectionHeader}>
-              <h2 style={sectionTitle}>League Overview</h2>
-              <p style={sectionSub}>Core settings for format, pool, and dates.</p>
-            </div>
-
-            <div style={topCardsGrid}>
-              <RuleCard label="Draft Type" value={data.draftType} />
-              <RuleCard label="Scoring Type" value={data.scoringType} />
-              <RuleCard label="Season Start" value={data.startDate} />
-              <RuleCard label="Season End" value={data.endDate} />
-              <RuleCard label="Total Roster Size" value={data.maxTotalPlayers} />
-              <RuleCard label="Active Lineup Size" value={data.maxTotalActivePlayers} />
-              <RuleCard label="Duplicate Players" value={data.duplicatePlayerType} />
-              <RuleCard label="Player Source" value={data.playerSourceType} />
-            </div>
-          </section>
-
-          <section style={section}>
-            <div style={sectionHeader}>
               <h2 style={sectionTitle}>Active Lineup Slots</h2>
-              <p style={sectionSub}>How many active players can be placed in each slot.</p>
+              <p style={sectionSub}>
+                How many active players can be placed in each slot.
+              </p>
             </div>
 
             <div style={slotGrid}>
@@ -153,31 +284,43 @@ export default function LeagueRulesPage() {
               ))}
             </div>
           </section>
+
+          <section style={section}>
+            <div style={sectionHeader}>
+              <h2 style={sectionTitle}>Constitution</h2>
+              <p style={sectionSub}>Synced from the published Google Doc.</p>
+            </div>
+
+            <div style={constitutionLayout}>
+              <ConstitutionMenu sections={constitutionSections} />
+
+              <div style={constitutionContent}>
+                {constitutionSections.length ? (
+                  constitutionSections.map((section) => (
+                    <ConstitutionSectionCard key={section.id} section={section} />
+                  ))
+                ) : (
+                  <div style={emptyBox}>No constitution sections were detected.</div>
+                )}
+              </div>
+            </div>
+          </section>
         </>
       )}
     </main>
   )
 }
 
-function RuleCard({ label, value }) {
-  return (
-    <div style={ruleCard}>
-      <div style={ruleLabel}>{label}</div>
-      <div style={ruleValue}>{formatValue(value)}</div>
-    </div>
-  )
-}
-
 const main = {
-  maxWidth: 1240,
+  maxWidth: 1200,
   margin: "0 auto",
-  padding: "32px 20px 48px",
+  padding: "32px 20px",
 }
 
 const hero = {
   background: "linear-gradient(135deg, #f97316 0%, #fb923c 100%)",
   color: "#ffffff",
-  borderRadius: 28,
+  borderRadius: 24,
   padding: "28px 28px 30px",
   marginBottom: 24,
   boxShadow: "0 18px 40px rgba(249,115,22,0.18)",
@@ -199,150 +342,34 @@ const heroTitle = {
 }
 
 const heroSub = {
-  margin: "10px 0 0",
+  margin: "12px 0 0",
   fontSize: 16,
-  opacity: 0.95,
+  opacity: 0.96,
+  maxWidth: 760,
 }
 
 const section = {
   background: "#ffffff",
   border: "1px solid #fed7aa",
   borderRadius: 24,
-  padding: 24,
-  marginBottom: 22,
+  padding: 20,
+  marginBottom: 24,
 }
 
 const sectionHeader = {
-  marginBottom: 18,
+  marginBottom: 16,
 }
 
 const sectionTitle = {
   margin: 0,
-  fontSize: 24,
+  fontSize: 22,
   color: "#111827",
 }
 
 const sectionSub = {
   margin: "8px 0 0",
   color: "#6b7280",
-  fontSize: 15,
-}
-
-const topCardsGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 14,
-}
-
-const ruleCard = {
-  background: "#fff7ed",
-  border: "1px solid #fed7aa",
-  borderRadius: 20,
-  padding: 18,
-  minHeight: 92,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-}
-
-const ruleLabel = {
-  fontSize: 13,
-  fontWeight: 700,
-  color: "#9a3412",
-  letterSpacing: "0.02em",
-}
-
-const ruleValue = {
-  marginTop: 10,
-  fontSize: 22,
-  fontWeight: 800,
-  color: "#111827",
-  lineHeight: 1.1,
-  wordBreak: "break-word",
-}
-
-const slotGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-  gap: 14,
-}
-
-const slotCard = {
-  background: "#ffffff",
-  border: "1px solid #fed7aa",
-  borderRadius: 20,
-  padding: 18,
-  textAlign: "center",
-  boxShadow: "0 8px 20px rgba(15,23,42,0.04)",
-}
-
-const slotName = {
-  fontSize: 15,
-  fontWeight: 800,
-  color: "#9a3412",
-  marginBottom: 10,
-}
-
-const slotCount = {
-  fontSize: 34,
-  fontWeight: 900,
-  color: "#f97316",
-  lineHeight: 1,
-}
-
-const slotLabel = {
-  marginTop: 8,
-  fontSize: 12,
-  color: "#6b7280",
-  textTransform: "uppercase",
-  letterSpacing: "0.06em",
-}
-
-const catGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-  gap: 14,
-}
-
-const catCard = {
-  background: "#fff7ed",
-  border: "1px solid #fed7aa",
-  borderRadius: 20,
-  padding: 18,
-}
-
-const catTopRow = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: 10,
-  marginBottom: 12,
-}
-
-const catShort = {
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minWidth: 58,
-  padding: "8px 12px",
-  borderRadius: 999,
-  background: "#f97316",
-  color: "#ffffff",
-  fontWeight: 800,
-  fontSize: 13,
-}
-
-const catWeight = {
-  fontSize: 13,
-  fontWeight: 800,
-  color: "#9a3412",
-}
-
-const catName = {
-  fontSize: 17,
-  fontWeight: 700,
-  color: "#111827",
-  lineHeight: 1.25,
+  fontSize: 14,
 }
 
 const loadingBox = {
@@ -350,12 +377,191 @@ const loadingBox = {
   border: "1px solid #fed7aa",
   borderRadius: 20,
   padding: 24,
+  color: "#374151",
 }
 
 const errorBox = {
   background: "#fff7ed",
-  border: "1px solid #fed7aa",
+  border: "1px solid #fdba74",
+  color: "#9a3412",
   borderRadius: 20,
   padding: 24,
+}
+
+const emptyBox = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 18,
+  padding: 18,
+  color: "#6b7280",
+}
+
+const constitutionLayout = {
+  display: "grid",
+  gridTemplateColumns: "280px minmax(0, 1fr)",
+  gap: 20,
+  alignItems: "start",
+}
+
+const constitutionMenu = {
+  position: "sticky",
+  top: 20,
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 18,
+  padding: 16,
+}
+
+const constitutionMenuTitle = {
+  fontSize: 13,
+  fontWeight: 800,
+  textTransform: "uppercase",
+  letterSpacing: "0.06em",
   color: "#9a3412",
+  marginBottom: 12,
+}
+
+const constitutionMenuList = {
+  display: "grid",
+  gap: 8,
+}
+
+const constitutionMenuLink = {
+  display: "block",
+  padding: "10px 12px",
+  borderRadius: 12,
+  background: "#ffffff",
+  border: "1px solid #ffedd5",
+  color: "#374151",
+  fontSize: 14,
+  fontWeight: 600,
+}
+
+const constitutionContent = {
+  display: "grid",
+  gap: 16,
+}
+
+const constitutionSectionCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 18,
+  padding: 20,
+  scrollMarginTop: 24,
+}
+
+const constitutionSectionTitle = {
+  margin: "0 0 14px",
+  fontSize: 20,
+  color: "#111827",
+}
+
+const constitutionItemsWrap = {
+  display: "grid",
+  gap: 10,
+}
+
+const constitutionItemCard = {
+  background: "#ffffff",
+  border: "1px solid #ffedd5",
+  borderRadius: 14,
+  padding: 12,
+}
+
+const constitutionItemText = {
+  color: "#374151",
+  lineHeight: 1.7,
+  fontWeight: 500,
+  fontSize: 15,
+}
+
+const constitutionSubList = {
+  display: "grid",
+  gap: 8,
+  marginTop: 10,
+  paddingLeft: 22,
+}
+
+const constitutionSubItem = {
+  color: "#6b7280",
+  lineHeight: 1.7,
+  borderLeft: "3px solid #fed7aa",
+  paddingLeft: 12,
+}
+
+const slotGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+  gap: 10,
+}
+
+const slotCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 14,
+  padding: 12,
+  textAlign: "center",
+}
+
+const slotName = {
+  fontSize: 12,
+  fontWeight: 800,
+  color: "#9a3412",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+}
+
+const slotCount = {
+  fontSize: 24,
+  lineHeight: 1,
+  fontWeight: 900,
+  color: "#111827",
+  marginTop: 8,
+}
+
+const slotLabel = {
+  fontSize: 11,
+  color: "#6b7280",
+  marginTop: 6,
+}
+
+const catGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+  gap: 10,
+}
+
+const catCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 14,
+  padding: 12,
+}
+
+const catTopRow = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 10,
+  marginBottom: 8,
+}
+
+const catShort = {
+  fontSize: 12,
+  fontWeight: 800,
+  color: "#f97316",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+}
+
+const catWeight = {
+  fontSize: 12,
+  fontWeight: 800,
+  color: "#9a3412",
+}
+
+const catName = {
+  fontSize: 14,
+  fontWeight: 700,
+  color: "#111827",
 }
