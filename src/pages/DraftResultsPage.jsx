@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
+import { SEASONS } from "../config/seasons"
+import { HISTORICAL_DRAFT_RESULTS } from "../config/historicalDraftResults"
 import {
   buildPlayerLookupFromAdp,
   buildPlayerLookupFromCsvRows,
@@ -16,10 +18,11 @@ const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
   import: "default",
 })
-function formatDraftDate(value) {
-  if (!value) return "—"
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+
+
+function isHistoricalSeason(seasonKey) {
+  const seasonMeta = SEASONS.find((s) => s.key === seasonKey)
+  return !seasonMeta?.leagueId
 }
 
 function slugifyPlayerName(value) {
@@ -30,6 +33,109 @@ function slugifyPlayerName(value) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
 }
+
+function normalizeLooseName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['’.]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function getAdpRowName(row) {
+  const raw =
+    row?.name ||
+    row?.playerName ||
+    row?.fullName ||
+    row?.Player ||
+    row?.player?.name ||
+    [row?.firstName, row?.lastName].filter(Boolean).join(" ") ||
+    [row?.first_name, row?.last_name].filter(Boolean).join(" ") ||
+    ""
+
+  return String(raw).trim()
+}
+
+function flipNameOrder(name) {
+  const clean = String(name ?? "").trim()
+  if (!clean) return ""
+
+  if (clean.includes(",")) {
+    return clean
+      .split(",")
+      .map((x) => x.trim())
+      .reverse()
+      .join(" ")
+  }
+
+  const parts = clean.split(/\s+/)
+  if (parts.length < 2) return clean
+  return `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(" ")}`
+}
+
+function findAdpRowByPlayerName(adpRows = [], playerName = "") {
+  const direct = normalizeLooseName(playerName)
+  const flipped = normalizeLooseName(flipNameOrder(playerName))
+
+  if (!direct) return null
+
+  return (
+    adpRows.find((row) => {
+      const rowName = getAdpRowName(row)
+      const normalizedRowName = normalizeLooseName(rowName)
+      const normalizedRowFlipped = normalizeLooseName(flipNameOrder(rowName))
+
+      return (
+        normalizedRowName === direct ||
+        normalizedRowName === flipped ||
+        normalizedRowFlipped === direct ||
+        normalizedRowFlipped === flipped
+      )
+    }) || null
+  )
+}
+
+function normalizeHistoricalDraftResults(rows = [], adpRows = []) {
+  return {
+    draftType: "Historical",
+    draftState: "Completed",
+    startDate: null,
+    endDate: null,
+    draftPicks: rows.map((row) => {
+      const adpRow = findAdpRowByPlayerName(adpRows, row.player)
+
+      return {
+        pick: row.overall,
+        round: row.round,
+        pickInRound: row.pickInRound,
+        time: row.time || "",
+        note: row.note || "",
+        teamId: slugifyTeamName(row.team),
+        playerId: adpRow?.id ? String(adpRow.id) : "",
+        historicalPlayerName: row.player || "",
+        historicalTeamName: row.team || "",
+        historicalPlayerAdp:
+          adpRow?.ADP != null && Number.isFinite(Number(adpRow.ADP))
+            ? Number(adpRow.ADP)
+            : adpRow?.adp != null && Number.isFinite(Number(adpRow.adp))
+            ? Number(adpRow.adp)
+            : null,
+        historicalPlayerPos: adpRow?.pos || adpRow?.position || "",
+      }
+    }),
+  }
+}
+
+function formatDraftDate(value) {
+  if (!value) return "—"
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+}
+
+
 
 function formatPickTimestamp(value) {
   if (!value) return "—"
@@ -79,7 +185,7 @@ function SortableHeader({ label, columnKey, sortConfig, onSort }) {
 }
 
 function TeamLinkCell({ teamId, teamName }) {
-  if (!teamId || !teamName || teamName === "Free Agent") {
+  if (!teamId || !teamName || teamName === "Free Agent" || teamName === "—") {
     return (
       <span
         style={
@@ -102,6 +208,7 @@ function TeamLinkCell({ teamId, teamName }) {
 
 export default function DraftResultsPage() {
   const { season } = useSeason()
+  const historicalSeason = isHistoricalSeason(season.key)
 
   const [draftResults, setDraftResults] = useState(null)
   const [adpRows, setAdpRows] = useState([])
@@ -125,12 +232,35 @@ export default function DraftResultsPage() {
 
     const csvLoader = playerCsvFiles[`../config/playerCsv/${season.key}.csv`]
 
-    const [draftRes, adpRes, rostersRes, period17Res, csvText] = await Promise.all([
+    if (historicalSeason) {
+      const [adpRes, csvText] = await Promise.all([
+        fetch(`/api/adp`),
+        csvLoader ? csvLoader() : Promise.resolve(""),
+      ])
+
+      const adpText = await adpRes.text()
+      if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+
+      const adpJson = JSON.parse(adpText)
+      const manualRows = HISTORICAL_DRAFT_RESULTS[season.key] || []
+
+      if (!cancelled) {
+        setDraftResults(normalizeHistoricalDraftResults(manualRows, adpJson))
+        setAdpRows(adpJson)
+        setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+        setTeamRosters(null)
+        setPeriod17Rosters(null)
+      }
+      return
+    }
+
+    const csvText = csvLoader ? await csvLoader() : ""
+
+    const [draftRes, adpRes, rostersRes, period17Res] = await Promise.all([
       fetch(`/api/draft-results?season=${encodeURIComponent(season.key)}`),
       fetch(`/api/adp`),
       fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=1`),
       fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=17`),
-      csvLoader ? csvLoader() : Promise.resolve(""),
     ])
 
     const [draftText, adpText, rostersText, period17Text] = await Promise.all([
@@ -171,13 +301,14 @@ export default function DraftResultsPage() {
     return () => {
       cancelled = true
     }
-  }, [season.key])
+  }, [season.key, historicalSeason])
 
   const playerLookup = useMemo(() => {
-  const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
-  const adpLookup = buildPlayerLookupFromAdp(adpRows)
-  return mergePlayerLookups(csvLookup, adpLookup)
-}, [playerCsvRows, adpRows])
+    const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
+    const adpLookup = buildPlayerLookupFromAdp(adpRows)
+    return mergePlayerLookups(csvLookup, adpLookup)
+  }, [playerCsvRows, adpRows])
+
   const teamNameMap = useMemo(() => getTeamNameMapFromRosters(teamRosters), [teamRosters])
   const playerTeamMapPeriod17 = useMemo(
     () => getPlayerTeamMapFromRosters(period17Rosters),
@@ -185,34 +316,56 @@ export default function DraftResultsPage() {
   )
 
   const picks = useMemo(() => {
-    const enriched = enrichDraftPicks(draftResults, playerLookup, teamNameMap)
+  if (historicalSeason) {
+    const rawPicks = draftResults?.draftPicks || []
 
-    return enriched.map((pick) => {
-      const period17Team =
-        pick.playerId && playerTeamMapPeriod17.has(String(pick.playerId))
-          ? playerTeamMapPeriod17.get(String(pick.playerId))
-          : "Free Agent"
+    return rawPicks.map((pick) => ({
+      ...pick,
+      teamName: pick.historicalTeamName || pick.teamId || "—",
+      playerName: pick.historicalPlayerName || "No selection",
+      playerPos: pick.historicalPlayerPos || "",
+      playerAdp: pick.historicalPlayerAdp,
+      madePick: Boolean(pick.historicalPlayerName),
+      period17Team: "—",
+      period17TeamId: null,
+    }))
+  }
 
-      let period17TeamId = null
-      if (pick.playerId && period17Rosters?.rosters) {
-        for (const [teamId, teamData] of Object.entries(period17Rosters.rosters)) {
-          const found = (teamData?.rosterItems || []).some(
-            (item) => String(item?.id) === String(pick.playerId)
-          )
-          if (found) {
-            period17TeamId = teamId
-            break
-          }
+  const enriched = enrichDraftPicks(draftResults, playerLookup, teamNameMap)
+
+  return enriched.map((pick) => {
+    const period17Team =
+      pick.playerId && playerTeamMapPeriod17.has(String(pick.playerId))
+        ? playerTeamMapPeriod17.get(String(pick.playerId))
+        : "Free Agent"
+
+    let period17TeamId = null
+    if (pick.playerId && period17Rosters?.rosters) {
+      for (const [teamId, teamData] of Object.entries(period17Rosters.rosters)) {
+        const found = (teamData?.rosterItems || []).some(
+          (item) => String(item?.id) === String(pick.playerId)
+        )
+        if (found) {
+          period17TeamId = teamId
+          break
         }
       }
+    }
 
-      return {
-        ...pick,
-        period17Team,
-        period17TeamId,
-      }
-    })
-  }, [draftResults, playerLookup, teamNameMap, playerTeamMapPeriod17, period17Rosters])
+    return {
+      ...pick,
+      period17Team,
+      period17TeamId,
+    }
+  })
+}, [
+  historicalSeason,
+  draftResults,
+  playerLookup,
+  teamNameMap,
+  playerTeamMapPeriod17,
+  period17Rosters,
+])
 
   const availableRounds = useMemo(() => {
     return Array.from(new Set(picks.map((p) => p.round))).sort((a, b) => a - b)
@@ -229,7 +382,7 @@ export default function DraftResultsPage() {
     const map = new Map()
 
     for (const pick of filteredPicks) {
-      const key = pick.teamId || "unknown"
+      const key = pick.teamId || pick.teamName || "unknown"
       if (!map.has(key)) {
         map.set(key, {
           teamId: key,
@@ -393,24 +546,29 @@ export default function DraftResultsPage() {
                         <td style={td}>{pick.round}</td>
                         <td style={td}>{pick.pickInRound}</td>
                         <td style={td}>
-                      <div style={{ fontWeight: 700 }}>
-                        {pick.playerId ? (
-                          <Link
-                            to={`/players/${slugifyPlayerName(pick.playerName)}`}
-                            style={teamLink}
-                          >
-                            {pick.playerName}
-                          </Link>
-                        ) : (
-                          pick.playerName
-                        )}
-                      </div>
-                      {!pick.madePick && (
-                        <div style={{ fontSize: 12, color: "#9a3412" }}>
-                          No player attached
-                        </div>
-                      )}
-                    </td>
+                          <div style={{ fontWeight: 700 }}>
+                            {pick.playerName ? (
+                              <Link
+                                to={`/players/${slugifyPlayerName(pick.playerName)}`}
+                                style={teamLink}
+                              >
+                                {pick.playerName}
+                              </Link>
+                            ) : (
+                              "—"
+                            )}
+                          </div>
+                          {!pick.madePick && (
+                            <div style={{ fontSize: 12, color: "#9a3412" }}>
+                              No player attached
+                            </div>
+                          )}
+                          {pick.note ? (
+                            <div style={{ fontSize: 12, color: "#9a3412", marginTop: 4 }}>
+                              {pick.note}
+                            </div>
+                          ) : null}
+                        </td>
                         <td style={td}>{pick.playerPos || "—"}</td>
                         <td style={td}>
                           {typeof pick.playerAdp === "number" ? pick.playerAdp.toFixed(2) : "—"}
@@ -459,12 +617,28 @@ export default function DraftResultsPage() {
                               <td style={td}>#{pick.pick}</td>
                               <td style={td}>R{pick.round}.{pick.pickInRound}</td>
                               <td style={td}>
-                                <div style={{ fontWeight: 700 }}>{pick.playerName}</div>
+                                <div style={{ fontWeight: 700 }}>
+                                  {pick.playerName ? (
+                                    <Link
+                                      to={`/players/${slugifyPlayerName(pick.playerName)}`}
+                                      style={teamLink}
+                                    >
+                                      {pick.playerName}
+                                    </Link>
+                                  ) : (
+                                    "—"
+                                  )}
+                                </div>
                                 {!pick.madePick && (
                                   <div style={{ fontSize: 12, color: "#9a3412" }}>
                                     No selection
                                   </div>
                                 )}
+                                {pick.note ? (
+                                  <div style={{ fontSize: 12, color: "#9a3412", marginTop: 4 }}>
+                                    {pick.note}
+                                  </div>
+                                ) : null}
                               </td>
                               <td style={td}>{pick.playerPos || "—"}</td>
                               <td style={td}>

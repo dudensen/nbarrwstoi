@@ -10,6 +10,8 @@ import {
   decodeMaybeBrokenText,
 } from "../utils/fantrax"
 import { SEASONS } from "../config/seasons"
+import { canonicalTeamName } from "../utils/history"
+import { HISTORICAL_DRAFT_RESULTS } from "../config/historicalDraftResults"
 
 import {
   CONTRACTS_CSV_URL,
@@ -17,11 +19,12 @@ import {
   normalizeContractPlayerName,
 } from "../utils/contracts"
 
-
-
 const LATEST_SEASON =
   SEASONS.find((s) => s.isCurrent) ||
   SEASONS[0]
+
+const HISTORICAL_TRADES_SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbbhrj0UcAR4RG2zZgLxshUbsJy_YOTI4KNiTapBGJnMrY97kJqZEMz9q1bf4bSmglC2XkJvDhHbTW/pub?gid=0&single=true&output=csv"
 
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
@@ -300,6 +303,27 @@ function normalizeDraftRows(draftResults, teamNameMap, mergedPlayerLookup, seaso
   })
 }
 
+
+function normalizeHistoricalDraftRows(rows = [], seasonKey, adpRows = []) {
+  return rows.map((row) => {
+    const adpRow = findAdpRowByPlayerName(adpRows, row.player)
+
+    return {
+      seasonKey,
+      seasonLabel: seasonKey,
+      teamId: slugifyTeamName(canonicalTeamName(row.team)),
+      teamName: canonicalTeamName(row.team),
+      playerId: adpRow?.id ? String(adpRow.id) : "",
+      playerName: adpRow?.name || row.player || "",
+      playerPos: adpRow?.pos || adpRow?.position || "",
+      pick: row.overall ?? null,
+      round: row.round ?? null,
+      pickInRound: row.pickInRound ?? null,
+      time: row.time ?? null,
+    }
+  })
+}
+
 function findAdpRowForPlayer(adpRows, player) {
   if (!player) return null
 
@@ -307,10 +331,338 @@ function findAdpRowForPlayer(adpRows, player) {
   const playerSlug = slugifyPlayerName(player.name || "")
 
   return (
-    adpRows.find((row) => String(row?.id || row?.playerId || row?.player?.id || "") === playerId) ||
-    adpRows.find((row) => slugifyPlayerName(getPlayerNameFromAnyRow(row)) === playerSlug) ||
-    null
+  adpRows.find((row) => String(row?.id || row?.playerId || row?.player?.id || "") === playerId) ||
+  adpRows.find((row) => slugifyPlayerName(getPlayerNameFromAnyRow(row)) === playerSlug) ||
+  findAdpRowByPlayerName(adpRows, player.name || "") ||
+  null
+)
+}
+
+function normalizeLooseName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['’.]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function getAdpRowName(row) {
+  const raw =
+    row?.name ||
+    row?.playerName ||
+    row?.fullName ||
+    row?.Player ||
+    row?.player?.name ||
+    [row?.firstName, row?.lastName].filter(Boolean).join(" ") ||
+    [row?.first_name, row?.last_name].filter(Boolean).join(" ") ||
+    ""
+
+  return String(raw).trim()
+}
+
+function flipNameOrder(name) {
+  const clean = String(name ?? "").trim()
+  if (!clean) return ""
+
+  if (clean.includes(",")) {
+    return clean
+      .split(",")
+      .map((x) => x.trim())
+      .reverse()
+      .join(" ")
+  }
+
+  const parts = clean.split(/\s+/)
+  if (parts.length < 2) return clean
+  return `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(" ")}`
+}
+
+function findAdpRowByPlayerName(adpRows = [], playerName = "") {
+  const direct = normalizeLooseName(playerName)
+  const flipped = normalizeLooseName(flipNameOrder(playerName))
+
+  if (!direct) return null
+
+  return (
+    adpRows.find((row) => {
+      const rowName = getAdpRowName(row)
+      const normalizedRowName = normalizeLooseName(rowName)
+      const normalizedRowFlipped = normalizeLooseName(flipNameOrder(rowName))
+
+      return (
+        normalizedRowName === direct ||
+        normalizedRowName === flipped ||
+        normalizedRowFlipped === direct ||
+        normalizedRowFlipped === flipped
+      )
+    }) || null
   )
+}
+
+function parseCsvMatrix(text = "") {
+  const rows = []
+  let current = []
+  let value = ""
+  let inQuotes = false
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i]
+
+    if (char === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        value += '"'
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (char === "," && !inQuotes) {
+      current.push(value)
+      value = ""
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      if (char === "\r" && text[i + 1] === "\n") i++
+      current.push(value)
+      rows.push(current)
+      current = []
+      value = ""
+    } else {
+      value += char
+    }
+  }
+
+  if (value.length || current.length) {
+    current.push(value)
+    rows.push(current)
+  }
+
+  return rows
+}
+
+function normalizeHeader(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function headerIndex(headerMap, candidates = []) {
+  for (const candidate of candidates) {
+    const idx = headerMap.get(normalizeHeader(candidate))
+    if (Number.isInteger(idx)) return idx
+  }
+  return -1
+}
+
+function splitAssetsCell(value) {
+  return String(value ?? "")
+    .split(/\r?\n|;|,|\u2022/)
+    .map((item) => decodeMaybeBrokenText(String(item || "").trim()))
+    .filter(Boolean)
+}
+
+function seasonLabelToKey(value) {
+  const raw = String(value ?? "").trim()
+  if (!raw) return ""
+
+  const direct = raw.match(/^(\d{4})-(\d{2})$/)
+  if (direct) return raw
+
+  const slash = raw.match(/^(\d{4})\/(\d{2,4})$/)
+  if (slash) {
+    const start = slash[1]
+    const end = slash[2].slice(-2)
+    return `${start}-${end}`
+  }
+
+  const year = raw.match(/^(\d{4})$/)
+  if (year) {
+    const endYear = Number(year[1])
+    return `${endYear - 1}-${String(endYear).slice(-2)}`
+  }
+
+  return raw
+}
+
+function seasonKeyFromDate(value) {
+  const text = String(value ?? "").trim()
+  if (!text) return ""
+
+  const date = new Date(text)
+  if (Number.isNaN(date.getTime())) return ""
+
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const seasonStartYear = month >= 7 ? year : year - 1
+  return `${seasonStartYear}-${String(seasonStartYear + 1).slice(-2)}`
+}
+
+function normalizeSheetPlayerStub(name, direction) {
+  return {
+    id: "",
+    playerId: "",
+    name: decodeMaybeBrokenText(name || ""),
+    playerName: decodeMaybeBrokenText(name || ""),
+    short_name: decodeMaybeBrokenText(name || ""),
+    type: direction,
+    pos_short_name: "",
+    team_name: "",
+  }
+}
+
+function normalizeHistoricalTradeRows(csvText, player) {
+  if (!player) return []
+
+  const matrix = parseCsvMatrix(csvText)
+  if (!Array.isArray(matrix) || matrix.length < 2) return []
+
+  const headerRow = matrix[0] || []
+  const bodyRows = matrix.slice(1).filter((row) =>
+    Array.isArray(row) && row.some((cell) => String(cell ?? "").trim())
+  )
+
+  const headerMap = new Map(
+    headerRow.map((cell, index) => [normalizeHeader(cell), index])
+  )
+
+  const dateIdx = headerIndex(headerMap, [
+    "date",
+    "trade date",
+  ])
+
+  const teamAIdx = headerIndex(headerMap, [
+    "team a",
+  ])
+
+  const teamBIdx = headerIndex(headerMap, [
+    "team b",
+  ])
+
+  const sentIdx = headerIndex(headerMap, [
+    "team a assets",
+  ])
+
+  const receivedIdx = headerIndex(headerMap, [
+    "team b assets",
+  ])
+
+  const vetoIdx = headerIndex(headerMap, [
+    "veto",
+  ])
+
+  return bodyRows.flatMap((row, index) => {
+    const dateRaw = dateIdx >= 0 ? row[dateIdx] : ""
+    const teamARaw = teamAIdx >= 0 ? row[teamAIdx] : ""
+    const teamBRaw = teamBIdx >= 0 ? row[teamBIdx] : ""
+    const sentRaw = sentIdx >= 0 ? row[sentIdx] : ""
+    const receivedRaw = receivedIdx >= 0 ? row[receivedIdx] : ""
+    const vetoRaw = vetoIdx >= 0 ? row[vetoIdx] : ""
+
+    const season =
+      seasonKeyFromDate(dateRaw) ||
+      "2018-19"
+
+    const teamA = canonicalTeamName(decodeMaybeBrokenText(String(teamARaw || "").trim()))
+    const teamB = canonicalTeamName(decodeMaybeBrokenText(String(teamBRaw || "").trim()))
+
+    const teamAAssets = splitAssetsCell(sentRaw)
+    const teamBAssets = splitAssetsCell(receivedRaw)
+
+    const sideATraded = teamAAssets
+  .map((name) => normalizeSheetPlayerStub(name, "TRADED"))
+  .filter((p) => transactionPlayerMatches(p, player))
+
+const sideAAcquired = teamBAssets
+  .map((name) => normalizeSheetPlayerStub(name, "ACQUIRED"))
+  .filter((p) => transactionPlayerMatches(p, player))
+
+const sideBTraded = teamBAssets
+  .map((name) => normalizeSheetPlayerStub(name, "TRADED"))
+  .filter((p) => transactionPlayerMatches(p, player))
+
+const sideBAcquired = teamAAssets
+  .map((name) => normalizeSheetPlayerStub(name, "ACQUIRED"))
+  .filter((p) => transactionPlayerMatches(p, player))
+
+    const rows = []
+
+    if (sideATraded.length > 0) {
+  rows.push({
+    id: `sheet-${season}-${index}-a-traded`,
+    season,
+    date: String(dateRaw || "").trim() || "—",
+    types: ["TRADE"],
+    teamId: null,
+    teamName: teamA || "—",
+    matchedPlayers: sideATraded,
+    tradeDetail: {
+      teamA,
+      teamB,
+      teamAAssets,
+      teamBAssets,
+      veto: String(vetoRaw || "").trim(),
+    },
+  })
+} else if (sideAAcquired.length > 0) {
+  rows.push({
+    id: `sheet-${season}-${index}-a-acquired`,
+    season,
+    date: String(dateRaw || "").trim() || "—",
+    types: ["TRADE"],
+    teamId: null,
+    teamName: teamA || "—",
+    matchedPlayers: sideAAcquired,
+    tradeDetail: {
+      teamA,
+      teamB,
+      teamAAssets,
+      teamBAssets,
+      veto: String(vetoRaw || "").trim(),
+    },
+  })
+}
+
+if (sideBTraded.length > 0) {
+  rows.push({
+    id: `sheet-${season}-${index}-b-traded`,
+    season,
+    date: String(dateRaw || "").trim() || "—",
+    types: ["TRADE"],
+    teamId: null,
+    teamName: teamB || "—",
+    matchedPlayers: sideBTraded,
+    tradeDetail: {
+      teamA,
+      teamB,
+      teamAAssets,
+      teamBAssets,
+      veto: String(vetoRaw || "").trim(),
+    },
+  })
+} else if (sideBAcquired.length > 0) {
+  rows.push({
+    id: `sheet-${season}-${index}-b-acquired`,
+    season,
+    date: String(dateRaw || "").trim() || "—",
+    types: ["TRADE"],
+    teamId: null,
+    teamName: teamB || "—",
+    matchedPlayers: sideBAcquired,
+    tradeDetail: {
+      teamA,
+      teamB,
+      teamAAssets,
+      teamBAssets,
+      veto: String(vetoRaw || "").trim(),
+    },
+  })
+}
+    return rows
+  })
 }
 
 function TeamLinkCell({ teamId, teamName, seasonKey }) {
@@ -349,6 +701,68 @@ function DetailRow({ label, value }) {
   )
 }
 
+function TradeDetailBlock({ detail }) {
+  if (!detail) return null
+
+  return (
+    <div
+      style={{
+        marginTop: 12,
+        background: "#ffffff",
+        border: "1px solid #ffedd5",
+        borderRadius: 14,
+        padding: 14,
+      }}
+    >
+      <div style={{ fontWeight: 800, color: "#9a3412", marginBottom: 10 }}>
+        Full Trade
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 12,
+        }}
+      >
+        <div>
+          <div style={{ fontWeight: 800, marginBottom: 8 }}>{detail.teamA}</div>
+          <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 6 }}>Sent:</div>
+          <div style={{ display: "grid", gap: 6 }}>
+            {detail.teamAAssets?.length ? (
+              detail.teamAAssets.map((asset, idx) => (
+                <div key={`a-${idx}`} style={{ color: "#111827" }}>{asset}</div>
+              ))
+            ) : (
+              <div style={{ color: "#6b7280" }}>—</div>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontWeight: 800, marginBottom: 8 }}>{detail.teamB}</div>
+          <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 6 }}>Sent:</div>
+          <div style={{ display: "grid", gap: 6 }}>
+            {detail.teamBAssets?.length ? (
+              detail.teamBAssets.map((asset, idx) => (
+                <div key={`b-${idx}`} style={{ color: "#111827" }}>{asset}</div>
+              ))
+            ) : (
+              <div style={{ color: "#6b7280" }}>—</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {detail.veto ? (
+        <div style={{ marginTop: 12, color: "#6b7280", fontSize: 14 }}>
+          Veto: {detail.veto}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export default function PlayerDetailPage() {
   const { playerSlug } = useParams()
 
@@ -376,9 +790,9 @@ export default function PlayerDetailPage() {
         })
 
         const contractsPromise = fetch(CONTRACTS_CSV_URL).then(async (res) => {
-        const text = await res.text()
-        if (!res.ok) throw new Error(`Contracts sheet failed (${res.status}): ${text}`)
-        return parseContractsCsv(text)
+          const text = await res.text()
+          if (!res.ok) throw new Error(`Contracts sheet failed (${res.status}): ${text}`)
+          return parseContractsCsv(text)
         })
 
         const currentRostersPromise = fetch(
@@ -387,6 +801,12 @@ export default function PlayerDetailPage() {
           const text = await res.text()
           if (!res.ok) throw new Error(`Current season rosters failed (${res.status}): ${text}`)
           return JSON.parse(text)
+        })
+
+        const historicalTradesPromise = fetch(HISTORICAL_TRADES_SHEET_CSV_URL).then(async (res) => {
+          const text = await res.text()
+          if (!res.ok) throw new Error(`Historical trades sheet failed (${res.status}): ${text}`)
+          return text
         })
 
         const csvPromises = Object.entries(playerCsvFiles).map(async ([path, loader]) => {
@@ -403,19 +823,43 @@ export default function PlayerDetailPage() {
           }))
         })
 
-        const seasonPromises = SEASONS
-            .filter((seasonEntry) => seasonEntry.leagueId)
-            .map(async (seasonEntry) => {
-          const [draftRes, rostersRes, transactionsRes] = await Promise.all([
+        const seasonPromises = SEASONS.map(async (seasonEntry) => {
+          const transactionsRes = await fetch(
+            `/data/transactions-${encodeURIComponent(seasonEntry.key)}.json`
+          ).catch(() => null)
+
+          let transactionsText = ""
+          if (transactionsRes) {
+            transactionsText = await transactionsRes.text()
+          }
+
+          let transactionsJson = []
+          if (transactionsRes?.ok && String(transactionsText || "").trim()) {
+            try {
+              transactionsJson = JSON.parse(transactionsText)
+            } catch {
+              transactionsJson = []
+            }
+          }
+
+          if (!seasonEntry.leagueId) {
+            return {
+              seasonKey: seasonEntry.key,
+              seasonLabel: seasonEntry.label,
+              draftResults: { draftPicks: [] },
+              teamNameMap: new Map(),
+              transactionsJson,
+            }
+          }
+
+          const [draftRes, rostersRes] = await Promise.all([
             fetch(`/api/draft-results?season=${encodeURIComponent(seasonEntry.key)}`),
             fetch(`/api/team-rosters?season=${encodeURIComponent(seasonEntry.key)}&period=1`),
-            fetch(`/data/transactions-${encodeURIComponent(seasonEntry.key)}.json`),
           ])
 
-          const [draftText, rostersText, transactionsText] = await Promise.all([
+          const [draftText, rostersText] = await Promise.all([
             draftRes.text(),
             rostersRes.text(),
-            transactionsRes.text(),
           ])
 
           if (!draftRes.ok) {
@@ -429,15 +873,6 @@ export default function PlayerDetailPage() {
           const rosters = JSON.parse(rostersText)
           const teamNameMap = getTeamNameMapFromRosters(rosters)
 
-          let transactionsJson = []
-          if (transactionsRes.ok && String(transactionsText || "").trim()) {
-            try {
-              transactionsJson = JSON.parse(transactionsText)
-            } catch {
-              transactionsJson = []
-            }
-          }
-
           return {
             seasonKey: seasonEntry.key,
             seasonLabel: seasonEntry.label,
@@ -447,12 +882,20 @@ export default function PlayerDetailPage() {
           }
         })
 
-        const [adpRowsRaw, currentRosters, csvGroups, seasonData, contractsRows] = await Promise.all([
-        adpPromise,
-        currentRostersPromise,
-        Promise.all(csvPromises),
-        Promise.all(seasonPromises),
-        contractsPromise,
+        const [
+          adpRowsRaw,
+          currentRosters,
+          historicalTradesCsv,
+          csvGroups,
+          seasonData,
+          contractsRows,
+        ] = await Promise.all([
+          adpPromise,
+          currentRostersPromise,
+          historicalTradesPromise,
+          Promise.all(csvPromises),
+          Promise.all(seasonPromises),
+          contractsPromise,
         ])
 
         const adpRows = Array.isArray(adpRowsRaw) ? adpRowsRaw : []
@@ -473,15 +916,21 @@ export default function PlayerDetailPage() {
 
         const mergedLookup = mergePlayerLookups(csvLookup, adpLookup)
 
-        const draftRows = seasonData.flatMap((seasonBlock) =>
-          normalizeDraftRows(
-            seasonBlock.draftResults,
-            seasonBlock.teamNameMap,
-            mergedLookup,
-            seasonBlock.seasonKey,
-            seasonBlock.seasonLabel
-          )
-        )
+        const fantraxDraftRows = seasonData.flatMap((seasonBlock) =>
+  normalizeDraftRows(
+    seasonBlock.draftResults,
+    seasonBlock.teamNameMap,
+    mergedLookup,
+    seasonBlock.seasonKey,
+    seasonBlock.seasonLabel
+  )
+)
+
+const historicalDraftRows = Object.entries(HISTORICAL_DRAFT_RESULTS).flatMap(
+  ([seasonKey, rows]) => normalizeHistoricalDraftRows(rows, seasonKey, adpRows)
+)
+
+const draftRows = [...fantraxDraftRows, ...historicalDraftRows]
 
         const resolvedPlayer = findPlayerBySlug(
           playerSlug,
@@ -494,15 +943,23 @@ export default function PlayerDetailPage() {
           throw new Error("Player not found.")
         }
 
-        const normalizedCareer = sortTransactionsDesc(
-          seasonData.flatMap((seasonBlock) =>
-            normalizeTransactionRows(
-              seasonBlock.transactionsJson,
-              resolvedPlayer,
-              seasonBlock.seasonKey
-            )
+        const fantraxCareer = seasonData.flatMap((seasonBlock) =>
+          normalizeTransactionRows(
+            seasonBlock.transactionsJson,
+            resolvedPlayer,
+            seasonBlock.seasonKey
           )
         )
+
+        const historicalTradeCareer = normalizeHistoricalTradeRows(
+          historicalTradesCsv,
+          resolvedPlayer
+        )
+
+        const normalizedCareer = sortTransactionsDesc([
+          ...fantraxCareer,
+          ...historicalTradeCareer,
+        ])
 
         if (!cancelled) {
           setCurrentAdpRows(adpRows)
@@ -534,33 +991,33 @@ export default function PlayerDetailPage() {
   }, [playerSlug])
 
   const player = useMemo(() => {
-  return findPlayerBySlug(playerSlug, currentAdpRows, historicalCsvRows, allDraftRows)
-}, [playerSlug, currentAdpRows, historicalCsvRows, allDraftRows])
+    return findPlayerBySlug(playerSlug, currentAdpRows, historicalCsvRows, allDraftRows)
+  }, [playerSlug, currentAdpRows, historicalCsvRows, allDraftRows])
 
-const playerContract = useMemo(() => {
-  if (!player) return null
+  const playerContract = useMemo(() => {
+    if (!player) return null
 
-  const directTarget = normalizeContractPlayerName(player.name)
+    const directTarget = normalizeContractPlayerName(player.name)
 
-  const flippedName = player.name?.includes(",")
-    ? player.name
-        .split(",")
-        .map((x) => x.trim())
-        .reverse()
-        .join(" ")
-    : ""
+    const flippedName = player.name?.includes(",")
+      ? player.name
+          .split(",")
+          .map((x) => x.trim())
+          .reverse()
+          .join(" ")
+      : ""
 
-  const flippedTarget = normalizeContractPlayerName(flippedName)
+    const flippedTarget = normalizeContractPlayerName(flippedName)
 
-  return (
-    contracts.find((row) => {
-      const rowName = normalizeContractPlayerName(row.player)
-      return rowName === directTarget || rowName === flippedTarget
-    }) || null
-  )
-}, [contracts, player])
+    return (
+      contracts.find((row) => {
+        const rowName = normalizeContractPlayerName(row.player)
+        return rowName === directTarget || rowName === flippedTarget
+      }) || null
+    )
+  }, [contracts, player])
 
-const nameParts = useMemo(() => splitName(player?.name || ""), [player])
+  const nameParts = useMemo(() => splitName(player?.name || ""), [player])
 
   const currentAdpRow = useMemo(() => {
     return findAdpRowForPlayer(currentAdpRows, player)
@@ -603,8 +1060,7 @@ const nameParts = useMemo(() => splitName(player?.name || ""), [player])
     return matches[0] || null
   }, [player, allDraftRows])
 
-  const earliestTrackedSeason =
-  SEASONS.filter((s) => s.leagueId).slice(-1)[0]?.label || "2020-21"
+  const earliestTrackedSeason = SEASONS[SEASONS.length - 1]?.label || "2020-21"
 
   const draftInfoUnavailable = !originalDraft && Boolean(player)
 
@@ -660,17 +1116,17 @@ const nameParts = useMemo(() => splitName(player?.name || ""), [player])
 
       <section style={section}>
         <div style={summaryGrid}>
-            <StatCard label="First Name" value={nameParts.firstName} />
-            <StatCard label="Last Name" value={nameParts.lastName} />
-            <StatCard label="Position" value={player.pos || "—"} />
-            <StatCard
+          <StatCard label="First Name" value={nameParts.firstName} />
+          <StatCard label="Last Name" value={nameParts.lastName} />
+          <StatCard label="Position" value={player.pos || "—"} />
+          <StatCard
             label="ADP"
             value={typeof currentAdpValue === "number" ? currentAdpValue.toFixed(2) : "—"}
-            />
-            <StatCard label="Current Team" value={currentFantasyTeam} />
-            <StatCard label="Contract Expiry" value={playerContract?.expiryYear ?? "—"} />
+          />
+          <StatCard label="Current Team" value={currentFantasyTeam} />
+          <StatCard label="Contract Expiry" value={playerContract?.expiryYear ?? "—"} />
         </div>
-        </section>
+      </section>
 
       <section style={section}>
         <div style={sectionTop}>
@@ -753,28 +1209,30 @@ const nameParts = useMemo(() => splitName(player?.name || ""), [player])
                 </div>
 
                 <div style={transactionPlayers}>
-                  {tx.matchedPlayers.map((p, idx) => (
-                    <div key={`${tx.id}-${p.id || idx}-${p.type || "x"}`} style={transactionPlayerRow}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                        <span
-                          style={{
-                            ...playerTypeBadge,
-                            color: playerTypeColor(p.type),
-                            borderColor: playerTypeColor(p.type),
-                          }}
-                        >
-                          {p.type || "—"}
-                        </span>
-                        <span style={transactionPlayerName}>
-                          {decodeMaybeBrokenText(p.name || p.playerName || "—")}
-                        </span>
-                        <span style={transactionPlayerMeta}>
-                          {p.pos_short_name || "—"} · {decodeMaybeBrokenText(p.team_name || "—")}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+  {tx.matchedPlayers.map((p, idx) => (
+    <div key={`${tx.id}-${p.id || idx}-${p.type || "x"}`} style={transactionPlayerRow}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <span
+          style={{
+            ...playerTypeBadge,
+            color: playerTypeColor(p.type),
+            borderColor: playerTypeColor(p.type),
+          }}
+        >
+          {p.type || "—"}
+        </span>
+        <span style={transactionPlayerName}>
+          {decodeMaybeBrokenText(p.name || p.playerName || "—")}
+        </span>
+        <span style={transactionPlayerMeta}>
+          {p.pos_short_name || "—"} · {decodeMaybeBrokenText(p.team_name || "—")}
+        </span>
+      </div>
+    </div>
+  ))}
+</div>
+
+{tx.tradeDetail ? <TradeDetailBlock detail={tx.tradeDetail} /> : null}
               </div>
             ))}
           </div>

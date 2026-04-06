@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useSeason } from "../context/SeasonContext"
 import { SEASONS } from "../config/seasons"
+import { HISTORICAL_DRAFT_RESULTS } from "../config/historicalDraftResults"
 import {
   decodeMaybeBrokenText,
   getTeamMatchups,
@@ -33,6 +34,8 @@ const LATEST_SEASON =
 const PLAYOFFS_SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/1DEXCIZjzFP6WZUM0LoPP_LVjC1RVFYkTV3gizVxd0ps/export?format=csv&gid=0"
 
+
+
 function buildGoogleSheetCsvUrl(sheetId, gid) {
   return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
 }
@@ -49,7 +52,6 @@ function normalizeName(value) {
     .replace(/\s+/g, " ")
 }
 
-
 function toNumberOrNull(value) {
   const n = Number(String(value ?? "").replace(",", "."))
   return Number.isFinite(n) ? n : null
@@ -60,7 +62,6 @@ function getSeasonEndYear(seasonKey) {
   if (!m) return null
   return Number(String(m[1]).slice(0, 2) + m[2])
 }
-
 
 function isHistoricalSeason(season) {
   return !season?.leagueId
@@ -74,9 +75,9 @@ function buildChampionMapFromSheet(csvText = "") {
   const rowsByYear = new Map()
 
   for (const row of dataRows) {
-    const year = toNumberOrNull(row?.[0]) // col A
-    const phase = normalizeName(row?.[1]) // col B
-    const roundLabel = normalizeName(row?.[2]) // col C
+    const year = toNumberOrNull(row?.[0])
+    const phase = normalizeName(row?.[1])
+    const roundLabel = normalizeName(row?.[2])
 
     if (!year || phase !== "playoffs" || roundLabel !== "final") continue
 
@@ -88,19 +89,19 @@ function buildChampionMapFromSheet(csvText = "") {
 
   for (const [year, finalRows] of rowsByYear.entries()) {
     const championRow =
-      finalRows.find((row) => toNumberOrNull(row?.[6]) === 1) || null // col G
+      finalRows.find((row) => toNumberOrNull(row?.[6]) === 1) || null
 
     const runnerUpRow =
-      finalRows.find((row) => toNumberOrNull(row?.[6]) === 0) || null // col G
+      finalRows.find((row) => toNumberOrNull(row?.[6]) === 0) || null
 
     if (!championRow) continue
 
     const championTeam = canonicalTeamName(
-      decodeMaybeBrokenText(s(championRow?.[4])) // col E
+      decodeMaybeBrokenText(s(championRow?.[4]))
     )
 
     const runnerUpTeam = canonicalTeamName(
-      decodeMaybeBrokenText(s(runnerUpRow?.[4])) // col E
+      decodeMaybeBrokenText(s(runnerUpRow?.[4]))
     )
 
     if (!championTeam) continue
@@ -410,6 +411,69 @@ function slugifyPlayerName(value) {
     .replace(/^-+|-+$/g, "")
 }
 
+function normalizeLooseName(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/['’.]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function getAdpRowName(row) {
+  const raw =
+    row?.name ||
+    row?.playerName ||
+    row?.fullName ||
+    row?.Player ||
+    row?.player?.name ||
+    [row?.firstName, row?.lastName].filter(Boolean).join(" ") ||
+    [row?.first_name, row?.last_name].filter(Boolean).join(" ") ||
+    ""
+
+  return String(raw).trim()
+}
+
+function flipNameOrder(name) {
+  const clean = String(name ?? "").trim()
+  if (!clean) return ""
+
+  if (clean.includes(",")) {
+    return clean
+      .split(",")
+      .map((x) => x.trim())
+      .reverse()
+      .join(" ")
+  }
+
+  const parts = clean.split(/\s+/)
+  if (parts.length < 2) return clean
+  return `${parts[parts.length - 1]}, ${parts.slice(0, -1).join(" ")}`
+}
+
+function findAdpRowByPlayerName(adpRows = [], playerName = "") {
+  const direct = normalizeLooseName(playerName)
+  const flipped = normalizeLooseName(flipNameOrder(playerName))
+
+  if (!direct) return null
+
+  return (
+    adpRows.find((row) => {
+      const rowName = getAdpRowName(row)
+      const normalizedRowName = normalizeLooseName(rowName)
+      const normalizedRowFlipped = normalizeLooseName(flipNameOrder(rowName))
+
+      return (
+        normalizedRowName === direct ||
+        normalizedRowName === flipped ||
+        normalizedRowFlipped === direct ||
+        normalizedRowFlipped === flipped
+      )
+    }) || null
+  )
+}
 
 function normalizeDraftRows(draftResults, teamNameMap, mergedPlayerLookup, seasonKey, seasonLabel) {
   const picks = Array.isArray(draftResults?.draftPicks) ? draftResults.draftPicks : []
@@ -445,6 +509,32 @@ function normalizeDraftRows(draftResults, teamNameMap, mergedPlayerLookup, seaso
   })
 }
 
+function normalizeHistoricalDraftRows(rows = [], seasonKey, adpRows = []) {
+  return rows.map((row) => {
+    const adpRow = findAdpRowByPlayerName(adpRows, row.player)
+    const rawAdp = adpRow?.ADP ?? adpRow?.adp ?? null
+    const numericAdp = typeof rawAdp === "number" ? rawAdp : Number(rawAdp)
+const currentAdp =
+  Number.isFinite(numericAdp) && numericAdp > 0 ? numericAdp : null
+
+    return {
+      seasonKey,
+      seasonLabel: seasonKey,
+      teamId: null,
+      teamName: canonicalTeamName(row.team),
+      playerId: adpRow?.id ? String(adpRow.id) : "",
+      playerName: adpRow?.name || row.player || "",
+      playerPos: adpRow?.pos || adpRow?.position || "",
+      playerAdp: currentAdp,
+      currentAdp,
+      pick: row.overall ?? null,
+      round: row.round ?? null,
+      pickInRound: row.pickInRound ?? null,
+      time: row.time ?? null,
+    }
+  })
+}
+
 function findAdpRowForPlayer(adpRows, player) {
   if (!player) return null
 
@@ -454,13 +544,18 @@ function findAdpRowForPlayer(adpRows, player) {
   return (
     adpRows.find((row) => String(row?.id || row?.playerId || row?.player?.id || "") === playerId) ||
     adpRows.find((row) => slugifyPlayerName(row?.name || row?.playerName || row?.player?.name || "") === playerSlug) ||
+    findAdpRowByPlayerName(adpRows, player.name || player.playerName || "") ||
     null
   )
 }
 
 function BestDraftedPlayerCard({ player }) {
   const currentAdpValue =
-    player?.playerAdp ?? player?.adp ?? player?.ADP ?? null
+    player?.currentAdp ??
+    player?.playerAdp ??
+    player?.adp ??
+    player?.ADP ??
+    null
 
   return (
     <div style={card}>
@@ -786,7 +881,7 @@ function HistoricalTeamMode({
   effectiveSeason,
   bestDraftedPlayer,
 }) {
-    return (
+  return (
     <main style={main}>
       <Link
         to="/teams"
@@ -974,7 +1069,7 @@ export default function TeamDetailPage() {
   useEffect(() => {
     let cancelled = false
 
-        async function load() {
+    async function load() {
       try {
         setLoading(true)
         setError("")
@@ -1045,26 +1140,26 @@ export default function TeamDetailPage() {
 
         if (historicalSeason) {
           const [
-          historyRes,
-          latestLeagueRes,
-          draftPicksRes,
-          extraFuturePicksRes,
-          playoffsRes,
-          adpRowsRaw,
-          csvGroups,
-          seasonDraftData,
-        ] = await Promise.all([
-          fetch("/data/history-data.json").catch(() => null),
-          fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
-          fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
-          extraFuturePicksUrl
-            ? fetch(extraFuturePicksUrl).catch(() => null)
-            : Promise.resolve(null),
-          fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
-          adpPromise,
-          Promise.all(allCsvPromises),
-          Promise.all(fantraxSeasonPromises),
-        ])
+            historyRes,
+            latestLeagueRes,
+            draftPicksRes,
+            extraFuturePicksRes,
+            playoffsRes,
+            adpRowsRaw,
+            csvGroups,
+            seasonDraftData,
+          ] = await Promise.all([
+            fetch("/data/history-data.json").catch(() => null),
+            fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
+            fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+            extraFuturePicksUrl
+              ? fetch(extraFuturePicksUrl).catch(() => null)
+              : Promise.resolve(null),
+            fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+            adpPromise,
+            Promise.all(allCsvPromises),
+            Promise.all(fantraxSeasonPromises),
+          ])
 
           const [
             historyText,
@@ -1091,6 +1186,7 @@ export default function TeamDetailPage() {
           const parsedHistory = JSON.parse(historyText)
           const parsedDraftPicks = JSON.parse(draftPicksText)
           const flatCsvRows = csvGroups.flat()
+          const currentAdpRows = Array.isArray(adpRowsRaw) ? adpRowsRaw : []
           const mergedLookup = mergePlayerLookups(
             new Map(
               flatCsvRows.map((row) => [
@@ -1103,9 +1199,10 @@ export default function TeamDetailPage() {
                 },
               ])
             ),
-            buildPlayerLookupFromAdp(Array.isArray(adpRowsRaw) ? adpRowsRaw : [])
+            buildPlayerLookupFromAdp(currentAdpRows)
           )
-          const normalizedAllDraftRows = seasonDraftData.flatMap((seasonBlock) =>
+
+          const normalizedFantraxDraftRows = seasonDraftData.flatMap((seasonBlock) =>
             normalizeDraftRows(
               seasonBlock.draftResults,
               seasonBlock.teamNameMap,
@@ -1114,6 +1211,17 @@ export default function TeamDetailPage() {
               seasonBlock.seasonLabel
             )
           )
+
+          const normalizedHistoricalDraftRows = Object.entries(HISTORICAL_DRAFT_RESULTS).flatMap(
+            ([seasonKey, rows]) =>
+              normalizeHistoricalDraftRows(rows, seasonKey, currentAdpRows)
+          )
+
+          const normalizedAllDraftRows = [
+            ...normalizedFantraxDraftRows,
+            ...normalizedHistoricalDraftRows,
+          ]
+
           const parsedExtraFuturePickRows =
             extraFuturePicksRes && extraFuturePicksRes.ok
               ? normalizeFutureSheetPickRows(extraFuturePicksText)
@@ -1127,7 +1235,7 @@ export default function TeamDetailPage() {
                 : null
             )
             setTeamRosters(null)
-            setAdpRows(Array.isArray(adpRowsRaw) ? adpRowsRaw : [])
+            setAdpRows(currentAdpRows)
             setPlayerCsvRows([])
             setAllDraftRows(normalizedAllDraftRows)
             setMatchupResults(null)
@@ -1145,66 +1253,65 @@ export default function TeamDetailPage() {
         }
 
         const [
-        leagueRes,
-        latestLeagueRes,
-        rosterRes,
-        matchupRes,
-        transactionsRes,
-        historyRes,
-        draftPicksRes,
-        extraFuturePicksRes,
-        playoffsRes,
-        csvText,
-        adpRowsRaw,
-        csvGroups,
-        seasonDraftData,
-      ] = await Promise.all([
-        fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
-        fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
-        fetch(
-          `/api/team-rosters?season=${encodeURIComponent(
-            effectiveSeason.key
-          )}&period=${encodeURIComponent(period)}`
-        ),
-        fetch(matchupFile),
-        fetch(transactionsFile).catch(() => null),
-        fetch("/data/history-data.json").catch(() => null),
-        fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
-        extraFuturePicksUrl
-          ? fetch(extraFuturePicksUrl).catch(() => null)
-          : Promise.resolve(null),
-        fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
-        csvLoader ? csvLoader() : Promise.resolve(""),
-        adpPromise,
-        Promise.all(allCsvPromises),
-        Promise.all(fantraxSeasonPromises),
-      ])
+          leagueRes,
+          latestLeagueRes,
+          rosterRes,
+          matchupRes,
+          transactionsRes,
+          historyRes,
+          draftPicksRes,
+          extraFuturePicksRes,
+          playoffsRes,
+          csvText,
+          adpRowsRaw,
+          csvGroups,
+          seasonDraftData,
+        ] = await Promise.all([
+          fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
+          fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
+          fetch(
+            `/api/team-rosters?season=${encodeURIComponent(
+              effectiveSeason.key
+            )}&period=${encodeURIComponent(period)}`
+          ),
+          fetch(matchupFile),
+          fetch(transactionsFile).catch(() => null),
+          fetch("/data/history-data.json").catch(() => null),
+          fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+          extraFuturePicksUrl
+            ? fetch(extraFuturePicksUrl).catch(() => null)
+            : Promise.resolve(null),
+          fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+          csvLoader ? csvLoader() : Promise.resolve(""),
+          adpPromise,
+          Promise.all(allCsvPromises),
+          Promise.all(fantraxSeasonPromises),
+        ])
 
         const [
-        leagueText,
-        latestLeagueText,
-        rosterText,
-        matchupText,
-        transactionsText,
-        historyText,
-        draftPicksText,
-        extraFuturePicksText,
-        playoffsText,
-      ] = await Promise.all([
-        leagueRes.text(),
-        latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
-        rosterRes.text(),
-        matchupRes.text(),
-        transactionsRes ? transactionsRes.text() : Promise.resolve(""),
-        historyRes ? historyRes.text() : Promise.resolve(""),
-        draftPicksRes.text(),
-        extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
-        playoffsRes ? playoffsRes.text() : Promise.resolve(""),
-      ])
+          leagueText,
+          latestLeagueText,
+          rosterText,
+          matchupText,
+          transactionsText,
+          historyText,
+          draftPicksText,
+          extraFuturePicksText,
+          playoffsText,
+        ] = await Promise.all([
+          leagueRes.text(),
+          latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
+          rosterRes.text(),
+          matchupRes.text(),
+          transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+          historyRes ? historyRes.text() : Promise.resolve(""),
+          draftPicksRes.text(),
+          extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
+          playoffsRes ? playoffsRes.text() : Promise.resolve(""),
+        ])
 
         if (!leagueRes.ok) {
           throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
-          
         }
         if (!rosterRes.ok) {
           throw new Error(`Team rosters failed (${rosterRes.status}): ${rosterText}`)
@@ -1256,7 +1363,8 @@ export default function TeamDetailPage() {
           ),
           buildPlayerLookupFromAdp(currentAdpRows)
         )
-        const normalizedAllDraftRows = seasonDraftData.flatMap((seasonBlock) =>
+
+        const normalizedFantraxDraftRows = seasonDraftData.flatMap((seasonBlock) =>
           normalizeDraftRows(
             seasonBlock.draftResults,
             seasonBlock.teamNameMap,
@@ -1265,6 +1373,16 @@ export default function TeamDetailPage() {
             seasonBlock.seasonLabel
           )
         )
+
+        const normalizedHistoricalDraftRows = Object.entries(HISTORICAL_DRAFT_RESULTS).flatMap(
+          ([seasonKey, rows]) =>
+            normalizeHistoricalDraftRows(rows, seasonKey, currentAdpRows)
+        )
+
+        const normalizedAllDraftRows = [
+          ...normalizedFantraxDraftRows,
+          ...normalizedHistoricalDraftRows,
+        ]
 
         const parsedExtraFuturePickRows =
           extraFuturePicksRes && extraFuturePicksRes.ok && extraFuturePicksText
@@ -1337,8 +1455,8 @@ export default function TeamDetailPage() {
   }, [team, historicalProfile])
 
   const teamTrophies = useMemo(() => {
-  return championMap.get(canonicalTeam) || []
-}, [championMap, canonicalTeam])
+    return championMap.get(canonicalTeam) || []
+  }, [championMap, canonicalTeam])
 
   const teamManagerName = useMemo(() => {
     if (historicalProfile?.manager) return historicalProfile.manager
@@ -1361,17 +1479,17 @@ export default function TeamDetailPage() {
   }, [playerCsvRows, adpRows])
 
   const teamIdToName = useMemo(() => {
-  const map = new Map()
+    const map = new Map()
 
-  for (const candidate of extractTeamsFromLeagueInfoSafe(latestLeagueInfo || {})) {
-    map.set(
-      String(candidate.id),
-      canonicalTeamName(decodeMaybeBrokenText(candidate.name || ""))
-    )
-  }
+    for (const candidate of extractTeamsFromLeagueInfoSafe(latestLeagueInfo || {})) {
+      map.set(
+        String(candidate.id),
+        canonicalTeamName(decodeMaybeBrokenText(candidate.name || ""))
+      )
+    }
 
-  return map
-}, [latestLeagueInfo])
+    return map
+  }, [latestLeagueInfo])
 
   const rosterItems = useMemo(() => {
     const raw = getRosterForTeam(teamRosters, teamId)
@@ -1448,23 +1566,23 @@ export default function TeamDetailPage() {
   }, [playoffSheetText, effectiveSeason.key, teamSlug, canonicalTeam])
 
   const matchupRows = useMemo(() => {
-  return [...regularMatchupRows, ...playoffMatchupRows].sort((a, b) => {
-    const aPlayoff = Boolean(a.isPlayoff)
-    const bPlayoff = Boolean(b.isPlayoff)
+    return [...regularMatchupRows, ...playoffMatchupRows].sort((a, b) => {
+      const aPlayoff = Boolean(a.isPlayoff)
+      const bPlayoff = Boolean(b.isPlayoff)
 
-    if (aPlayoff && !bPlayoff) return -1
-    if (!aPlayoff && bPlayoff) return 1
+      if (aPlayoff && !bPlayoff) return -1
+      if (!aPlayoff && bPlayoff) return 1
 
-    if (aPlayoff && bPlayoff) {
-      if ((a.roundRank || 0) !== (b.roundRank || 0)) {
-        return (b.roundRank || 0) - (a.roundRank || 0)
+      if (aPlayoff && bPlayoff) {
+        if ((a.roundRank || 0) !== (b.roundRank || 0)) {
+          return (b.roundRank || 0) - (a.roundRank || 0)
+        }
+        return (b.sortPeriod || 0) - (a.sortPeriod || 0)
       }
-      return (b.sortPeriod || 0) - (a.sortPeriod || 0)
-    }
 
-    return (Number(b.sortPeriod) || 0) - (Number(a.sortPeriod) || 0)
-  })
-}, [regularMatchupRows, playoffMatchupRows])
+      return (Number(b.sortPeriod) || 0) - (Number(a.sortPeriod) || 0)
+    })
+  }, [regularMatchupRows, playoffMatchupRows])
 
   const completedPeriods = useMemo(
     () =>
@@ -1599,19 +1717,22 @@ export default function TeamDetailPage() {
         return true
       })
       .map((row) => {
-        const adpRow = findAdpRowForPlayer(adpRows, {
-          id: row.playerId,
-          name: row.playerName,
-        })
-        const currentAdp = Number(adpRow?.ADP ?? adpRow?.adp)
+  const adpRow = findAdpRowForPlayer(adpRows, {
+    id: row.playerId,
+    name: row.playerName,
+  })
 
-        return {
-          ...row,
-          currentAdp: Number.isFinite(currentAdp) ? currentAdp : null,
-        }
-      })
-      .filter((row) => typeof row.currentAdp === "number")
-      .sort((a, b) => a.currentAdp - b.currentAdp)
+  const rawAdp = adpRow?.ADP ?? adpRow?.adp ?? row.currentAdp ?? row.playerAdp
+  const numericAdp = Number(rawAdp)
+
+  return {
+    ...row,
+    currentAdp:
+      Number.isFinite(numericAdp) && numericAdp > 0 ? numericAdp : null,
+  }
+})
+.filter((row) => typeof row.currentAdp === "number" && row.currentAdp > 0)
+.sort((a, b) => a.currentAdp - b.currentAdp)
 
     return draftedRows[0] || null
   }, [allDraftRows, adpRows, canonicalTeam])
@@ -1645,22 +1766,22 @@ export default function TeamDetailPage() {
   }
 
   if (!team && historicalProfile) {
-  return (
-    <HistoricalTeamMode
-      historicalProfile={historicalProfile}
-      teamManagerName={teamManagerName}
-      historyPayload={historyPayload}
-      franchiseRecordRows={franchiseRecordRows}
-      franchiseRecordCount={franchiseRecordCount}
-      teamSlug={teamSlug}
-      trophies={teamTrophies}
-      teamDraftPicks={teamDraftPicks}
-      draftPickCountsBySeason={draftPickCountsBySeason}
-      effectiveSeason={effectiveSeason}
-      bestDraftedPlayer={bestDraftedPlayer}
-    />
-  )
-}
+    return (
+      <HistoricalTeamMode
+        historicalProfile={historicalProfile}
+        teamManagerName={teamManagerName}
+        historyPayload={historyPayload}
+        franchiseRecordRows={franchiseRecordRows}
+        franchiseRecordCount={franchiseRecordCount}
+        teamSlug={teamSlug}
+        trophies={teamTrophies}
+        teamDraftPicks={teamDraftPicks}
+        draftPickCountsBySeason={draftPickCountsBySeason}
+        effectiveSeason={effectiveSeason}
+        bestDraftedPlayer={bestDraftedPlayer}
+      />
+    )
+  }
 
   return (
     <main style={main}>
@@ -1696,25 +1817,25 @@ export default function TeamDetailPage() {
       </div>
 
       <>
-  <div style={topInfoGrid}>
-    <TrophyCabinetCard trophies={teamTrophies} />
-    <BestDraftedPlayerCard player={bestDraftedPlayer} />
-  </div>
+        <div style={topInfoGrid}>
+          <TrophyCabinetCard trophies={teamTrophies} />
+          <BestDraftedPlayerCard player={bestDraftedPlayer} />
+        </div>
 
-  <div style={topInfoGrid}>
-    <FranchiseRecordsCard
-      historyPayload={historyPayload}
-      franchiseRecordRows={franchiseRecordRows}
-      franchiseRecordCount={franchiseRecordCount}
-    />
+        <div style={topInfoGrid}>
+          <FranchiseRecordsCard
+            historyPayload={historyPayload}
+            franchiseRecordRows={franchiseRecordRows}
+            franchiseRecordCount={franchiseRecordCount}
+          />
 
-    <DraftPicksSection
-      rows={teamDraftPicks}
-      latestSeasonLabel={LATEST_SEASON.label}
-      countsBySeason={draftPickCountsBySeason}
-    />
-  </div>
-</>
+          <DraftPicksSection
+            rows={teamDraftPicks}
+            latestSeasonLabel={LATEST_SEASON.label}
+            countsBySeason={draftPickCountsBySeason}
+          />
+        </div>
+      </>
 
       <div style={card}>
         <div style={tabRow}>
