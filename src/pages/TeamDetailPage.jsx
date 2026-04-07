@@ -34,6 +34,9 @@ const LATEST_SEASON =
 const PLAYOFFS_SHEET_CSV_URL =
   "https://docs.google.com/spreadsheets/d/1DEXCIZjzFP6WZUM0LoPP_LVjC1RVFYkTV3gizVxd0ps/export?format=csv&gid=0"
 
+  const HISTORICAL_TRADES_SHEET_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRbbhrj0UcAR4RG2zZgLxshUbsJy_YOTI4KNiTapBGJnMrY97kJqZEMz9q1bf4bSmglC2XkJvDhHbTW/pub?gid=0&single=true&output=csv"
+
 
 
 function buildGoogleSheetCsvUrl(sheetId, gid) {
@@ -514,7 +517,7 @@ function normalizeHistoricalDraftRows(rows = [], seasonKey, adpRows = []) {
     const adpRow = findAdpRowByPlayerName(adpRows, row.player)
     const rawAdp = adpRow?.ADP ?? adpRow?.adp ?? null
     const numericAdp = typeof rawAdp === "number" ? rawAdp : Number(rawAdp)
-const currentAdp =
+    const currentAdp =
   Number.isFinite(numericAdp) && numericAdp > 0 ? numericAdp : null
 
     return {
@@ -880,6 +883,7 @@ function HistoricalTeamMode({
   draftPickCountsBySeason,
   effectiveSeason,
   bestDraftedPlayer,
+  teamTrades,
 }) {
   return (
     <main style={main}>
@@ -1041,6 +1045,97 @@ function RosterSection({ title, rows }) {
   )
 }
 
+function normalizeHeader(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function headerIndex(headerMap, candidates = []) {
+  for (const candidate of candidates) {
+    const idx = headerMap.get(normalizeHeader(candidate))
+    if (Number.isInteger(idx)) return idx
+  }
+  return -1
+}
+
+function splitAssetsCell(value) {
+  return String(value ?? "")
+    .split(/\r?\n|;|,|\u2022|\+/)
+    .map((item) => decodeMaybeBrokenText(String(item || "").trim()))
+    .filter(Boolean)
+}
+
+function seasonKeyFromDate(value) {
+  const text = String(value ?? "").trim()
+  if (!text) return ""
+
+  const date = new Date(text)
+  if (Number.isNaN(date.getTime())) return ""
+
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const seasonStartYear = month >= 7 ? year : year - 1
+  return `${seasonStartYear}-${String(seasonStartYear + 1).slice(-2)}`
+}
+
+function normalizeHistoricalTeamTradeRows(csvText = "") {
+  const matrix = parseCsvMatrix(csvText)
+  if (!Array.isArray(matrix) || matrix.length < 2) return []
+
+  const headerRow = matrix[0] || []
+  const bodyRows = matrix.slice(1).filter(
+    (row) => Array.isArray(row) && row.some((cell) => String(cell ?? "").trim())
+  )
+
+  const headerMap = new Map(
+    headerRow.map((cell, index) => [normalizeHeader(cell), index])
+  )
+
+  const teamAIdx = headerIndex(headerMap, ["team a"])
+  const teamAAssetsIdx = headerIndex(headerMap, ["team a assets"])
+  const teamBAssetsIdx = headerIndex(headerMap, ["team b assets"])
+  const teamBIdx = headerIndex(headerMap, ["team b"])
+  const dateIdx = headerIndex(headerMap, ["date"])
+  const vetoIdx = headerIndex(headerMap, ["veto"])
+
+  return bodyRows
+    .map((row, index) => {
+      const teamA = canonicalTeamName(
+        decodeMaybeBrokenText(String(row[teamAIdx] || "").trim())
+      )
+      const teamB = canonicalTeamName(
+        decodeMaybeBrokenText(String(row[teamBIdx] || "").trim())
+      )
+
+      return {
+        id: `sheet-trade-${index}`,
+        season: seasonKeyFromDate(row[dateIdx] || "") || "—",
+        date: String(row[dateIdx] || "").trim(),
+        teamA,
+        teamB,
+        teamAAssets: splitAssetsCell(row[teamAAssetsIdx] || ""),
+        teamBAssets: splitAssetsCell(row[teamBAssetsIdx] || ""),
+        veto: String(row[vetoIdx] || "").trim(),
+      }
+    })
+    .filter((row) => row.teamA || row.teamB)
+}
+
+function formatTradeDate(value) {
+  if (!value) return "—"
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString()
+}
+
+function sameFranchiseName(a, b) {
+  return slugifyTeamName(a || "") === slugifyTeamName(b || "")
+}
+
 export default function TeamDetailPage() {
   const { teamSlug } = useParams()
   const { season } = useSeason()
@@ -1065,6 +1160,7 @@ export default function TeamDetailPage() {
   const [error, setError] = useState("")
   const [championMap, setChampionMap] = useState(new Map())
   const [allDraftRows, setAllDraftRows] = useState([])
+  const [historicalTradesText, setHistoricalTradesText] = useState("")
 
   useEffect(() => {
     let cancelled = false
@@ -1145,6 +1241,7 @@ export default function TeamDetailPage() {
             draftPicksRes,
             extraFuturePicksRes,
             playoffsRes,
+            historicalTradesRes,
             adpRowsRaw,
             csvGroups,
             seasonDraftData,
@@ -1152,10 +1249,9 @@ export default function TeamDetailPage() {
             fetch("/data/history-data.json").catch(() => null),
             fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
             fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
-            extraFuturePicksUrl
-              ? fetch(extraFuturePicksUrl).catch(() => null)
-              : Promise.resolve(null),
+            extraFuturePicksUrl ? fetch(extraFuturePicksUrl).catch(() => null) : Promise.resolve(null),
             fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+            fetch(HISTORICAL_TRADES_SHEET_CSV_URL).catch(() => null),
             adpPromise,
             Promise.all(allCsvPromises),
             Promise.all(fantraxSeasonPromises),
@@ -1167,12 +1263,14 @@ export default function TeamDetailPage() {
             draftPicksText,
             extraFuturePicksText,
             playoffsText,
+            historicalTradesRawText,
           ] = await Promise.all([
             historyRes ? historyRes.text() : Promise.resolve(""),
             latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
             draftPicksRes.text(),
             extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
             playoffsRes ? playoffsRes.text() : Promise.resolve(""),
+            historicalTradesRes ? historicalTradesRes.text() : Promise.resolve(""),
           ])
 
           if (!historyRes || !historyRes.ok) {
@@ -1244,6 +1342,9 @@ export default function TeamDetailPage() {
             setDraftPicksData(parsedDraftPicks)
             setExtraFuturePickRows(parsedExtraFuturePickRows)
             setPlayoffSheetText(playoffsRes && playoffsRes.ok ? playoffsText : "")
+            setHistoricalTradesText(
+              historicalTradesRes && historicalTradesRes.ok ? historicalTradesRawText : ""
+            )
             setChampionMap(
               playoffsRes && playoffsRes.ok ? buildChampionMapFromSheet(playoffsText) : new Map()
             )
@@ -1253,62 +1354,66 @@ export default function TeamDetailPage() {
         }
 
         const [
-          leagueRes,
-          latestLeagueRes,
-          rosterRes,
-          matchupRes,
-          transactionsRes,
-          historyRes,
-          draftPicksRes,
-          extraFuturePicksRes,
-          playoffsRes,
-          csvText,
-          adpRowsRaw,
-          csvGroups,
-          seasonDraftData,
-        ] = await Promise.all([
-          fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
-          fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
-          fetch(
-            `/api/team-rosters?season=${encodeURIComponent(
-              effectiveSeason.key
-            )}&period=${encodeURIComponent(period)}`
-          ),
-          fetch(matchupFile),
-          fetch(transactionsFile).catch(() => null),
-          fetch("/data/history-data.json").catch(() => null),
-          fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
-          extraFuturePicksUrl
-            ? fetch(extraFuturePicksUrl).catch(() => null)
-            : Promise.resolve(null),
-          fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
-          csvLoader ? csvLoader() : Promise.resolve(""),
-          adpPromise,
-          Promise.all(allCsvPromises),
-          Promise.all(fantraxSeasonPromises),
-        ])
+  leagueRes,
+  latestLeagueRes,
+  rosterRes,
+  matchupRes,
+  transactionsRes,
+  historyRes,
+  draftPicksRes,
+  extraFuturePicksRes,
+  playoffsRes,
+  historicalTradesRes,
+  csvText,
+  adpRowsRaw,
+  csvGroups,
+  seasonDraftData,
+] = await Promise.all([
+  fetch(`/api/league-info?season=${encodeURIComponent(effectiveSeason.key)}`),
+  fetch(`/api/league-info?season=${encodeURIComponent(LATEST_SEASON.key)}`).catch(() => null),
+  fetch(
+    `/api/team-rosters?season=${encodeURIComponent(
+      effectiveSeason.key
+    )}&period=${encodeURIComponent(period)}`
+  ),
+  fetch(matchupFile),
+  fetch(transactionsFile).catch(() => null),
+  fetch("/data/history-data.json").catch(() => null),
+  fetch(`/api/draft-picks?season=${encodeURIComponent(LATEST_SEASON.key)}`),
+  extraFuturePicksUrl
+    ? fetch(extraFuturePicksUrl).catch(() => null)
+    : Promise.resolve(null),
+  fetch(PLAYOFFS_SHEET_CSV_URL).catch(() => null),
+  fetch(HISTORICAL_TRADES_SHEET_CSV_URL).catch(() => null),
+  csvLoader ? csvLoader() : Promise.resolve(""),
+  adpPromise,
+  Promise.all(allCsvPromises),
+  Promise.all(fantraxSeasonPromises),
+])
 
         const [
-          leagueText,
-          latestLeagueText,
-          rosterText,
-          matchupText,
-          transactionsText,
-          historyText,
-          draftPicksText,
-          extraFuturePicksText,
-          playoffsText,
-        ] = await Promise.all([
-          leagueRes.text(),
-          latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
-          rosterRes.text(),
-          matchupRes.text(),
-          transactionsRes ? transactionsRes.text() : Promise.resolve(""),
-          historyRes ? historyRes.text() : Promise.resolve(""),
-          draftPicksRes.text(),
-          extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
-          playoffsRes ? playoffsRes.text() : Promise.resolve(""),
-        ])
+  leagueText,
+  latestLeagueText,
+  rosterText,
+  matchupText,
+  transactionsText,
+  historyText,
+  draftPicksText,
+  extraFuturePicksText,
+  playoffsText,
+  historicalTradesRawText,
+] = await Promise.all([
+  leagueRes.text(),
+  latestLeagueRes ? latestLeagueRes.text() : Promise.resolve(""),
+  rosterRes.text(),
+  matchupRes.text(),
+  transactionsRes ? transactionsRes.text() : Promise.resolve(""),
+  historyRes ? historyRes.text() : Promise.resolve(""),
+  draftPicksRes.text(),
+  extraFuturePicksRes ? extraFuturePicksRes.text() : Promise.resolve(""),
+  playoffsRes ? playoffsRes.text() : Promise.resolve(""),
+  historicalTradesRes ? historicalTradesRes.text() : Promise.resolve(""),
+])
 
         if (!leagueRes.ok) {
           throw new Error(`League info failed (${leagueRes.status}): ${leagueText}`)
@@ -1401,12 +1506,16 @@ export default function TeamDetailPage() {
           setDraftPicksData(parsedDraftPicks)
           setExtraFuturePickRows(parsedExtraFuturePickRows)
           setPlayoffSheetText(playoffsRes && playoffsRes.ok ? playoffsText : "")
-          setChampionMap(nextChampionMap)
+            setHistoricalTradesText(
+              historicalTradesRes && historicalTradesRes.ok ? historicalTradesRawText : ""
+            )
+            setChampionMap(nextChampionMap)
           setLatestLeagueInfo(
             latestLeagueRes && latestLeagueRes.ok && latestLeagueText
               ? JSON.parse(latestLeagueText)
               : null
           )
+          
         }
       } catch (err) {
         if (!cancelled) {
@@ -1423,7 +1532,9 @@ export default function TeamDetailPage() {
           setExtraFuturePickRows([])
           setPlayoffSheetText("")
           setChampionMap(new Map())
+        
           setAllDraftRows([])
+          setHistoricalTradesText("")
         }
       } finally {
         if (!cancelled) setLoading(false)
@@ -1447,12 +1558,22 @@ export default function TeamDetailPage() {
 
   const teamId = team?.id || ""
 
-  const canonicalTeam = useMemo(() => {
+const canonicalTeam = useMemo(() => {
     if (team) {
       return canonicalTeamName(decodeMaybeBrokenText(team?.name || ""))
     }
     return canonicalTeamName(historicalProfile?.team || "")
   }, [team, historicalProfile])
+
+const teamTrades = useMemo(() => {
+  if (!canonicalTeam || !historicalTradesText) return []
+
+  return normalizeHistoricalTeamTradeRows(historicalTradesText)
+    .filter((row) => sameFranchiseName(row.teamA, canonicalTeam) || sameFranchiseName(row.teamB, canonicalTeam))
+    .sort(compareDescByDate)
+}, [historicalTradesText, canonicalTeam])
+
+  
 
   const teamTrophies = useMemo(() => {
     return championMap.get(canonicalTeam) || []
@@ -1684,58 +1805,59 @@ export default function TeamDetailPage() {
   }, [teamDraftPicks])
 
   const bestDraftedPlayer = useMemo(() => {
-    if (!canonicalTeam) return null
+  if (!canonicalTeam) return null
 
-    const targetTeam = canonicalTeamName(canonicalTeam)
-    const seenPlayers = new Set()
+  const targetSlug = slugifyTeamName(canonicalTeam)
+  const seenPlayers = new Set()
 
-    const draftedRows = allDraftRows
-      .filter((row) => canonicalTeamName(row.teamName) === targetTeam)
-      .sort((a, b) => {
-        const seasonCompare = String(a.seasonKey || "").localeCompare(String(b.seasonKey || ""), undefined, {
-          numeric: true,
-          sensitivity: "base",
-        })
-        if (seasonCompare !== 0) return seasonCompare
+  const draftedRows = allDraftRows
+    .filter((row) => slugifyTeamName(row.teamName || "") === targetSlug)
+    .sort((a, b) => {
+      const seasonCompare = String(a.seasonKey || "").localeCompare(
+        String(b.seasonKey || ""),
+        undefined,
+        { numeric: true, sensitivity: "base" }
+      )
+      if (seasonCompare !== 0) return seasonCompare
 
-        const pickA = Number(a.pick)
-        const pickB = Number(b.pick)
-        if (Number.isFinite(pickA) && Number.isFinite(pickB) && pickA !== pickB) {
-          return pickA - pickB
-        }
+      const pickA = Number(a.pick)
+      const pickB = Number(b.pick)
+      if (Number.isFinite(pickA) && Number.isFinite(pickB) && pickA !== pickB) {
+        return pickA - pickB
+      }
 
-        return String(a.playerName || "").localeCompare(String(b.playerName || ""), undefined, {
-          numeric: true,
-          sensitivity: "base",
-        })
+      return String(a.playerName || "").localeCompare(
+        String(b.playerName || ""),
+        undefined,
+        { numeric: true, sensitivity: "base" }
+      )
+    })
+    .filter((row) => row.playerId || row.playerName)
+    .filter((row) => {
+      const key = String(row.playerId || slugifyPlayerName(row.playerName || ""))
+      if (!key || seenPlayers.has(key)) return false
+      seenPlayers.add(key)
+      return true
+    })
+    .map((row) => {
+      const adpRow = findAdpRowForPlayer(adpRows, {
+        id: row.playerId,
+        name: row.playerName,
       })
-      .filter((row) => row.playerId || row.playerName)
-      .filter((row) => {
-        const key = String(row.playerId || slugifyPlayerName(row.playerName || ""))
-        if (!key || seenPlayers.has(key)) return false
-        seenPlayers.add(key)
-        return true
-      })
-      .map((row) => {
-  const adpRow = findAdpRowForPlayer(adpRows, {
-    id: row.playerId,
-    name: row.playerName,
-  })
 
-  const rawAdp = adpRow?.ADP ?? adpRow?.adp ?? row.currentAdp ?? row.playerAdp
-  const numericAdp = Number(rawAdp)
+      const rawAdp = adpRow?.ADP ?? adpRow?.adp ?? row.currentAdp ?? row.playerAdp
+      const numericAdp = Number(rawAdp)
 
-  return {
-    ...row,
-    currentAdp:
-      Number.isFinite(numericAdp) && numericAdp > 0 ? numericAdp : null,
-  }
-})
-.filter((row) => typeof row.currentAdp === "number" && row.currentAdp > 0)
-.sort((a, b) => a.currentAdp - b.currentAdp)
+      return {
+        ...row,
+        currentAdp: Number.isFinite(numericAdp) && numericAdp > 0 ? numericAdp : null,
+      }
+    })
+    .filter((row) => typeof row.currentAdp === "number" && row.currentAdp > 0)
+    .sort((a, b) => a.currentAdp - b.currentAdp)
 
-    return draftedRows[0] || null
-  }, [allDraftRows, adpRows, canonicalTeam])
+  return draftedRows[0] || null
+}, [allDraftRows, adpRows, canonicalTeam])
 
   const franchiseRecordCount = franchiseRecordRows.length
 
@@ -1779,6 +1901,7 @@ export default function TeamDetailPage() {
         draftPickCountsBySeason={draftPickCountsBySeason}
         effectiveSeason={effectiveSeason}
         bestDraftedPlayer={bestDraftedPlayer}
+        teamTrades={teamTrades}
       />
     )
   }
@@ -1859,6 +1982,13 @@ export default function TeamDetailPage() {
             style={activeTab === "transactions" ? activeTabBtn : tabBtn}
           >
             Transactions
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("trades")}
+            style={activeTab === "trades" ? activeTabBtn : tabBtn}
+          >
+            Trades
           </button>
         </div>
 
@@ -1947,7 +2077,71 @@ export default function TeamDetailPage() {
               </table>
             </div>
           </>
-        ) : (
+        ) : activeTab === "trades" ? (
+  <>
+    <h3 style={sectionTitle}>Trades</h3>
+
+    {teamTrades.length === 0 ? (
+      <div style={{ color: "#6b7280" }}>No trades found for this team.</div>
+    ) : (
+      <div style={transactionsList}>
+        {teamTrades.map((trade) => {
+          const isTeamA = sameFranchiseName(trade.teamA, canonicalTeam)
+          const sent = isTeamA ? trade.teamAAssets : trade.teamBAssets
+          const received = isTeamA ? trade.teamBAssets : trade.teamAAssets
+          const partner = isTeamA ? trade.teamB : trade.teamA
+
+          return (
+            <div key={trade.id} style={transactionCard}>
+              <div style={transactionHeader}>
+                <div>
+                  <div style={transactionDate}>{formatTradeDate(trade.date)}</div>
+                  <div style={transactionTypes}>{trade.season} · TRADE</div>
+                </div>
+                <div style={transactionTeam}>vs {partner || "—"}</div>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+                  gap: 12,
+                }}
+              >
+                <div style={transactionPlayerRow}>
+                  <div style={{ fontWeight: 800, color: "#9a3412", marginBottom: 8 }}>
+                    Sent
+                  </div>
+                  {sent.length ? sent.map((asset, idx) => (
+                    <div key={`sent-${trade.id}-${idx}`} style={{ marginBottom: 6 }}>
+                      <PlayerLinkCell playerName={asset} />
+                    </div>
+                  )) : <div style={{ color: "#6b7280" }}>—</div>}
+                </div>
+
+                <div style={transactionPlayerRow}>
+                  <div style={{ fontWeight: 800, color: "#15803d", marginBottom: 8 }}>
+                    Received
+                  </div>
+                  {received.length ? received.map((asset, idx) => (
+                    <div key={`received-${trade.id}-${idx}`} style={{ marginBottom: 6 }}>
+                      <PlayerLinkCell playerName={asset} />
+                    </div>
+                  )) : <div style={{ color: "#6b7280" }}>—</div>}
+                </div>
+              </div>
+
+              {trade.veto ? (
+                <div style={{ marginTop: 12, color: "#6b7280", fontSize: 14 }}>
+                  Veto: {trade.veto}
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+    )}
+  </>) : (
           <>
             <h3 style={sectionTitle}>Transactions</h3>
             {teamTransactions.length === 0 ? (
@@ -2011,8 +2205,12 @@ export default function TeamDetailPage() {
               </div>
             )}
           </>
+          
         )}
+        
       </div>
+      
+      
 
       <div style={card}>
         <div

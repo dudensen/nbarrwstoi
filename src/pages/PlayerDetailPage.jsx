@@ -576,21 +576,13 @@ function normalizeHistoricalTradeRows(csvText, player) {
   .map((name) => normalizeSheetPlayerStub(name, "TRADED"))
   .filter((p) => transactionPlayerMatches(p, player))
 
-const sideAAcquired = teamBAssets
-  .map((name) => normalizeSheetPlayerStub(name, "ACQUIRED"))
-  .filter((p) => transactionPlayerMatches(p, player))
-
 const sideBTraded = teamBAssets
   .map((name) => normalizeSheetPlayerStub(name, "TRADED"))
   .filter((p) => transactionPlayerMatches(p, player))
 
-const sideBAcquired = teamAAssets
-  .map((name) => normalizeSheetPlayerStub(name, "ACQUIRED"))
-  .filter((p) => transactionPlayerMatches(p, player))
+const rows = []
 
-    const rows = []
-
-    if (sideATraded.length > 0) {
+if (sideATraded.length > 0) {
   rows.push({
     id: `sheet-${season}-${index}-a-traded`,
     season,
@@ -599,23 +591,6 @@ const sideBAcquired = teamAAssets
     teamId: null,
     teamName: teamA || "—",
     matchedPlayers: sideATraded,
-    tradeDetail: {
-      teamA,
-      teamB,
-      teamAAssets,
-      teamBAssets,
-      veto: String(vetoRaw || "").trim(),
-    },
-  })
-} else if (sideAAcquired.length > 0) {
-  rows.push({
-    id: `sheet-${season}-${index}-a-acquired`,
-    season,
-    date: String(dateRaw || "").trim() || "—",
-    types: ["TRADE"],
-    teamId: null,
-    teamName: teamA || "—",
-    matchedPlayers: sideAAcquired,
     tradeDetail: {
       teamA,
       teamB,
@@ -643,25 +618,9 @@ if (sideBTraded.length > 0) {
       veto: String(vetoRaw || "").trim(),
     },
   })
-} else if (sideBAcquired.length > 0) {
-  rows.push({
-    id: `sheet-${season}-${index}-b-acquired`,
-    season,
-    date: String(dateRaw || "").trim() || "—",
-    types: ["TRADE"],
-    teamId: null,
-    teamName: teamB || "—",
-    matchedPlayers: sideBAcquired,
-    tradeDetail: {
-      teamA,
-      teamB,
-      teamAAssets,
-      teamBAssets,
-      veto: String(vetoRaw || "").trim(),
-    },
-  })
 }
-    return rows
+
+return rows
   })
 }
 

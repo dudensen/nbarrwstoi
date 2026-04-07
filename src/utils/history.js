@@ -26,6 +26,7 @@ const TEAM_ALIASES = {
   "Arvyla": "Xanthi Ducks 🦆",
   "otto": "Xanthi Ducks 🦆",
   "demons": "Donkey Rolls",
+  "knights": "Knights of Ni",
 }
 
 const PHASE_ALIASES = {
