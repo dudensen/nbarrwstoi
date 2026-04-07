@@ -912,7 +912,7 @@ function HistoricalTeamMode({
               Years active: {historicalProfile.firstYear} - {historicalProfile.lastYear}
             </div>
             <div style={{ color: "#6b7280", marginTop: 6 }}>
-              Manager / Owner: {teamManagerName || "—"}
+              GM: {teamManagerName || "—"}
             </div>
           </div>
 
@@ -1927,7 +1927,7 @@ const teamTrades = useMemo(() => {
             <h1 style={{ margin: "0 0 10px" }}>{canonicalTeam}</h1>
             <div style={{ color: "#6b7280" }}>Season: {effectiveSeason.label}</div>
             <div style={{ color: "#6b7280", marginTop: 6 }}>
-              Manager / Owner: {teamManagerName || "—"}
+              GM: {teamManagerName || "—"}
             </div>
           </div>
 

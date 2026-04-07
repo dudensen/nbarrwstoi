@@ -214,7 +214,7 @@ const rows = useMemo(() => {
       <div style={hero}>
         <div style={eyebrow}>Player Contracts</div>
         <h1 style={{ margin: 0 }}>Contracts board</h1>
-        <p style={heroSub}>Live from the Google Sheet. Team/status is shown directly from column B.</p>
+        <p style={heroSub}>Οι παίκτες που συμπληρώνουν πενταετία γίνονται Drop στην Keepers Deadline της Offseason που αναγράφεται στο Expiry Year.</p>
       </div>
 
       <div style={card}>
@@ -250,7 +250,6 @@ const rows = useMemo(() => {
                 <tr style={{ background: "#fff7ed" }}>
                   <SortableHeader label="Player" columnKey="player" sortConfig={sortConfig} onSort={handleSort} />
                   <SortableHeader label="Team" columnKey="teamName" sortConfig={sortConfig} onSort={handleSort} />
-                  <SortableHeader label="Age" columnKey="age" sortConfig={sortConfig} onSort={handleSort} />
                   <SortableHeader label="Contract Year" columnKey="contractYear" sortConfig={sortConfig} onSort={handleSort} />
                   <SortableHeader label="Expiry" columnKey="expiryYear" sortConfig={sortConfig} onSort={handleSort} />
                   <SortableHeader label="Trade Date" columnKey="tradeDate" sortConfig={sortConfig} onSort={handleSort} />
@@ -273,7 +272,6 @@ const rows = useMemo(() => {
                         row.teamName
                       )}
                     </td>
-                    <td style={td}>{row.age ?? "—"}</td>
                     <td style={td}>{row.contractYear ?? "—"}</td>
                     <td style={td}>{row.expiryYear ?? "—"}</td>
                     <td style={td}>{row.tradeDateLabel || "—"}</td>

@@ -184,7 +184,7 @@ export default function HistoryPage() {
     <main style={main}>
       <section style={hero}>
         <div style={eyebrow}>History</div>
-        <h1 style={heroTitle}>League history hub</h1>
+        <h1 style={heroTitle}>League History Hub</h1>
         <p style={heroSub}>
           Rebuilt from the workbook&apos;s canonical Data sheet, with team aliases normalized for franchise continuity.
         </p>

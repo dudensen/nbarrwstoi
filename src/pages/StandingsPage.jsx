@@ -631,7 +631,7 @@ export default function StandingsPage() {
         <p style={{ color: "#6b7280", marginTop: 10 }}>
           {isHistoricalSeason
             ? "Historical standings built from the pre-Fantrax spreadsheet data."
-            : "This page reads the selected season and hits the matching Fantrax league automatically."}
+            : "Βαθμολογίες, Φόρμα, Σκορ Τελικού."}
         </p>
       </div>
 

@@ -627,7 +627,7 @@ return rows
 function TeamLinkCell({ teamId, teamName, seasonKey }) {
   if (!teamName) return <span>—</span>
 
-  if (!teamId || teamName === "Free Agent" || teamName === "Retired") {
+  if (teamName === "Free Agent" || teamName === "Retired") {
     return <span>{teamName}</span>
   }
 
@@ -660,7 +660,7 @@ function DetailRow({ label, value }) {
   )
 }
 
-function TradeDetailBlock({ detail }) {
+function TradeDetailBlock({ detail, seasonKey }) {
   if (!detail) return null
 
   return (
@@ -685,7 +685,9 @@ function TradeDetailBlock({ detail }) {
         }}
       >
         <div>
-          <div style={{ fontWeight: 800, marginBottom: 8 }}>{detail.teamA}</div>
+          <div style={{ fontWeight: 800, marginBottom: 8 }}>
+            <TeamLinkCell teamName={detail.teamA} seasonKey={seasonKey} />
+          </div>
           <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 6 }}>Sent:</div>
           <div style={{ display: "grid", gap: 6 }}>
             {detail.teamAAssets?.length ? (
@@ -699,7 +701,9 @@ function TradeDetailBlock({ detail }) {
         </div>
 
         <div>
-          <div style={{ fontWeight: 800, marginBottom: 8 }}>{detail.teamB}</div>
+          <div style={{ fontWeight: 800, marginBottom: 8 }}>
+            <TeamLinkCell teamName={detail.teamB} seasonKey={seasonKey} />
+          </div>
           <div style={{ color: "#6b7280", fontSize: 14, marginBottom: 6 }}>Sent:</div>
           <div style={{ display: "grid", gap: 6 }}>
             {detail.teamBAssets?.length ? (
@@ -1191,7 +1195,9 @@ const draftRows = [...fantraxDraftRows, ...historicalDraftRows]
   ))}
 </div>
 
-{tx.tradeDetail ? <TradeDetailBlock detail={tx.tradeDetail} /> : null}
+{tx.tradeDetail ? (
+  <TradeDetailBlock detail={tx.tradeDetail} seasonKey={tx.season} />
+) : null}
               </div>
             ))}
           </div>

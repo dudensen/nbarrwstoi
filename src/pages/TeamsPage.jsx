@@ -157,14 +157,14 @@ export default function TeamsPage() {
   }, [season.key, historical])
 
   const subtitle = historical
-    ? "Historical teams from the pre-Fantrax database"
-    : "Live teams from the selected Fantrax season"
+    ? ""
+    : ""
 
   return (
     <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
       <div style={card}>
         <div style={eyebrow}>Teams</div>
-        <h2 style={{ margin: 0 }}>{season.label} teams</h2>
+        <h2 style={{ margin: 0 }}>{season.label} Active Teams</h2>
         <div style={{ color: "#6b7280", marginTop: 8 }}>{subtitle}</div>
       </div>
 

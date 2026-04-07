@@ -85,8 +85,9 @@ export default function HomePage() {
             maxWidth: 760,
           }}
         >
-          Live Fantrax data, historical records, team pages, draft results, and
-          league history for the NBArrwstoi Fantasy League.
+          Οι NBArrwstoi είναι μια Φαντασιακή NBA Λίγκα που "τρέχει" από το 2017 μέσα από πλατφόρμες, εξελάξια, 
+          facebook groups, Discord Servers, ψαγμένα internet cafe και underground μπιροκαφωδεία, σε Ελλάδα, 
+          Μάλτα, Καταρ, Κύπρο, Ηνωμένο Βασίλειο, Σουηδία με μικρές στάσεις στους φίλους μας τους Αυστραλούς.
         </p>
       </section>
 
@@ -99,8 +100,8 @@ export default function HomePage() {
         }}
       >
         <InfoCard label="Season" value={season.label} />
-        <InfoCard label="League ID" value={season.leagueId} note="Loaded from seasons.js" />
-        <InfoCard label="Routing" value="Season-aware" note="Pages read the selected season automatically" />
+        <InfoCard label="Platform" value="Fantrax" />
+        <InfoCard label="Discussions" value="Discord" />
       </section>
 
       <section
@@ -112,15 +113,15 @@ export default function HomePage() {
         }}
       >
         <h2 style={{ margin: "0 0 12px", fontSize: 24, color: "#111827" }}>
-          What this site includes
+          Latest Additions
         </h2>
 
         <div style={{ color: "#374151", lineHeight: 1.7 }}>
-          <div>• Standings by season</div>
-          <div>• Team pages and franchise history</div>
-          <div>• Draft results</div>
+          <div>• Team Logos</div>
+          <div>• Trade History</div>
+          <div>• 2020-21 Draft Results</div>
           <div>• League rules and settings</div>
-          <div>• Historical database from your exported records</div>
+          <div>• The War Room</div>
         </div>
       </section>
     </main>
