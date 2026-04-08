@@ -13,6 +13,7 @@ import {
   getTeamNameMapFromRosters,
   slugifyTeamName,
 } from "../utils/fantrax"
+import { canonicalTeamName } from "../utils/history"
 
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
@@ -199,8 +200,10 @@ function TeamLinkCell({ teamId, teamName }) {
     )
   }
 
+  const canonicalName = canonicalTeamName(teamName) || teamName
+
   return (
-    <Link to={`/teams/${slugifyTeamName(teamName)}`} style={teamLink}>
+    <Link to={`/teams/${slugifyTeamName(canonicalName)}`} style={teamLink}>
       {teamName}
     </Link>
   )
@@ -441,9 +444,15 @@ export default function DraftResultsPage() {
       ) : error ? (
         <div style={errorBox}>{error}</div>
       ) : (
-        <>
-          <section style={section}>
-            <div style={summaryGrid}>
+  <>
+    {season.key === "2018-19" && (
+      <div style={noticeBox}>
+        The 2018-19 draft comes from a legacy export. Some picks, player identities, or draft order entries may be incomplete or approximate.
+      </div>
+    )}
+
+    <section style={section}>
+      <div style={summaryGrid}>
               <StatCard label="Draft Type" value={draftResults?.draftType || "—"} />
               <StatCard label="Draft State" value={draftResults?.draftState || "—"} />
               <StatCard label="Start Date" value={formatDraftDate(draftResults?.startDate)} />
@@ -943,4 +952,15 @@ const errorBox = {
   borderRadius: 20,
   padding: 24,
   color: "#9a3412",
+}
+
+const noticeBox = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 20,
+  padding: 16,
+  marginBottom: 18,
+  color: "#9a3412",
+  fontSize: 14,
+  fontWeight: 600,
 }
