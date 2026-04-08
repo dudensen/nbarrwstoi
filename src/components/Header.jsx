@@ -12,6 +12,7 @@ const LINKS = [
   ["/history", "History"],
   ["/contracts", "Contracts"],
   ["/war-room", "The War Room"],
+  ["/fantanea", "Fantanea"],
 ]
 
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
