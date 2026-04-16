@@ -157,6 +157,55 @@ export function buildPlayerLookupFromCsvRows(csvRows = []) {
   return map
 }
 
+export function buildPlayerLookupFromPlayerIds(rows = []) {
+  const map = new Map()
+
+  for (const row of rows) {
+    const id = cleanFantraxPlayerId(
+      row?.id ||
+      row?.playerId ||
+      row?.ID ||
+      row?.player?.id ||
+      ""
+    )
+    if (!id) continue
+
+    const name = decodeMaybeBrokenText(
+      row?.name ||
+      row?.playerName ||
+      row?.fullName ||
+      row?.Player ||
+      row?.player?.name ||
+      [row?.firstName, row?.lastName].filter(Boolean).join(" ") ||
+      [row?.first_name, row?.last_name].filter(Boolean).join(" ") ||
+      id
+    )
+
+    const pos = String(
+      row?.pos ||
+      row?.position ||
+      row?.Position ||
+      row?.posShortName ||
+      row?.player?.pos ||
+      row?.player?.position ||
+      ""
+    ).trim()
+
+    const adpValue = row?.ADP ?? row?.adp ?? null
+    const adp = Number.isFinite(Number(adpValue)) ? Number(adpValue) : null
+
+    map.set(id, {
+      id,
+      name,
+      pos,
+      adp,
+      raw: row,
+    })
+  }
+
+  return map
+}
+
 export function mergePlayerLookups(...maps) {
   const merged = new Map()
 

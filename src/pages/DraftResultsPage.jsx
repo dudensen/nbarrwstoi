@@ -5,13 +5,15 @@ import { SEASONS } from "../config/seasons"
 import { HISTORICAL_DRAFT_RESULTS } from "../config/historicalDraftResults"
 import {
   buildPlayerLookupFromAdp,
-  buildPlayerLookupFromCsvRows,
   parsePlayerCsv,
   mergePlayerLookups,
   enrichDraftPicks,
   getPlayerTeamMapFromRosters,
   getTeamNameMapFromRosters,
+  buildPlayerLookupFromCsvRows,
   slugifyTeamName,
+  decodeMaybeBrokenText,
+  cleanFantraxPlayerId,
 } from "../utils/fantrax"
 import { canonicalTeamName } from "../utils/history"
 
@@ -44,6 +46,95 @@ function normalizeLooseName(value) {
     .replace(/[^a-z0-9]+/g, " ")
     .replace(/\s+/g, " ")
     .trim()
+}
+
+
+function formatPlayerIdsName(name) {
+  const clean = String(name || "").trim()
+  if (!clean.includes(",")) return clean
+
+  const [last, first] = clean.split(",").map((x) => x.trim())
+  return [first, last].filter(Boolean).join(" ")
+}
+
+function normalizePlayerIdsPayload(payload) {
+  if (!payload || typeof payload !== "object") return []
+
+  return Object.values(payload)
+    .filter((item) => item && typeof item === "object")
+    .filter((item) => String(item.position || "").trim().toUpperCase() !== "TM")
+    .map((item) => ({
+      id: cleanFantraxPlayerId(item.fantraxId || item.id || ""),
+      name: formatPlayerIdsName(item.name || ""),
+      pos: String(item.position || item.pos || "").trim(),
+      team: String(item.team || "").trim(),
+      adp: null,
+      source: "playerIds",
+      raw: item,
+    }))
+    .filter((item) => item.id && item.name)
+}
+
+function buildPlayerLookupFromPlayerIds(playerIdsRows = []) {
+  const map = new Map()
+
+  for (const row of playerIdsRows) {
+    const id = cleanFantraxPlayerId(row?.id || row?.fantraxId || "")
+    if (!id) continue
+
+    map.set(id, {
+      id,
+      name: decodeMaybeBrokenText(row?.name || id),
+      pos: row?.pos || row?.position || "",
+      team: row?.team || "",
+      adp: null,
+      raw: row,
+    })
+  }
+
+  return map
+}
+
+function loadPlayerDirectory() {
+  return (async () => {
+    const [adpRes, playerIdsRes] = await Promise.all([
+      fetch(`/api/adp`),
+      fetch(`/api/player-ids`),
+    ])
+
+    const [adpText, playerIdsText] = await Promise.all([
+      adpRes.text(),
+      playerIdsRes.text(),
+    ])
+
+    if (!adpRes.ok) {
+      throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+    }
+
+    if (!playerIdsRes.ok) {
+      throw new Error(`Player IDs failed (${playerIdsRes.status}): ${playerIdsText}`)
+    }
+
+    let adpJson = []
+    let playerIdsJson = {}
+
+    try {
+      adpJson = JSON.parse(adpText)
+    } catch {
+      adpJson = []
+    }
+
+    try {
+      playerIdsJson = JSON.parse(playerIdsText)
+    } catch {
+      playerIdsJson = {}
+    }
+
+    return {
+      adpRows: Array.isArray(adpJson) ? adpJson : [],
+      playerIdsRows: normalizePlayerIdsPayload(playerIdsJson),
+    }
+  })()
 }
 
 function getAdpRowName(row) {
@@ -99,14 +190,14 @@ function findAdpRowByPlayerName(adpRows = [], playerName = "") {
   )
 }
 
-function normalizeHistoricalDraftResults(rows = [], adpRows = []) {
+function normalizeHistoricalDraftResults(rows = [], directoryRows = []) {
   return {
     draftType: "Historical",
     draftState: "Completed",
     startDate: null,
     endDate: null,
     draftPicks: rows.map((row) => {
-      const adpRow = findAdpRowByPlayerName(adpRows, row.player)
+      const adpRow = findAdpRowByPlayerName(directoryRows, row.player)
 
       return {
         pick: row.overall,
@@ -224,6 +315,7 @@ export default function DraftResultsPage() {
   const [viewMode, setViewMode] = useState("all")
   const [allSort, setAllSort] = useState({ key: "pick", direction: "asc" })
   const [teamSort, setTeamSort] = useState({ key: "pick", direction: "asc" })
+  const [playerIdsRows, setPlayerIdsRows] = useState([])
 
   useEffect(() => {
     let cancelled = false
@@ -236,51 +328,64 @@ export default function DraftResultsPage() {
     const csvLoader = playerCsvFiles[`../config/playerCsv/${season.key}.csv`]
 
     if (historicalSeason) {
-      const [adpRes, csvText] = await Promise.all([
-        fetch(`/api/adp`),
-        csvLoader ? csvLoader() : Promise.resolve(""),
-      ])
+      const [playerDirectory, csvText] = await Promise.all([
+  loadPlayerDirectory(),
+  csvLoader ? csvLoader() : Promise.resolve(""),
+])
 
-      const adpText = await adpRes.text()
-      if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+const currentAdpRows = Array.isArray(playerDirectory?.adpRows)
+  ? playerDirectory.adpRows
+  : []
 
-      const adpJson = JSON.parse(adpText)
-      const manualRows = HISTORICAL_DRAFT_RESULTS[season.key] || []
+const currentPlayerIdsRows = Array.isArray(playerDirectory?.playerIdsRows)
+  ? playerDirectory.playerIdsRows
+  : []
 
-      if (!cancelled) {
-        setDraftResults(normalizeHistoricalDraftResults(manualRows, adpJson))
-        setAdpRows(adpJson)
-        setPlayerCsvRows(parsePlayerCsv(csvText || ""))
-        setTeamRosters(null)
-        setPeriod17Rosters(null)
-      }
+const manualRows = HISTORICAL_DRAFT_RESULTS[season.key] || []
+const directoryRows = currentAdpRows.length ? currentAdpRows : currentPlayerIdsRows
+
+if (!cancelled) {
+  setDraftResults(normalizeHistoricalDraftResults(manualRows, directoryRows))
+  setAdpRows(currentAdpRows)
+  setPlayerIdsRows(currentPlayerIdsRows)
+  setPlayerCsvRows(parsePlayerCsv(csvText || ""))
+  setTeamRosters(null)
+  setPeriod17Rosters(null)
+}
       return
     }
 
     const csvText = csvLoader ? await csvLoader() : ""
 
-    const [draftRes, adpRes, rostersRes, period17Res] = await Promise.all([
-      fetch(`/api/draft-results?season=${encodeURIComponent(season.key)}`),
-      fetch(`/api/adp`),
-      fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=1`),
-      fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=17`),
-    ])
+    const [draftRes, rostersRes, period17Res, playerDirectory] = await Promise.all([
+  fetch(`/api/draft-results?season=${encodeURIComponent(season.key)}`),
+  fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=1`),
+  fetch(`/api/team-rosters?season=${encodeURIComponent(season.key)}&period=17`),
+  loadPlayerDirectory(),
+])
 
-    const [draftText, adpText, rostersText, period17Text] = await Promise.all([
-      draftRes.text(),
-      adpRes.text(),
-      rostersRes.text(),
-      period17Res.text(),
-    ])
+const [draftText, rostersText, period17Text] = await Promise.all([
+  draftRes.text(),
+  rostersRes.text(),
+  period17Res.text(),
+])
+
+const currentAdpRows = Array.isArray(playerDirectory?.adpRows)
+  ? playerDirectory.adpRows
+  : []
+
+const currentPlayerIdsRows = Array.isArray(playerDirectory?.playerIdsRows)
+  ? playerDirectory.playerIdsRows
+  : []
 
     if (!draftRes.ok) throw new Error(`Draft results failed (${draftRes.status}): ${draftText}`)
-    if (!adpRes.ok) throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
     if (!rostersRes.ok) throw new Error(`Team rosters failed (${rostersRes.status}): ${rostersText}`)
     if (!period17Res.ok) throw new Error(`Period 17 rosters failed (${period17Res.status}): ${period17Text}`)
 
     if (!cancelled) {
       setDraftResults(JSON.parse(draftText))
-      setAdpRows(JSON.parse(adpText))
+      setAdpRows(currentAdpRows)
+      setPlayerIdsRows(currentPlayerIdsRows)
       setPlayerCsvRows(parsePlayerCsv(csvText || ""))
       setTeamRosters(JSON.parse(rostersText))
       setPeriod17Rosters(JSON.parse(period17Text))
@@ -293,6 +398,7 @@ export default function DraftResultsPage() {
       setPlayerCsvRows([])
       setTeamRosters(null)
       setPeriod17Rosters(null)
+      setPlayerIdsRows([])
     }
   } finally {
     if (!cancelled) setLoading(false)
@@ -306,11 +412,13 @@ export default function DraftResultsPage() {
     }
   }, [season.key, historicalSeason])
 
-  const playerLookup = useMemo(() => {
-    const csvLookup = buildPlayerLookupFromCsvRows(playerCsvRows)
-    const adpLookup = buildPlayerLookupFromAdp(adpRows)
-    return mergePlayerLookups(csvLookup, adpLookup)
-  }, [playerCsvRows, adpRows])
+const playerLookup = useMemo(() => {
+  return mergePlayerLookups(
+    buildPlayerLookupFromCsvRows(playerCsvRows),
+    buildPlayerLookupFromPlayerIds(playerIdsRows),
+    buildPlayerLookupFromAdp(adpRows)
+  )
+}, [playerCsvRows, playerIdsRows, adpRows])
 
   const teamNameMap = useMemo(() => getTeamNameMapFromRosters(teamRosters), [teamRosters])
   const playerTeamMapPeriod17 = useMemo(
