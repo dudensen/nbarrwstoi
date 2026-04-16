@@ -12,6 +12,8 @@ import HomePage from "./pages/HomePage"
 import ContractsPage from "./pages/ContractsPage"
 import ThemeAwardsPage from "./pages/ThemeAwardsPage"
 import FantaneaPage from "./pages/FantaneaPage"
+import SideLeaguesPage from "./pages/SideLeaguesPage"
+import ApiStatusPage from "./pages/ApiStatusPage"
 
 
 function PlaceholderPage({ title }) {
@@ -51,6 +53,8 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/war-room" element={<ThemeAwardsPage />} />
           <Route path="/fantanea" element={<FantaneaPage />} />
+          <Route path="/sideleagues" element={<SideLeaguesPage />} />
+          <Route path="/apistatus" element={<ApiStatusPage />} />
         </Routes>
       </BrowserRouter>
     </SeasonProvider>

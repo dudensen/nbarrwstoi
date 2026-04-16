@@ -1,9 +1,19 @@
 export const SEASONS = [
+    {
+    key: "2026-27",
+    label: "2026-27",
+    leagueId: "a8v40ygcmnwusl4d",
+    isCurrent: true,
+    dataSource: "fantrax",
+    spreadsheets: {
+      futurePicksSheetId: "178c8EuOzomntGys9O6zKpZ2LcNokUwh1UM7XKc7PMfc",
+      futurePicksGid: "513850187",
+    },
+  },
   {
     key: "2025-26",
     label: "2025-26",
     leagueId: "tl6muagkmafhimxi",
-    isCurrent: true,
     dataSource: "fantrax",
     spreadsheets: {
       futurePicksSheetId: "178c8EuOzomntGys9O6zKpZ2LcNokUwh1UM7XKc7PMfc",

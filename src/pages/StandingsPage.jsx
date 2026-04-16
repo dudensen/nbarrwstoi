@@ -426,6 +426,29 @@ function buildHistoricalStandings(rows = [], seasonKey = "") {
   }))
 }
 
+function buildPreseasonRowsFromLeagueInfo(leagueInfo) {
+  const teams = extractTeamsFromLeagueInfo(leagueInfo)
+
+  return teams
+    .sort((a, b) =>
+      String(a?.name || "").localeCompare(String(b?.name || ""), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      })
+    )
+    .map((team, index) => ({
+      rank: index + 1,
+      teamId: String(team?.id || ""),
+      teamName: decodeMaybeBrokenText(team?.name || "—"),
+      record: "—",
+      points: "—",
+      percentage: "—",
+      gamesBack: "—",
+      streak: "—",
+      preseason: true,
+    }))
+}
+
 export default function StandingsPage() {
   const { season } = useSeason()
 
@@ -436,124 +459,149 @@ export default function StandingsPage() {
   const [playoffSummary, setPlayoffSummary] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [preseasonMode, setPreseasonMode] = useState(false)
 
   const isHistoricalSeason = season?.dataSource === "history"
 
   useEffect(() => {
-    let cancelled = false
+  let cancelled = false
 
-    async function load() {
-      try {
-        setLoading(true)
-        setError("")
+  async function load() {
+    try {
+      setLoading(true)
+      setError("")
 
-        let nextRows = []
-        let nextLeagueInfo = null
-        let nextMatchupResults = null
-        let nextHistoryPayload = null
-        let nextPlayoffSummary = null
+      let nextRows = []
+      let nextLeagueInfo = null
+      let nextMatchupResults = null
+      let nextHistoryPayload = null
+      let nextPlayoffSummary = null
+      let standingsUnavailable = false
 
-        if (isHistoricalSeason) {
-          const [historyRes, sheetRes] = await Promise.allSettled([
-            fetch("/data/history-data.json"),
+      if (isHistoricalSeason) {
+        const [historyRes, sheetRes] = await Promise.allSettled([
+          fetch("/data/history-data.json"),
+          fetch(PLAYOFFS_SHEET_CSV_URL),
+        ])
+
+        if (historyRes.status !== "fulfilled") {
+          throw new Error("Failed to reach history dataset.")
+        }
+
+        const historyText = await historyRes.value.text()
+        if (!historyRes.value.ok) {
+          throw new Error(`History data failed (${historyRes.value.status}): ${historyText}`)
+        }
+
+        nextHistoryPayload = JSON.parse(historyText)
+        nextRows = buildHistoricalStandings(nextHistoryPayload?.rows || [], season.key)
+
+        if (sheetRes.status === "fulfilled" && sheetRes.value.ok) {
+          const sheetText = await sheetRes.value.text()
+          const matrix = parseCsvMatrix(sheetText)
+          const summary = buildPlayoffSummaryFromMatrix(matrix, season.key)
+          if (summary) nextPlayoffSummary = summary
+        }
+      } else {
+        const matchupFile = `/data/matchup-results-${encodeURIComponent(season.key)}.json`
+
+        const [standingsRes, leagueRes, matchupRes, sheetRes] =
+          await Promise.allSettled([
+            fetch(`/api/standings?season=${encodeURIComponent(season.key)}`),
+            fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
+            fetch(matchupFile),
             fetch(PLAYOFFS_SHEET_CSV_URL),
           ])
 
-          if (historyRes.status !== "fulfilled") {
-            throw new Error("Failed to reach history dataset.")
-          }
+        if (standingsRes.status !== "fulfilled") {
+          throw new Error("Failed to reach standings endpoint.")
+        }
 
-          const historyText = await historyRes.value.text()
-          if (!historyRes.value.ok) {
-            throw new Error(`History data failed (${historyRes.value.status}): ${historyText}`)
-          }
+        const standingsText = await standingsRes.value.text()
 
-          nextHistoryPayload = JSON.parse(historyText)
-          nextRows = buildHistoricalStandings(nextHistoryPayload?.rows || [], season.key)
-
-          if (sheetRes.status === "fulfilled" && sheetRes.value.ok) {
-            const sheetText = await sheetRes.value.text()
-            const matrix = parseCsvMatrix(sheetText)
-            const summary = buildPlayoffSummaryFromMatrix(matrix, season.key)
-            if (summary) nextPlayoffSummary = summary
+        let parsedStandings = []
+        if (standingsRes.value.ok && String(standingsText || "").trim()) {
+          try {
+            const json = JSON.parse(standingsText)
+            parsedStandings = Array.isArray(json) ? json : []
+          } catch {
+            standingsUnavailable = true
           }
         } else {
-          const matchupFile = `/data/matchup-results-${encodeURIComponent(season.key)}.json`
+          standingsUnavailable = true
+        }
 
-          const [standingsRes, leagueRes, matchupRes, sheetRes] =
-            await Promise.allSettled([
-              fetch(`/api/standings?season=${encodeURIComponent(season.key)}`),
-              fetch(`/api/league-info?season=${encodeURIComponent(season.key)}`),
-              fetch(matchupFile),
-              fetch(PLAYOFFS_SHEET_CSV_URL),
-            ])
-
-          if (standingsRes.status !== "fulfilled") {
-            throw new Error("Failed to reach standings endpoint.")
-          }
-
-          const standingsText = await standingsRes.value.text()
-          if (!standingsRes.value.ok) {
-            throw new Error(
-              `Request failed (${standingsRes.value.status}): ${standingsText}`
-            )
-          }
-
-          const parsedStandings = JSON.parse(standingsText)
-          nextRows = Array.isArray(parsedStandings) ? parsedStandings : []
-
-          if (leagueRes.status === "fulfilled") {
-            const leagueText = await leagueRes.value.text()
-            if (leagueRes.value.ok) {
+        if (leagueRes.status === "fulfilled") {
+          const leagueText = await leagueRes.value.text()
+          if (leagueRes.value.ok && String(leagueText || "").trim()) {
+            try {
               nextLeagueInfo = JSON.parse(leagueText)
+            } catch {
+              nextLeagueInfo = null
             }
           }
+        }
 
-          if (matchupRes.status === "fulfilled") {
-            const matchupText = await matchupRes.value.text()
-            if (matchupRes.value.ok) {
+        if (matchupRes.status === "fulfilled") {
+          const matchupText = await matchupRes.value.text()
+          if (matchupRes.value.ok && String(matchupText || "").trim()) {
+            try {
               nextMatchupResults = JSON.parse(matchupText)
-            }
-          }
-
-          if (sheetRes.status === "fulfilled" && sheetRes.value.ok) {
-            const sheetText = await sheetRes.value.text()
-            const matrix = parseCsvMatrix(sheetText)
-            const summary = buildPlayoffSummaryFromMatrix(matrix, season.key)
-
-            if (summary) {
-              nextPlayoffSummary = summary
+            } catch {
+              nextMatchupResults = null
             }
           }
         }
 
-        if (!cancelled) {
-          setRows(nextRows)
-          setLeagueInfo(nextLeagueInfo)
-          setMatchupResults(nextMatchupResults)
-          setHistoryPayload(nextHistoryPayload)
-          setPlayoffSummary(nextPlayoffSummary)
+        if (sheetRes.status === "fulfilled" && sheetRes.value.ok) {
+          const sheetText = await sheetRes.value.text()
+          const matrix = parseCsvMatrix(sheetText)
+          const summary = buildPlayoffSummaryFromMatrix(matrix, season.key)
+
+          if (summary) {
+            nextPlayoffSummary = summary
+          }
         }
-      } catch (err) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Unknown error")
-          setRows([])
-          setLeagueInfo(null)
-          setMatchupResults(null)
-          setHistoryPayload(null)
-          setPlayoffSummary(null)
+
+        if (parsedStandings.length > 0) {
+          nextRows = parsedStandings
+        } else if (nextLeagueInfo) {
+          nextRows = buildPreseasonRowsFromLeagueInfo(nextLeagueInfo)
+          standingsUnavailable = true
+        } else {
+          nextRows = []
         }
-      } finally {
-        if (!cancelled) setLoading(false)
       }
-    }
 
-    load()
-
-    return () => {
-      cancelled = true
+      if (!cancelled) {
+        setRows(nextRows)
+        setLeagueInfo(nextLeagueInfo)
+        setMatchupResults(nextMatchupResults)
+        setHistoryPayload(nextHistoryPayload)
+        setPlayoffSummary(nextPlayoffSummary)
+        setPreseasonMode(standingsUnavailable && nextRows.length > 0)
+      }
+    } catch (err) {
+      if (!cancelled) {
+        setError(err instanceof Error ? err.message : "Unknown error")
+        setRows([])
+        setLeagueInfo(null)
+        setMatchupResults(null)
+        setHistoryPayload(null)
+        setPlayoffSummary(null)
+        setPreseasonMode(false)
+      }
+    } finally {
+      if (!cancelled) setLoading(false)
     }
-  }, [season.key, isHistoricalSeason])
+  }
+
+  load()
+
+  return () => {
+    cancelled = true
+  }
+}, [season.key, isHistoricalSeason])
 
   const columns = useMemo(
     () => getDisplayColumns(rows, isHistoricalSeason),
@@ -651,7 +699,7 @@ export default function StandingsPage() {
         </div>
       ) : (
         <>
-          {champion && runnerUp && (
+          {!preseasonMode && champion && runnerUp && (
             <div
               style={{
                 background: "#ffffff",
@@ -708,6 +756,22 @@ export default function StandingsPage() {
               </div>
             </div>
           )}
+
+          {preseasonMode && (
+            <div
+              style={{
+                background: "#fff7ed",
+                border: "1px solid #fed7aa",
+                borderRadius: 20,
+                padding: 18,
+                marginBottom: 20,
+                color: "#9a3412",
+              }}
+            >
+              The league has not started yet. Teams are shown in alphabetical order.
+            </div>
+          )}
+
 
           <div
             style={{

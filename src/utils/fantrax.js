@@ -35,7 +35,10 @@ export function extractTeamsFromLeagueInfo(leagueInfo) {
 }
 
 export function getTeamByIdFromLeagueInfo(leagueInfo, teamId) {
-  return extractTeamsFromLeagueInfo(leagueInfo).find((team) => team.id === teamId) || null
+  return (
+    extractTeamsFromLeagueInfo(leagueInfo).find((team) => team.id === teamId) ||
+    null
+  )
 }
 
 export function getTeamMatchups(leagueInfo, teamId) {
@@ -68,12 +71,12 @@ export function buildPlayerLookupFromAdp(adpRows = []) {
   const map = new Map()
 
   for (const row of adpRows) {
-    const id = String(row?.id || "")
+    const id = cleanFantraxPlayerId(row?.id || "")
     if (!id) continue
 
     map.set(id, {
       id,
-      name: row?.name || id,
+      name: decodeMaybeBrokenText(row?.name || id),
       pos: row?.pos || "",
       adp: row?.ADP ?? null,
       raw: row,
@@ -182,18 +185,64 @@ export function mergePlayerLookups(...maps) {
   return merged
 }
 
+export function getRosterItemPlayerId(item) {
+  return cleanFantraxPlayerId(
+    item?.player?.id ||
+      item?.playerId ||
+      item?.entityId ||
+      item?.entity?.id ||
+      item?.id ||
+      ""
+  )
+}
+
+export function getRosterItemPlayerName(item) {
+  return decodeMaybeBrokenText(
+    item?.player?.name ||
+      item?.playerName ||
+      item?.name ||
+      item?.entity?.name ||
+      item?.player?.fullName ||
+      [item?.player?.firstName, item?.player?.lastName].filter(Boolean).join(" ") ||
+      ""
+  )
+}
+
+export function getRosterItemPlayerPos(item) {
+  return String(
+    item?.player?.pos ||
+      item?.player?.position ||
+      item?.pos ||
+      item?.position ||
+      item?.entity?.pos ||
+      item?.entity?.position ||
+      ""
+  ).trim()
+}
+
 export function getRosterForTeam(teamRostersResponse, teamId) {
-  return teamRostersResponse?.rosters?.[teamId]?.rosterItems || []
+  const roster = teamRostersResponse?.rosters?.[teamId]
+
+  return roster?.rosterItems || roster?.players || roster?.items || []
 }
 
 export function enrichRosterItems(rosterItems = [], playerLookup) {
   return rosterItems.map((item) => {
-    const player = playerLookup.get(String(item.id))
+    const rawId = String(item?.id || "")
+    const playerId = getRosterItemPlayerId(item)
+    const fallbackName = getRosterItemPlayerName(item)
+    const fallbackPos = getRosterItemPlayerPos(item)
+
+    const player =
+      playerLookup.get(playerId) ||
+      playerLookup.get(rawId) ||
+      null
 
     return {
       ...item,
-      playerName: player?.name || item.id,
-      playerPos: player?.pos || "",
+      id: playerId || rawId,
+      playerName: player?.name || fallbackName || playerId || rawId || "—",
+      playerPos: player?.pos || fallbackPos || "",
       playerAdp: player?.adp ?? null,
     }
   })
@@ -214,7 +263,9 @@ export function enrichDraftPicks(draftResults, playerLookup, teamNameMap) {
   const picks = draftResults?.draftPicks || []
 
   return picks.map((pick) => {
-    const player = pick?.playerId ? playerLookup.get(String(pick.playerId)) : null
+    const player = pick?.playerId
+      ? playerLookup.get(cleanFantraxPlayerId(String(pick.playerId)))
+      : null
     const teamName = teamNameMap.get(pick.teamId) || pick.teamId
 
     return {
@@ -234,11 +285,13 @@ export function getPlayerTeamMapFromRosters(teamRostersResponse) {
 
   for (const teamData of Object.values(rosters)) {
     const teamName = teamData?.teamName || "Unknown Team"
-    const rosterItems = teamData?.rosterItems || []
+    const rosterItems =
+      teamData?.rosterItems || teamData?.players || teamData?.items || []
 
     for (const item of rosterItems) {
-      if (!item?.id) continue
-      map.set(String(item.id), teamName)
+      const playerId = getRosterItemPlayerId(item)
+      if (!playerId) continue
+      map.set(playerId, teamName)
     }
   }
 
