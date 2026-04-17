@@ -117,11 +117,8 @@ export default function HomePage() {
         </h2>
 
         <div style={{ color: "#374151", lineHeight: 1.7 }}>
-          <div>• Team Logos</div>
-          <div>• Trade History</div>
-          <div>• 2020-21 Draft Results</div>
-          <div>• League rules and settings</div>
-          <div>• The War Room</div>
+          <div>• SideLeagues</div>
+          <div>• Minor Bugs</div>
         </div>
       </section>
     </main>

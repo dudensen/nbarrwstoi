@@ -1,0 +1,4924 @@
+{
+  "key": "asg-nbarrwstoi-3pts-contest-2022",
+  "name": "ASG NBArrwstoi 3pts contest",
+  "seasonLabel": "2021-22",
+  "leagueId": "z5npzkodkzibwuut",
+  "view": "final_standings",
+  "teams": [],
+  "leagueName": "NBArrwstoi 3pts contest",
+  "generatedAt": "2026-04-17T10:04:04Z",
+  "periods": [
+    {
+      "period": 1,
+      "matchups": [
+        {
+          "period": 1,
+          "matchupId": "period1_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": "1",
+              "w": 5.926512,
+              "l": 1.481628,
+              "t": 4.0,
+              "pts": 1.0,
+              "disabled": false,
+              "stats": {
+                "points": 1.0,
+                "reb": 0.0,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "2",
+              "w": 3.933333,
+              "l": 0.983333,
+              "t": 4.0,
+              "pts": 13.0,
+              "disabled": false,
+              "stats": {
+                "points": 13.0,
+                "reb": 1.993178,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM2_WIN",
+          "scoreText": "1.00 - 13.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "period1_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": "3",
+              "w": 3.533571,
+              "l": 0.706714,
+              "t": 5.0,
+              "pts": 20.0,
+              "disabled": false,
+              "stats": {
+                "points": 20.0,
+                "reb": 2.39294,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "4",
+              "w": 3.116471,
+              "l": 0.779118,
+              "t": 4.0,
+              "pts": 17.0,
+              "disabled": false,
+              "stats": {
+                "points": 17.0,
+                "reb": 2.810041,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "20.00 - 17.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "period1_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": "5",
+              "w": 2.786667,
+              "l": 0.928889,
+              "t": 3.0,
+              "pts": 15.0,
+              "disabled": false,
+              "stats": {
+                "points": 15.0,
+                "reb": 3.139845,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "6",
+              "w": 2.536552,
+              "l": 0.50731,
+              "t": 5.0,
+              "pts": 10.0,
+              "disabled": false,
+              "stats": {
+                "points": 10.0,
+                "reb": 3.38996,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "15.00 - 10.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "period1_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": "7",
+              "w": 2.391428,
+              "l": 0.597857,
+              "t": 4.0,
+              "pts": 6.0,
+              "disabled": false,
+              "stats": {
+                "points": 6.0,
+                "reb": 3.535083,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "8",
+              "w": 1.895807,
+              "l": 0.379161,
+              "t": 5.0,
+              "pts": 12.0,
+              "disabled": false,
+              "stats": {
+                "points": 12.0,
+                "reb": 4.030705,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM2_WIN",
+          "scoreText": "6.00 - 12.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "period1_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": "9",
+              "w": 0.528696,
+              "l": 0.132174,
+              "t": 4.0,
+              "pts": 14.0,
+              "disabled": false,
+              "stats": {
+                "points": 14.0,
+                "reb": 5.397816,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "10",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 2.0,
+              "disabled": false,
+              "stats": {
+                "points": 2.0,
+                "reb": 5.926512,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "14.00 - 2.00"
+        }
+      ]
+    },
+    {
+      "period": 2,
+      "matchups": [
+        {
+          "period": 2,
+          "matchupId": "period2_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": "1",
+              "w": 5.927,
+              "l": 0.0,
+              "t": 5.75,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.177,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "2",
+              "w": 3.933,
+              "l": 0.0,
+              "t": 3.75,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.183,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "0.00 - 0.00"
+        },
+        {
+          "period": 2,
+          "matchupId": "period2_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": "3",
+              "w": 3.534,
+              "l": 0.0,
+              "t": 3.4,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.134,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "4",
+              "w": 3.116,
+              "l": 0.0,
+              "t": 3.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.116,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "0.00 - 0.00"
+        },
+        {
+          "period": 2,
+          "matchupId": "period2_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": "5",
+              "w": 2.787,
+              "l": 0.0,
+              "t": 2.667,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.12,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "6",
+              "w": 2.537,
+              "l": 0.0,
+              "t": 2.4,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.137,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "0.00 - 0.00"
+        },
+        {
+          "period": 2,
+          "matchupId": "period2_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": "7",
+              "w": 2.391,
+              "l": 0.0,
+              "t": 2.25,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.141,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "8",
+              "w": 1.896,
+              "l": 0.0,
+              "t": 1.8,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.096,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "0.00 - 0.00"
+        },
+        {
+          "period": 2,
+          "matchupId": "period2_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": "9",
+              "w": 0.529,
+              "l": 0.0,
+              "t": 0.5,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.029,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "10",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "0.00 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 3,
+      "matchups": [
+        {
+          "period": 3,
+          "matchupId": "period3_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": "1",
+              "w": 5.927,
+              "l": 4.0,
+              "t": 23.0,
+              "pts": 5.8,
+              "disabled": false,
+              "stats": {
+                "points": 43.0,
+                "reb": 10.8,
+                "ast": 0.535,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "2",
+              "w": 3.933,
+              "l": 4.0,
+              "t": 15.0,
+              "pts": 3.8,
+              "disabled": false,
+              "stats": {
+                "points": 27.0,
+                "reb": 6.8,
+                "ast": 0.556,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "5.80 - 3.80"
+        },
+        {
+          "period": 3,
+          "matchupId": "period3_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": "3",
+              "w": 3.534,
+              "l": 5.0,
+              "t": 17.0,
+              "pts": 3.4,
+              "disabled": false,
+              "stats": {
+                "points": 42.0,
+                "reb": 8.4,
+                "ast": 0.405,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "4",
+              "w": 3.116,
+              "l": 4.0,
+              "t": 12.0,
+              "pts": 3.0,
+              "disabled": false,
+              "stats": {
+                "points": 34.0,
+                "reb": 8.5,
+                "ast": 0.353,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "3.40 - 3.00"
+        },
+        {
+          "period": 3,
+          "matchupId": "period3_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": "5",
+              "w": 2.787,
+              "l": 3.0,
+              "t": 8.0,
+              "pts": 2.7,
+              "disabled": false,
+              "stats": {
+                "points": 22.0,
+                "reb": 7.3,
+                "ast": 0.364,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "6",
+              "w": 2.537,
+              "l": 5.0,
+              "t": 12.0,
+              "pts": 2.4,
+              "disabled": false,
+              "stats": {
+                "points": 29.0,
+                "reb": 5.8,
+                "ast": 0.414,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "2.70 - 2.40"
+        },
+        {
+          "period": 3,
+          "matchupId": "period3_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": "7",
+              "w": 2.391,
+              "l": 4.0,
+              "t": 9.0,
+              "pts": 2.3,
+              "disabled": false,
+              "stats": {
+                "points": 21.0,
+                "reb": 5.3,
+                "ast": 0.429,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "8",
+              "w": 1.896,
+              "l": 5.0,
+              "t": 9.0,
+              "pts": 1.8,
+              "disabled": false,
+              "stats": {
+                "points": 31.0,
+                "reb": 6.2,
+                "ast": 0.29,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "2.30 - 1.80"
+        },
+        {
+          "period": 3,
+          "matchupId": "period3_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": "9",
+              "w": 0.529,
+              "l": 4.0,
+              "t": 2.0,
+              "pts": 0.5,
+              "disabled": false,
+              "stats": {
+                "points": 23.0,
+                "reb": 5.8,
+                "ast": 0.087,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": "10",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.50 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 4,
+      "matchups": []
+    },
+    {
+      "period": 5,
+      "matchups": [
+        {
+          "period": 5,
+          "matchupId": "period5_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 23.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 17.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "23.00 - 17.00"
+        },
+        {
+          "period": 5,
+          "matchupId": "period5_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 15.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 12.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "15.00 - 12.00"
+        },
+        {
+          "period": 5,
+          "matchupId": "period5_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 12.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 9.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "12.00 - 9.00"
+        },
+        {
+          "period": 5,
+          "matchupId": "period5_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 9.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 8.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "9.00 - 8.00"
+        },
+        {
+          "period": 5,
+          "matchupId": "period5_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 2.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "2.00 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 6,
+      "matchups": [
+        {
+          "period": 6,
+          "matchupId": "period6_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 5.75,
+              "t": 0.0,
+              "pts": 5.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 2.0,
+              "l": 3.75,
+              "t": 0.0,
+              "pts": 3.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "5.80 - 3.80"
+        },
+        {
+          "period": 6,
+          "matchupId": "period6_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 3.0,
+              "l": 3.4,
+              "t": 0.0,
+              "pts": 3.4,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 4.0,
+              "l": 3.0,
+              "t": 0.0,
+              "pts": 3.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "3.40 - 3.00"
+        },
+        {
+          "period": 6,
+          "matchupId": "period6_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 5.0,
+              "l": 2.667,
+              "t": 0.0,
+              "pts": 2.7,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 6.0,
+              "l": 2.4,
+              "t": 0.0,
+              "pts": 2.4,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "2.70 - 2.40"
+        },
+        {
+          "period": 6,
+          "matchupId": "period6_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 7.0,
+              "l": 2.25,
+              "t": 0.0,
+              "pts": 2.3,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 8.0,
+              "l": 1.8,
+              "t": 0.0,
+              "pts": 1.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "2.30 - 1.80"
+        },
+        {
+          "period": 6,
+          "matchupId": "period6_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 9.0,
+              "l": 0.5,
+              "t": 0.0,
+              "pts": 0.5,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 10.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.50 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 7,
+      "matchups": [
+        {
+          "period": 7,
+          "matchupId": "period7_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 43.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 42.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "43.00 - 42.00"
+        },
+        {
+          "period": 7,
+          "matchupId": "period7_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 34.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 31.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "34.00 - 31.00"
+        },
+        {
+          "period": 7,
+          "matchupId": "period7_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 29.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 27.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "29.00 - 27.00"
+        },
+        {
+          "period": 7,
+          "matchupId": "period7_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 23.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 22.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "23.00 - 22.00"
+        },
+        {
+          "period": 7,
+          "matchupId": "period7_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 21.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "21.00 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 8,
+      "matchups": [
+        {
+          "period": 8,
+          "matchupId": "period8_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 10.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 8.5,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "10.80 - 8.50"
+        },
+        {
+          "period": 8,
+          "matchupId": "period8_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 8.4,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 7.3,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "8.40 - 7.30"
+        },
+        {
+          "period": 8,
+          "matchupId": "period8_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 6.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 6.2,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "6.80 - 6.20"
+        },
+        {
+          "period": 8,
+          "matchupId": "period8_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 5.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 5.8,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "5.80 - 5.80"
+        },
+        {
+          "period": 8,
+          "matchupId": "period8_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 5.3,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "5.30 - 0.00"
+        }
+      ]
+    },
+    {
+      "period": 9,
+      "matchups": [
+        {
+          "period": 9,
+          "matchupId": "period9_fallback_1",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 1.0,
+              "l": 0.183,
+              "t": 0.0,
+              "pts": 0.556,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 2.0,
+              "l": 0.177,
+              "t": 0.0,
+              "pts": 0.535,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.56 - 0.54"
+        },
+        {
+          "period": 9,
+          "matchupId": "period9_fallback_2",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 3.0,
+              "l": 0.141,
+              "t": 0.0,
+              "pts": 0.429,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 4.0,
+              "l": 0.137,
+              "t": 0.0,
+              "pts": 0.414,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.43 - 0.41"
+        },
+        {
+          "period": 9,
+          "matchupId": "period9_fallback_3",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 5.0,
+              "l": 0.134,
+              "t": 0.0,
+              "pts": 0.405,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 6.0,
+              "l": 0.12,
+              "t": 0.0,
+              "pts": 0.364,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.41 - 0.36"
+        },
+        {
+          "period": 9,
+          "matchupId": "period9_fallback_4",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 7.0,
+              "l": 0.116,
+              "t": 0.0,
+              "pts": 0.353,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 8.0,
+              "l": 0.096,
+              "t": 0.0,
+              "pts": 0.29,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.35 - 0.29"
+        },
+        {
+          "period": 9,
+          "matchupId": "period9_fallback_5",
+          "teams": [
+            {
+              "id": null,
+              "name": null,
+              "w": 9.0,
+              "l": 0.029,
+              "t": 0.0,
+              "pts": 0.087,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": null,
+              "name": null,
+              "w": 10.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": null,
+                "reb": null,
+                "ast": null,
+                "st": null,
+                "blk": null,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TEAM1_WIN",
+          "scoreText": "0.09 - 0.00"
+        }
+      ]
+    }
+  ],
+  "matchups": [
+    {
+      "period": 1,
+      "matchupId": "period1_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": "1",
+          "w": 5.926512,
+          "l": 1.481628,
+          "t": 4.0,
+          "pts": 1.0,
+          "disabled": false,
+          "stats": {
+            "points": 1.0,
+            "reb": 0.0,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "2",
+          "w": 3.933333,
+          "l": 0.983333,
+          "t": 4.0,
+          "pts": 13.0,
+          "disabled": false,
+          "stats": {
+            "points": 13.0,
+            "reb": 1.993178,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM2_WIN",
+      "scoreText": "1.00 - 13.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "period1_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": "3",
+          "w": 3.533571,
+          "l": 0.706714,
+          "t": 5.0,
+          "pts": 20.0,
+          "disabled": false,
+          "stats": {
+            "points": 20.0,
+            "reb": 2.39294,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "4",
+          "w": 3.116471,
+          "l": 0.779118,
+          "t": 4.0,
+          "pts": 17.0,
+          "disabled": false,
+          "stats": {
+            "points": 17.0,
+            "reb": 2.810041,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "20.00 - 17.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "period1_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": "5",
+          "w": 2.786667,
+          "l": 0.928889,
+          "t": 3.0,
+          "pts": 15.0,
+          "disabled": false,
+          "stats": {
+            "points": 15.0,
+            "reb": 3.139845,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "6",
+          "w": 2.536552,
+          "l": 0.50731,
+          "t": 5.0,
+          "pts": 10.0,
+          "disabled": false,
+          "stats": {
+            "points": 10.0,
+            "reb": 3.38996,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "15.00 - 10.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "period1_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": "7",
+          "w": 2.391428,
+          "l": 0.597857,
+          "t": 4.0,
+          "pts": 6.0,
+          "disabled": false,
+          "stats": {
+            "points": 6.0,
+            "reb": 3.535083,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "8",
+          "w": 1.895807,
+          "l": 0.379161,
+          "t": 5.0,
+          "pts": 12.0,
+          "disabled": false,
+          "stats": {
+            "points": 12.0,
+            "reb": 4.030705,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM2_WIN",
+      "scoreText": "6.00 - 12.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "period1_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": "9",
+          "w": 0.528696,
+          "l": 0.132174,
+          "t": 4.0,
+          "pts": 14.0,
+          "disabled": false,
+          "stats": {
+            "points": 14.0,
+            "reb": 5.397816,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "10",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 2.0,
+          "disabled": false,
+          "stats": {
+            "points": 2.0,
+            "reb": 5.926512,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "14.00 - 2.00"
+    },
+    {
+      "period": 2,
+      "matchupId": "period2_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": "1",
+          "w": 5.927,
+          "l": 0.0,
+          "t": 5.75,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.177,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "2",
+          "w": 3.933,
+          "l": 0.0,
+          "t": 3.75,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.183,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "0.00 - 0.00"
+    },
+    {
+      "period": 2,
+      "matchupId": "period2_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": "3",
+          "w": 3.534,
+          "l": 0.0,
+          "t": 3.4,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.134,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "4",
+          "w": 3.116,
+          "l": 0.0,
+          "t": 3.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.116,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "0.00 - 0.00"
+    },
+    {
+      "period": 2,
+      "matchupId": "period2_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": "5",
+          "w": 2.787,
+          "l": 0.0,
+          "t": 2.667,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.12,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "6",
+          "w": 2.537,
+          "l": 0.0,
+          "t": 2.4,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.137,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "0.00 - 0.00"
+    },
+    {
+      "period": 2,
+      "matchupId": "period2_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": "7",
+          "w": 2.391,
+          "l": 0.0,
+          "t": 2.25,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.141,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "8",
+          "w": 1.896,
+          "l": 0.0,
+          "t": 1.8,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.096,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "0.00 - 0.00"
+    },
+    {
+      "period": 2,
+      "matchupId": "period2_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": "9",
+          "w": 0.529,
+          "l": 0.0,
+          "t": 0.5,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.029,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "10",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "0.00 - 0.00"
+    },
+    {
+      "period": 3,
+      "matchupId": "period3_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": "1",
+          "w": 5.927,
+          "l": 4.0,
+          "t": 23.0,
+          "pts": 5.8,
+          "disabled": false,
+          "stats": {
+            "points": 43.0,
+            "reb": 10.8,
+            "ast": 0.535,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "2",
+          "w": 3.933,
+          "l": 4.0,
+          "t": 15.0,
+          "pts": 3.8,
+          "disabled": false,
+          "stats": {
+            "points": 27.0,
+            "reb": 6.8,
+            "ast": 0.556,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "5.80 - 3.80"
+    },
+    {
+      "period": 3,
+      "matchupId": "period3_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": "3",
+          "w": 3.534,
+          "l": 5.0,
+          "t": 17.0,
+          "pts": 3.4,
+          "disabled": false,
+          "stats": {
+            "points": 42.0,
+            "reb": 8.4,
+            "ast": 0.405,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "4",
+          "w": 3.116,
+          "l": 4.0,
+          "t": 12.0,
+          "pts": 3.0,
+          "disabled": false,
+          "stats": {
+            "points": 34.0,
+            "reb": 8.5,
+            "ast": 0.353,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "3.40 - 3.00"
+    },
+    {
+      "period": 3,
+      "matchupId": "period3_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": "5",
+          "w": 2.787,
+          "l": 3.0,
+          "t": 8.0,
+          "pts": 2.7,
+          "disabled": false,
+          "stats": {
+            "points": 22.0,
+            "reb": 7.3,
+            "ast": 0.364,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "6",
+          "w": 2.537,
+          "l": 5.0,
+          "t": 12.0,
+          "pts": 2.4,
+          "disabled": false,
+          "stats": {
+            "points": 29.0,
+            "reb": 5.8,
+            "ast": 0.414,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "2.70 - 2.40"
+    },
+    {
+      "period": 3,
+      "matchupId": "period3_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": "7",
+          "w": 2.391,
+          "l": 4.0,
+          "t": 9.0,
+          "pts": 2.3,
+          "disabled": false,
+          "stats": {
+            "points": 21.0,
+            "reb": 5.3,
+            "ast": 0.429,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "8",
+          "w": 1.896,
+          "l": 5.0,
+          "t": 9.0,
+          "pts": 1.8,
+          "disabled": false,
+          "stats": {
+            "points": 31.0,
+            "reb": 6.2,
+            "ast": 0.29,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "2.30 - 1.80"
+    },
+    {
+      "period": 3,
+      "matchupId": "period3_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": "9",
+          "w": 0.529,
+          "l": 4.0,
+          "t": 2.0,
+          "pts": 0.5,
+          "disabled": false,
+          "stats": {
+            "points": 23.0,
+            "reb": 5.8,
+            "ast": 0.087,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": "10",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.50 - 0.00"
+    },
+    {
+      "period": 5,
+      "matchupId": "period5_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 23.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 17.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "23.00 - 17.00"
+    },
+    {
+      "period": 5,
+      "matchupId": "period5_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 15.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 12.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "15.00 - 12.00"
+    },
+    {
+      "period": 5,
+      "matchupId": "period5_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 12.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 9.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "12.00 - 9.00"
+    },
+    {
+      "period": 5,
+      "matchupId": "period5_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 9.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 8.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "9.00 - 8.00"
+    },
+    {
+      "period": 5,
+      "matchupId": "period5_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 2.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "2.00 - 0.00"
+    },
+    {
+      "period": 6,
+      "matchupId": "period6_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 5.75,
+          "t": 0.0,
+          "pts": 5.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 2.0,
+          "l": 3.75,
+          "t": 0.0,
+          "pts": 3.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "5.80 - 3.80"
+    },
+    {
+      "period": 6,
+      "matchupId": "period6_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 3.0,
+          "l": 3.4,
+          "t": 0.0,
+          "pts": 3.4,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 4.0,
+          "l": 3.0,
+          "t": 0.0,
+          "pts": 3.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "3.40 - 3.00"
+    },
+    {
+      "period": 6,
+      "matchupId": "period6_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 5.0,
+          "l": 2.667,
+          "t": 0.0,
+          "pts": 2.7,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 6.0,
+          "l": 2.4,
+          "t": 0.0,
+          "pts": 2.4,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "2.70 - 2.40"
+    },
+    {
+      "period": 6,
+      "matchupId": "period6_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 7.0,
+          "l": 2.25,
+          "t": 0.0,
+          "pts": 2.3,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 8.0,
+          "l": 1.8,
+          "t": 0.0,
+          "pts": 1.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "2.30 - 1.80"
+    },
+    {
+      "period": 6,
+      "matchupId": "period6_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 9.0,
+          "l": 0.5,
+          "t": 0.0,
+          "pts": 0.5,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 10.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.50 - 0.00"
+    },
+    {
+      "period": 7,
+      "matchupId": "period7_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 43.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 42.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "43.00 - 42.00"
+    },
+    {
+      "period": 7,
+      "matchupId": "period7_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 34.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 31.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "34.00 - 31.00"
+    },
+    {
+      "period": 7,
+      "matchupId": "period7_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 29.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 27.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "29.00 - 27.00"
+    },
+    {
+      "period": 7,
+      "matchupId": "period7_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 23.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 22.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "23.00 - 22.00"
+    },
+    {
+      "period": 7,
+      "matchupId": "period7_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 21.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "21.00 - 0.00"
+    },
+    {
+      "period": 8,
+      "matchupId": "period8_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 10.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 8.5,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "10.80 - 8.50"
+    },
+    {
+      "period": 8,
+      "matchupId": "period8_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 8.4,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 7.3,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "8.40 - 7.30"
+    },
+    {
+      "period": 8,
+      "matchupId": "period8_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 6.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 6.2,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "6.80 - 6.20"
+    },
+    {
+      "period": 8,
+      "matchupId": "period8_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 5.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 5.8,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "5.80 - 5.80"
+    },
+    {
+      "period": 8,
+      "matchupId": "period8_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 5.3,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "5.30 - 0.00"
+    },
+    {
+      "period": 9,
+      "matchupId": "period9_fallback_1",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 1.0,
+          "l": 0.183,
+          "t": 0.0,
+          "pts": 0.556,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 2.0,
+          "l": 0.177,
+          "t": 0.0,
+          "pts": 0.535,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.56 - 0.54"
+    },
+    {
+      "period": 9,
+      "matchupId": "period9_fallback_2",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 3.0,
+          "l": 0.141,
+          "t": 0.0,
+          "pts": 0.429,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 4.0,
+          "l": 0.137,
+          "t": 0.0,
+          "pts": 0.414,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.43 - 0.41"
+    },
+    {
+      "period": 9,
+      "matchupId": "period9_fallback_3",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 5.0,
+          "l": 0.134,
+          "t": 0.0,
+          "pts": 0.405,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 6.0,
+          "l": 0.12,
+          "t": 0.0,
+          "pts": 0.364,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.41 - 0.36"
+    },
+    {
+      "period": 9,
+      "matchupId": "period9_fallback_4",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 7.0,
+          "l": 0.116,
+          "t": 0.0,
+          "pts": 0.353,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 8.0,
+          "l": 0.096,
+          "t": 0.0,
+          "pts": 0.29,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.35 - 0.29"
+    },
+    {
+      "period": 9,
+      "matchupId": "period9_fallback_5",
+      "teams": [
+        {
+          "id": null,
+          "name": null,
+          "w": 9.0,
+          "l": 0.029,
+          "t": 0.0,
+          "pts": 0.087,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": null,
+          "name": null,
+          "w": 10.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": null,
+            "reb": null,
+            "ast": null,
+            "st": null,
+            "blk": null,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TEAM1_WIN",
+      "scoreText": "0.09 - 0.00"
+    }
+  ],
+  "standings": [
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "18",
+      "leagueId": null,
+      "points": 14.0
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": 18.0
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": 2.0
+    },
+    {
+      "rank": 1,
+      "teamId": null,
+      "team": "17",
+      "leagueId": null,
+      "points": 12.0
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "12",
+      "leagueId": null,
+      "points": 15.0
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "13",
+      "leagueId": null,
+      "points": 10.0
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "14",
+      "leagueId": null,
+      "points": 4.0
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "15",
+      "leagueId": null,
+      "points": 6.0
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "16",
+      "leagueId": null,
+      "points": 19.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "10",
+      "leagueId": null,
+      "points": 16.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "11",
+      "leagueId": null,
+      "points": 17.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "4",
+      "leagueId": null,
+      "points": 13.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "5",
+      "leagueId": null,
+      "points": 5.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "6",
+      "leagueId": null,
+      "points": 3.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "7",
+      "leagueId": null,
+      "points": 9.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "8",
+      "leagueId": null,
+      "points": 7.0
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "9",
+      "leagueId": null,
+      "points": 20.0
+    },
+    {
+      "rank": 4,
+      "teamId": null,
+      "team": "2",
+      "leagueId": null,
+      "points": 8.0
+    },
+    {
+      "rank": 4,
+      "teamId": null,
+      "team": "3",
+      "leagueId": null,
+      "points": 11.0
+    },
+    {
+      "rank": 5,
+      "teamId": null,
+      "team": "1",
+      "leagueId": null,
+      "points": 1.0
+    }
+  ],
+  "rosters": {
+    "south": [],
+    "north": []
+  }
+}

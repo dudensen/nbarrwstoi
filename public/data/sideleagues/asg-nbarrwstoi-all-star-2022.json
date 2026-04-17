@@ -1,0 +1,282 @@
+{
+  "key": "asg-nbarrwstoi-all-star-2022",
+  "name": "ASG NBArrwstoi All Star",
+  "seasonLabel": "2021-22",
+  "leagueId": "zaihibm3kzi5f12y",
+  "view": "matchup_rosters",
+  "teams": [
+    "White",
+    "Blue"
+  ],
+  "leagueName": "NBArrwstoi All Star",
+  "generatedAt": "2026-04-17T10:35:26Z",
+  "periods": [
+    {
+      "period": 1,
+      "matchups": [
+        {
+          "period": 1,
+          "matchupId": "qh0xb96lkzi5f137_6266iviykzi5f137",
+          "teams": [
+            {
+              "id": "qh0xb96lkzi5f137",
+              "name": "White",
+              "w": 6.0,
+              "l": 7.0,
+              "t": 0.0,
+              "pts": 6.0,
+              "disabled": false,
+              "stats": {
+                "fgm": 332.0,
+                "fgPct": 0.474286,
+                "tpm": 92.0,
+                "tpPct": 0.340741,
+                "ftPct": 0.808943,
+                "points": 955.0,
+                "oreb": 44.0,
+                "dreb": 227.0,
+                "ast": 184.0,
+                "st": 58.0,
+                "blk": 35.0,
+                "to": 109.0,
+                "aTo": 1.688073
+              }
+            },
+            {
+              "id": "6266iviykzi5f137",
+              "name": "Blue",
+              "w": 7.0,
+              "l": 6.0,
+              "t": 0.0,
+              "pts": 7.0,
+              "disabled": false,
+              "stats": {
+                "fgm": 330.0,
+                "fgPct": 0.450205,
+                "tpm": 109.0,
+                "tpPct": 0.402214,
+                "ftPct": 0.792531,
+                "points": 960.0,
+                "oreb": 65.0,
+                "dreb": 278.0,
+                "ast": 225.0,
+                "st": 42.0,
+                "blk": 22.0,
+                "to": 111.0,
+                "aTo": 2.027027
+              }
+            }
+          ],
+          "winnerTeamId": "6266iviykzi5f137",
+          "result": "TEAM2_WIN",
+          "scoreText": "6.00 - 7.00"
+        }
+      ]
+    }
+  ],
+  "matchups": [
+    {
+      "period": 1,
+      "matchupId": "qh0xb96lkzi5f137_6266iviykzi5f137",
+      "teams": [
+        {
+          "id": "qh0xb96lkzi5f137",
+          "name": "White",
+          "w": 6.0,
+          "l": 7.0,
+          "t": 0.0,
+          "pts": 6.0,
+          "disabled": false,
+          "stats": {
+            "fgm": 332.0,
+            "fgPct": 0.474286,
+            "tpm": 92.0,
+            "tpPct": 0.340741,
+            "ftPct": 0.808943,
+            "points": 955.0,
+            "oreb": 44.0,
+            "dreb": 227.0,
+            "ast": 184.0,
+            "st": 58.0,
+            "blk": 35.0,
+            "to": 109.0,
+            "aTo": 1.688073
+          }
+        },
+        {
+          "id": "6266iviykzi5f137",
+          "name": "Blue",
+          "w": 7.0,
+          "l": 6.0,
+          "t": 0.0,
+          "pts": 7.0,
+          "disabled": false,
+          "stats": {
+            "fgm": 330.0,
+            "fgPct": 0.450205,
+            "tpm": 109.0,
+            "tpPct": 0.402214,
+            "ftPct": 0.792531,
+            "points": 960.0,
+            "oreb": 65.0,
+            "dreb": 278.0,
+            "ast": 225.0,
+            "st": 42.0,
+            "blk": 22.0,
+            "to": 111.0,
+            "aTo": 2.027027
+          }
+        }
+      ],
+      "winnerTeamId": "6266iviykzi5f137",
+      "result": "TEAM2_WIN",
+      "scoreText": "6.00 - 7.00"
+    }
+  ],
+  "standings": [
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "10",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "11",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "12",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "13",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "14",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "15",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "16",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "17",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "18",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "20",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "3",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "4",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "5",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "6",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "7",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "8",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "9",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 6,
+      "teamId": null,
+      "team": "2",
+      "leagueId": null,
+      "points": 0.462
+    },
+    {
+      "rank": 7,
+      "teamId": null,
+      "team": "1",
+      "leagueId": null,
+      "points": 0.538
+    }
+  ],
+  "rosters": {
+    "south": [],
+    "north": []
+  }
+}

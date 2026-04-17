@@ -1,0 +1,286 @@
+{
+  "key": "asg-nbarrwstoi-veteran-star-2024",
+  "name": "ASG NBArrwstoi Veteran Star",
+  "seasonLabel": "2023-24",
+  "leagueId": "1k4wzr7hlsevba9g",
+  "view": "matchup_rosters",
+  "teams": [
+    "South",
+    "North"
+  ],
+  "leagueName": "*ASG* NBArrwstoi Veteran Star",
+  "generatedAt": "2026-04-17T10:03:55Z",
+  "periods": [
+    {
+      "period": 1,
+      "matchups": [
+        {
+          "period": 1,
+          "matchupId": "xg2lxuwvlsevbaa2_9yuilel5lsevbaa2",
+          "teams": [
+            {
+              "id": "xg2lxuwvlsevbaa2",
+              "name": "North",
+              "w": 2.0,
+              "l": 3.0,
+              "t": 0.0,
+              "pts": 2.0,
+              "disabled": false,
+              "stats": {
+                "points": 490.0,
+                "reb": 147.0,
+                "ast": 154.0,
+                "st": 24.0,
+                "blk": 13.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "9yuilel5lsevbaa2",
+              "name": "South",
+              "w": 3.0,
+              "l": 2.0,
+              "t": 0.0,
+              "pts": 3.0,
+              "disabled": false,
+              "stats": {
+                "points": 579.0,
+                "reb": 221.0,
+                "ast": 104.0,
+                "st": 20.0,
+                "blk": 27.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": "9yuilel5lsevbaa2",
+          "result": "TEAM2_WIN",
+          "scoreText": "2.00 - 3.00"
+        }
+      ]
+    }
+  ],
+  "matchups": [
+    {
+      "period": 1,
+      "matchupId": "xg2lxuwvlsevbaa2_9yuilel5lsevbaa2",
+      "teams": [
+        {
+          "id": "xg2lxuwvlsevbaa2",
+          "name": "North",
+          "w": 2.0,
+          "l": 3.0,
+          "t": 0.0,
+          "pts": 2.0,
+          "disabled": false,
+          "stats": {
+            "points": 490.0,
+            "reb": 147.0,
+            "ast": 154.0,
+            "st": 24.0,
+            "blk": 13.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "9yuilel5lsevbaa2",
+          "name": "South",
+          "w": 3.0,
+          "l": 2.0,
+          "t": 0.0,
+          "pts": 3.0,
+          "disabled": false,
+          "stats": {
+            "points": 579.0,
+            "reb": 221.0,
+            "ast": 104.0,
+            "st": 20.0,
+            "blk": 27.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": "9yuilel5lsevbaa2",
+      "result": "TEAM2_WIN",
+      "scoreText": "2.00 - 3.00"
+    }
+  ],
+  "standings": [
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "10",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "11",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "12",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "13",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "14",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "15",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "16",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "17",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "18",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "20",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "3",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "4",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "5",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "6",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "7",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "8",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "9",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 2,
+      "teamId": null,
+      "team": "2",
+      "leagueId": null,
+      "points": 0.4
+    },
+    {
+      "rank": 3,
+      "teamId": null,
+      "team": "1",
+      "leagueId": null,
+      "points": 0.6
+    }
+  ],
+  "rosters": {
+    "south": [],
+    "north": []
+  }
+}

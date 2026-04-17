@@ -1,0 +1,1223 @@
+{
+  "key": "asg-nbarrwstoi-rising-star-2023",
+  "name": "ASG NBArrwstoi Rising Star",
+  "seasonLabel": "2022-23",
+  "leagueId": "23456du8le03lkls",
+  "view": "matchup_rosters",
+  "teams": [
+    "South",
+    "North"
+  ],
+  "leagueName": "*ASG* NBArrwstoi Rising Star",
+  "generatedAt": "2026-04-17T10:03:58Z",
+  "periods": [
+    {
+      "period": 1,
+      "matchups": [
+        {
+          "period": 1,
+          "matchupId": "cqdnflotle03lkmk_feeqosqsle03lkmj",
+          "teams": [
+            {
+              "id": "cqdnflotle03lkmk",
+              "name": "Karafli ShaiTa",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "feeqosqsle03lkmj",
+              "name": "Tsarlatans",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "dxz9wqqsle03lkmk_8g0nz0dlle03lkmk",
+          "teams": [
+            {
+              "id": "dxz9wqqsle03lkmk",
+              "name": "South",
+              "w": 5.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 5.0,
+              "disabled": true,
+              "stats": {
+                "points": 395.0,
+                "reb": 151.0,
+                "ast": 105.0,
+                "st": 30.0,
+                "blk": 14.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "8g0nz0dlle03lkmk",
+              "name": "Fighting Thaddeus",
+              "w": 0.0,
+              "l": 5.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": "dxz9wqqsle03lkmk",
+          "result": "TEAM1_WIN",
+          "scoreText": "5.00 - 0.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "j62lpv4ele03lkmj_v6v9t0oele03lkmk",
+          "teams": [
+            {
+              "id": "j62lpv4ele03lkmj",
+              "name": "Salonika Devils",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "v6v9t0oele03lkmk",
+              "name": "Donkey Rolls",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "nxfqxf4sle03lkmk_fs7v877ele03lkmj",
+          "teams": [
+            {
+              "id": "nxfqxf4sle03lkmk",
+              "name": "North",
+              "w": 5.0,
+              "l": 0.0,
+              "t": 0.0,
+              "pts": 5.0,
+              "disabled": false,
+              "stats": {
+                "points": 449.0,
+                "reb": 199.0,
+                "ast": 82.0,
+                "st": 32.0,
+                "blk": 38.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "fs7v877ele03lkmj",
+              "name": "st.Helens Eruptions",
+              "w": 0.0,
+              "l": 5.0,
+              "t": 0.0,
+              "pts": 0.0,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": "nxfqxf4sle03lkmk",
+          "result": "TEAM1_WIN",
+          "scoreText": "5.00 - 0.00"
+        },
+        {
+          "period": 1,
+          "matchupId": "pspeoejole03lkmk_6k7uz4uple03lkmk",
+          "teams": [
+            {
+              "id": "pspeoejole03lkmk",
+              "name": "Knights of Ni",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "6k7uz4uple03lkmk",
+              "name": "Baltimore Hercules",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "q6wsvtkble03lkmk_mrerq3otle03lkmj",
+          "teams": [
+            {
+              "id": "q6wsvtkble03lkmk",
+              "name": "The Rookies",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "mrerq3otle03lkmj",
+              "name": "Guruuu 🐐🐐🐐",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "u71qe3fjle03lkmj_3fc7ox5kle03lkmk",
+          "teams": [
+            {
+              "id": "u71qe3fjle03lkmj",
+              "name": "🗻Samarina 🥃Dudenbros",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "3fc7ox5kle03lkmk",
+              "name": "Kourayo Vallecano",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": true,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "webh6tnnle03lkmk_sjutp70wle03lkmk",
+          "teams": [
+            {
+              "id": "webh6tnnle03lkmk",
+              "name": "Steven Adams' Moustache",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "sjutp70wle03lkmk",
+              "name": "Xanthi Ducks 🦆",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        },
+        {
+          "period": 1,
+          "matchupId": "xq0h54kdle03lkmk_0tbxwuxzle03lkmj",
+          "teams": [
+            {
+              "id": "xq0h54kdle03lkmk",
+              "name": "Underdogs",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            },
+            {
+              "id": "0tbxwuxzle03lkmj",
+              "name": "Pachiana NinjaBees",
+              "w": 0.0,
+              "l": 0.0,
+              "t": 5.0,
+              "pts": 2.5,
+              "disabled": false,
+              "stats": {
+                "points": 0.0,
+                "reb": 0.0,
+                "ast": 0.0,
+                "st": 0.0,
+                "blk": 0.0,
+                "fgm": null,
+                "fgPct": null,
+                "tpm": null,
+                "tpPct": null,
+                "ftPct": null,
+                "oreb": null,
+                "dreb": null,
+                "to": null,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": null,
+          "result": "TIE",
+          "scoreText": "2.50 - 2.50"
+        }
+      ]
+    }
+  ],
+  "matchups": [
+    {
+      "period": 1,
+      "matchupId": "cqdnflotle03lkmk_feeqosqsle03lkmj",
+      "teams": [
+        {
+          "id": "cqdnflotle03lkmk",
+          "name": "Karafli ShaiTa",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "feeqosqsle03lkmj",
+          "name": "Tsarlatans",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "dxz9wqqsle03lkmk_8g0nz0dlle03lkmk",
+      "teams": [
+        {
+          "id": "dxz9wqqsle03lkmk",
+          "name": "South",
+          "w": 5.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 5.0,
+          "disabled": true,
+          "stats": {
+            "points": 395.0,
+            "reb": 151.0,
+            "ast": 105.0,
+            "st": 30.0,
+            "blk": 14.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "8g0nz0dlle03lkmk",
+          "name": "Fighting Thaddeus",
+          "w": 0.0,
+          "l": 5.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": "dxz9wqqsle03lkmk",
+      "result": "TEAM1_WIN",
+      "scoreText": "5.00 - 0.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "j62lpv4ele03lkmj_v6v9t0oele03lkmk",
+      "teams": [
+        {
+          "id": "j62lpv4ele03lkmj",
+          "name": "Salonika Devils",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "v6v9t0oele03lkmk",
+          "name": "Donkey Rolls",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "nxfqxf4sle03lkmk_fs7v877ele03lkmj",
+      "teams": [
+        {
+          "id": "nxfqxf4sle03lkmk",
+          "name": "North",
+          "w": 5.0,
+          "l": 0.0,
+          "t": 0.0,
+          "pts": 5.0,
+          "disabled": false,
+          "stats": {
+            "points": 449.0,
+            "reb": 199.0,
+            "ast": 82.0,
+            "st": 32.0,
+            "blk": 38.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "fs7v877ele03lkmj",
+          "name": "st.Helens Eruptions",
+          "w": 0.0,
+          "l": 5.0,
+          "t": 0.0,
+          "pts": 0.0,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": "nxfqxf4sle03lkmk",
+      "result": "TEAM1_WIN",
+      "scoreText": "5.00 - 0.00"
+    },
+    {
+      "period": 1,
+      "matchupId": "pspeoejole03lkmk_6k7uz4uple03lkmk",
+      "teams": [
+        {
+          "id": "pspeoejole03lkmk",
+          "name": "Knights of Ni",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "6k7uz4uple03lkmk",
+          "name": "Baltimore Hercules",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "q6wsvtkble03lkmk_mrerq3otle03lkmj",
+      "teams": [
+        {
+          "id": "q6wsvtkble03lkmk",
+          "name": "The Rookies",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "mrerq3otle03lkmj",
+          "name": "Guruuu 🐐🐐🐐",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "u71qe3fjle03lkmj_3fc7ox5kle03lkmk",
+      "teams": [
+        {
+          "id": "u71qe3fjle03lkmj",
+          "name": "🗻Samarina 🥃Dudenbros",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "3fc7ox5kle03lkmk",
+          "name": "Kourayo Vallecano",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": true,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "webh6tnnle03lkmk_sjutp70wle03lkmk",
+      "teams": [
+        {
+          "id": "webh6tnnle03lkmk",
+          "name": "Steven Adams' Moustache",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "sjutp70wle03lkmk",
+          "name": "Xanthi Ducks 🦆",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    },
+    {
+      "period": 1,
+      "matchupId": "xq0h54kdle03lkmk_0tbxwuxzle03lkmj",
+      "teams": [
+        {
+          "id": "xq0h54kdle03lkmk",
+          "name": "Underdogs",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        },
+        {
+          "id": "0tbxwuxzle03lkmj",
+          "name": "Pachiana NinjaBees",
+          "w": 0.0,
+          "l": 0.0,
+          "t": 5.0,
+          "pts": 2.5,
+          "disabled": false,
+          "stats": {
+            "points": 0.0,
+            "reb": 0.0,
+            "ast": 0.0,
+            "st": 0.0,
+            "blk": 0.0,
+            "fgm": null,
+            "fgPct": null,
+            "tpm": null,
+            "tpPct": null,
+            "ftPct": null,
+            "oreb": null,
+            "dreb": null,
+            "to": null,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": null,
+      "result": "TIE",
+      "scoreText": "2.50 - 2.50"
+    }
+  ],
+  "standings": [
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "10",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "11",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "12",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "13",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "14",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "15",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "16",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "17",
+      "leagueId": null,
+      "points": 0.0
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "18",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": 0.0
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "3",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "4",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "5",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "6",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "7",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "8",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "9",
+      "leagueId": null,
+      "points": 0.5
+    },
+    {
+      "rank": 5,
+      "teamId": null,
+      "team": "1",
+      "leagueId": null,
+      "points": 1.0
+    },
+    {
+      "rank": 5,
+      "teamId": null,
+      "team": "2",
+      "leagueId": null,
+      "points": 1.0
+    }
+  ],
+  "rosters": {
+    "south": [],
+    "north": []
+  }
+}

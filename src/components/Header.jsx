@@ -12,6 +12,7 @@ const LINKS = [
   ["/history", "History"],
   ["/contracts", "Contracts"],
   ["/war-room", "The War Room"],
+  ["/sideleagues", "SideLeagues"],
   ["/fantanea", "Fantanea"],
 ]
 

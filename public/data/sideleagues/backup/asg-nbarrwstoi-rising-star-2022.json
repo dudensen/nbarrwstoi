@@ -1,0 +1,286 @@
+{
+  "key": "asg-nbarrwstoi-rising-star-2022",
+  "name": "ASG NBArrwstoi Rising Star",
+  "seasonLabel": "2021-22",
+  "leagueId": "4imjcwoakzi6qqe9",
+  "view": "matchup_rosters",
+  "teams": [
+    "White",
+    "Blue"
+  ],
+  "leagueName": "NBArrwstoi Rising Star",
+  "generatedAt": "2026-04-17T10:04:03Z",
+  "periods": [
+    {
+      "period": 1,
+      "matchups": [
+        {
+          "period": 1,
+          "matchupId": "8162dcxokzi6qqen_pk0rroprkzi6qqek",
+          "teams": [
+            {
+              "id": "8162dcxokzi6qqen",
+              "name": "White",
+              "w": 5.0,
+              "l": 8.0,
+              "t": 0.0,
+              "pts": 5.0,
+              "disabled": false,
+              "stats": {
+                "points": 176.0,
+                "reb": 0.46438,
+                "ast": 28.0,
+                "st": 0.266667,
+                "blk": 0.797753,
+                "fgm": 451.0,
+                "fgPct": 40.0,
+                "tpm": 155.0,
+                "tpPct": 96.0,
+                "ftPct": 31.0,
+                "oreb": 22.0,
+                "dreb": 66.0,
+                "to": 1.454545,
+                "aTo": null
+              }
+            },
+            {
+              "id": "pk0rroprkzi6qqek",
+              "name": "Blue",
+              "w": 8.0,
+              "l": 5.0,
+              "t": 0.0,
+              "pts": 8.0,
+              "disabled": false,
+              "stats": {
+                "points": 166.0,
+                "reb": 0.419192,
+                "ast": 49.0,
+                "st": 0.333333,
+                "blk": 0.804124,
+                "fgm": 459.0,
+                "fgPct": 55.0,
+                "tpm": 150.0,
+                "tpPct": 154.0,
+                "ftPct": 33.0,
+                "oreb": 19.0,
+                "dreb": 71.0,
+                "to": 2.169014,
+                "aTo": null
+              }
+            }
+          ],
+          "winnerTeamId": "pk0rroprkzi6qqek",
+          "result": "TEAM2_WIN",
+          "scoreText": "5.00 - 8.00"
+        }
+      ]
+    }
+  ],
+  "matchups": [
+    {
+      "period": 1,
+      "matchupId": "8162dcxokzi6qqen_pk0rroprkzi6qqek",
+      "teams": [
+        {
+          "id": "8162dcxokzi6qqen",
+          "name": "White",
+          "w": 5.0,
+          "l": 8.0,
+          "t": 0.0,
+          "pts": 5.0,
+          "disabled": false,
+          "stats": {
+            "points": 176.0,
+            "reb": 0.46438,
+            "ast": 28.0,
+            "st": 0.266667,
+            "blk": 0.797753,
+            "fgm": 451.0,
+            "fgPct": 40.0,
+            "tpm": 155.0,
+            "tpPct": 96.0,
+            "ftPct": 31.0,
+            "oreb": 22.0,
+            "dreb": 66.0,
+            "to": 1.454545,
+            "aTo": null
+          }
+        },
+        {
+          "id": "pk0rroprkzi6qqek",
+          "name": "Blue",
+          "w": 8.0,
+          "l": 5.0,
+          "t": 0.0,
+          "pts": 8.0,
+          "disabled": false,
+          "stats": {
+            "points": 166.0,
+            "reb": 0.419192,
+            "ast": 49.0,
+            "st": 0.333333,
+            "blk": 0.804124,
+            "fgm": 459.0,
+            "fgPct": 55.0,
+            "tpm": 150.0,
+            "tpPct": 154.0,
+            "ftPct": 33.0,
+            "oreb": 19.0,
+            "dreb": 71.0,
+            "to": 2.169014,
+            "aTo": null
+          }
+        }
+      ],
+      "winnerTeamId": "pk0rroprkzi6qqek",
+      "result": "TEAM2_WIN",
+      "scoreText": "5.00 - 8.00"
+    }
+  ],
+  "standings": [
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "10",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "11",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "12",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "13",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "14",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "15",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "16",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "17",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "18",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "19",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "20",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "3",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "4",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "5",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "6",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "7",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "8",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 0,
+      "teamId": null,
+      "team": "9",
+      "leagueId": null,
+      "points": null
+    },
+    {
+      "rank": 5,
+      "teamId": null,
+      "team": "2",
+      "leagueId": null,
+      "points": 0.385
+    },
+    {
+      "rank": 8,
+      "teamId": null,
+      "team": "1",
+      "leagueId": null,
+      "points": 0.615
+    }
+  ],
+  "rosters": {
+    "south": [],
+    "north": []
+  }
+}

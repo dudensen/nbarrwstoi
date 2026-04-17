@@ -13,7 +13,9 @@ import ContractsPage from "./pages/ContractsPage"
 import ThemeAwardsPage from "./pages/ThemeAwardsPage"
 import FantaneaPage from "./pages/FantaneaPage"
 import SideLeaguesPage from "./pages/SideLeaguesPage"
+import SideLeagueDetailPage from "./pages/SideLeagueDetailPage"
 import ApiStatusPage from "./pages/ApiStatusPage"
+import SideleagueTeamPage from "./pages/SideleagueTeamPage"
 
 
 function PlaceholderPage({ title }) {
@@ -54,7 +56,11 @@ export default function App() {
           <Route path="/war-room" element={<ThemeAwardsPage />} />
           <Route path="/fantanea" element={<FantaneaPage />} />
           <Route path="/sideleagues" element={<SideLeaguesPage />} />
+          <Route path="/sideleagues/teams/:teamName" element={<SideleagueTeamPage />} />
+          <Route path="/sideleagues/:sideleagueKey" element={<SideLeagueDetailPage />} />
           <Route path="/apistatus" element={<ApiStatusPage />} />
+          
+          
         </Routes>
       </BrowserRouter>
     </SeasonProvider>
