@@ -135,7 +135,145 @@ function parseSheetNumber(value) {
   return Number.isFinite(num) ? num : null
 }
 
+function isDraftRoundLabel(text) {
+  const value = normalizeSheetText(text)
+  return /^\d+ος γύρος$/i.test(value)
+}
 
+function parseDraftEntryCell(text, currentRound = null, teamNames = []) {
+  const value = normalizeSheetText(text)
+  if (!value) return null
+  if (isDraftRoundLabel(value)) return null
+  if (/^Ομάδα\s+Παίκτης$/i.test(value)) return null
+
+  const overallMatch = value.match(/^(\d+)\s+(.+)$/)
+  if (!overallMatch) return null
+
+  const overall = Number(overallMatch[1])
+  const rest = normalizeSheetText(overallMatch[2])
+
+  if (!Number.isFinite(overall) || !rest) return null
+
+  const matchedTeam =
+    [...teamNames]
+      .sort((a, b) => b.length - a.length)
+      .find((team) => rest === team || rest.startsWith(`${team} `)) || null
+
+  if (!matchedTeam) return null
+
+  const playerAndClub = normalizeSheetText(rest.slice(matchedTeam.length))
+  const playerClubMatch = playerAndClub.match(/^(.*?)\s*\(([^)]+)\)$/)
+
+  if (!playerClubMatch) return null
+
+  const player = normalizeSheetText(playerClubMatch[1])
+  const club = normalizeSheetText(playerClubMatch[2])
+
+  if (!player || !club) return null
+
+  return {
+    round: currentRound,
+    overall,
+    team: matchedTeam,
+    player,
+    club,
+  }
+}
+
+function formatDraftRoundLabel(round) {
+  return String(round || "").replace(/\s*ος\s+γύρος/i, "").trim()
+}
+
+function parseEuroleagueDraftCsv(text = "") {
+  const grid = parseCsvGrid(text)
+
+  const euroleagueTeams = [
+    "Bridgeburners",
+    "Samarina Dudenbros",
+    "Colonos Gypsies",
+    "Ancrum heirs",
+    "LarryOBrienPhoenix",
+    "Xanthi Ducks",
+    "Γιουγκοσφάχτηκα",
+    "Green Guns",
+    "Fourogatoi",
+    "PRISONball",
+  ]
+
+  let currentRound = null
+  const picks = []
+
+  for (const row of grid) {
+    const cells = row.map((cell) => normalizeSheetText(cell)).filter(Boolean)
+    if (!cells.length) continue
+
+    const joined = cells.join(" ")
+
+    if (isDraftRoundLabel(joined)) {
+      currentRound = joined
+      continue
+    }
+
+    if (/^Ομάδα\s+Παίκτης$/i.test(joined)) continue
+
+    // Case 1: row split into columns: overall | team | player(club)
+    const firstNum = Number(cells[0])
+    if (Number.isFinite(firstNum) && cells.length >= 3) {
+      const overall = firstNum
+      const team = cells[1]
+      const playerClub = cells.slice(2).join(" ")
+      const teamMatched = euroleagueTeams.find(
+        (name) => normalizeSheetText(name) === normalizeSheetText(team)
+      )
+
+      const m = playerClub.match(/^(.*?)\s*\(([^)]+)\)$/)
+      if (teamMatched && m) {
+        picks.push({
+          round: currentRound,
+          overall,
+          team: teamMatched,
+          player: normalizeSheetText(m[1]),
+          club: normalizeSheetText(m[2]),
+        })
+        continue
+      }
+    }
+
+    // Case 2: whole pick stored in one cell
+    const singleCellMatch = joined.match(/^(\d+)\s+(.+)$/)
+    if (singleCellMatch) {
+      const overall = Number(singleCellMatch[1])
+      const rest = normalizeSheetText(singleCellMatch[2])
+
+      const matchedTeam =
+        [...euroleagueTeams]
+          .sort((a, b) => b.length - a.length)
+          .find((team) => rest === team || rest.startsWith(`${team} `)) || null
+
+      if (matchedTeam) {
+        const playerAndClub = normalizeSheetText(rest.slice(matchedTeam.length))
+        const m = playerAndClub.match(/^(.*?)\s*\(([^)]+)\)$/)
+
+        if (m) {
+          picks.push({
+            round: currentRound,
+            overall,
+            team: matchedTeam,
+            player: normalizeSheetText(m[1]),
+            club: normalizeSheetText(m[2]),
+          })
+        }
+      }
+    }
+  }
+
+  return picks.sort((a, b) => {
+    const roundA = Number(String(a.round || "").match(/\d+/)?.[0] || 999)
+    const roundB = Number(String(b.round || "").match(/\d+/)?.[0] || 999)
+    if (roundA !== roundB) return roundA - roundB
+    return a.overall - b.overall
+  })
+}
 
 
 
@@ -303,6 +441,7 @@ function isMatchupLabel(text) {
     upper === "FINAL"
   )
 }
+
 
 function tallySeries(scoresA = [], scoresB = []) {
   const length = Math.min(scoresA.length, scoresB.length)
@@ -1026,6 +1165,11 @@ export default function SideLeagueDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [sheetResults, setSheetResults] = useState(null)
+  const [sheetDraftPicks, setSheetDraftPicks] = useState([])
+  const [sheetTab, setSheetTab] = useState("matchups")
+const [draftView, setDraftView] = useState("byPick")
+
+  
 
   useEffect(() => {
   let cancelled = false
@@ -1055,7 +1199,15 @@ export default function SideLeagueDetailPage() {
     throw new Error(`Results sheet failed (${resultsRes.status}): ${resultsText}`)
   }
 
+  const draftRes = await fetch(sideleague.draftCsvUrl)
+  const draftText = await draftRes.text()
+
+  if (!draftRes.ok) {
+    throw new Error(`Draft sheet failed (${draftRes.status}): ${draftText}`)
+  }
+
   const parsedSheetResults = parseEuroleagueResultsCsv(resultsText)
+  const parsedDraftPicks = parseEuroleagueDraftCsv(draftText)
 
   if (!cancelled) {
     setResultsPayload(null)
@@ -1064,7 +1216,9 @@ export default function SideLeagueDetailPage() {
     setStandingsPayload(null)
     setPlayerLookup(new Map())
     setSheetResults(parsedSheetResults)
+    setSheetDraftPicks(parsedDraftPicks)
   }
+
   return
 }
 
@@ -1141,7 +1295,9 @@ export default function SideLeagueDetailPage() {
         setStandingsPayload(liveStandings)
         setPlayerLookup(lookup)
         setSheetResults(null)
-      }
+        setSheetDraftPicks([])
+
+        }
     } catch (err) {
       if (!cancelled) {
         setError(err instanceof Error ? err.message : "Unknown error")
@@ -1151,6 +1307,8 @@ export default function SideLeagueDetailPage() {
         setStandingsPayload(null)
         setPlayerLookup(new Map())
         setSheetResults(null)
+        setSheetDraftPicks([])
+
       }
     } finally {
       if (!cancelled) setLoading(false)
@@ -1288,6 +1446,23 @@ const loserScore = useMemo(() => {
       .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
       .sort((a, b) => Number(a.rank) - Number(b.rank))
   }, [standingsPayload])
+  
+  const draftPicksByTeam = useMemo(() => {
+  const map = new Map()
+
+  for (const pick of sheetDraftPicks) {
+    const team = pick?.team || "—"
+    if (!map.has(team)) map.set(team, [])
+    map.get(team).push(pick)
+  }
+
+  return [...map.entries()]
+    .map(([team, picks]) => ({
+      team,
+      picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
+    }))
+    .sort((a, b) => a.team.localeCompare(b.team))
+}, [sheetDraftPicks])
 
   const champion = finalStandings[0] || null
 
@@ -1364,158 +1539,280 @@ const loserScore = useMemo(() => {
     </section>
 
     <section style={sectionCard}>
-  <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Matchups</h2>
+  <div
+    style={{
+      display: "flex",
+      gap: 10,
+      marginBottom: 18,
+      flexWrap: "wrap",
+    }}
+  >
+    <button
+      type="button"
+      onClick={() => setSheetTab("matchups")}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 999,
+        border: sheetTab === "matchups" ? "1px solid #fb923c" : "1px solid #fed7aa",
+        background: sheetTab === "matchups" ? "#f97316" : "#fff7ed",
+        color: sheetTab === "matchups" ? "#ffffff" : "#9a3412",
+        fontWeight: 800,
+        cursor: "pointer",
+      }}
+    >
+      Matchups
+    </button>
 
-  {!groupedSheetMatchups.length ? (
-    <div style={{ color: "#6b7280" }}>No matchups found.</div>
-  ) : (
-    <div style={{ display: "grid", gap: 24 }}>
-      {groupedSheetMatchups.map((group) => {
-        const items = Array.isArray(group.items) ? group.items : []
+    <button
+      type="button"
+      onClick={() => setSheetTab("draft")}
+      style={{
+        padding: "10px 16px",
+        borderRadius: 999,
+        border: sheetTab === "draft" ? "1px solid #fb923c" : "1px solid #fed7aa",
+        background: sheetTab === "draft" ? "#f97316" : "#fff7ed",
+        color: sheetTab === "draft" ? "#ffffff" : "#9a3412",
+        fontWeight: 800,
+        cursor: "pointer",
+      }}
+    >
+      Draft
+    </button>
 
-        if (group.phaseKey === "FINAL FOUR") {
-          const finalMatch =
-            items.find((item) => normalizeSheetText(item.round).toUpperCase() === "FINAL") || null
 
-          const semifinals = items.filter((item) =>
-            normalizeSheetText(item.round).toUpperCase().startsWith("SEMIFINAL")
-          )
+  </div>
 
-          return (
-            <section key={group.phaseKey}>
-              <div
-                style={{
-                  color: "#111827",
-                  fontWeight: 900,
-                  fontSize: 22,
-                  marginBottom: 12,
-                }}
-              >
-                {group.phase}
-              </div>
+  {sheetTab === "matchups" ? (
+  <>
+    <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Matchups</h2>
 
-              <div style={{ display: "grid", gap: 16 }}>
-                {finalMatch ? (
-                  <div
-                    style={{
-                      maxWidth: 760,
-                    }}
-                  >
-                    <EuroleagueMatchupCard matchup={finalMatch} />
-                  </div>
-                ) : null}
+    {!groupedSheetMatchups.length ? (
+      <div style={{ color: "#6b7280" }}>No matchups found.</div>
+    ) : (
+      <div style={{ display: "grid", gap: 24 }}>
+        {groupedSheetMatchups.map((group) => {
+          const items = Array.isArray(group.items) ? group.items : []
 
-                {semifinals.length ? (
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                      gap: 16,
-                    }}
-                  >
-                    {semifinals.map((matchup, idx) => (
-                      <EuroleagueMatchupCard
-                        key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                        matchup={matchup}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          )
-        }
+          if (group.phaseKey === "FINAL FOUR") {
+            const finalMatch =
+              items.find((item) => normalizeSheetText(item.round).toUpperCase() === "FINAL") || null
 
-        if (group.phaseKey === "PLAYOFFS") {
-          return (
-            <section key={group.phaseKey}>
-              <div
-                style={{
-                  color: "#111827",
-                  fontWeight: 900,
-                  fontSize: 22,
-                  marginBottom: 12,
-                }}
-              >
-                {group.phase}
-              </div>
+            const semifinals = items.filter((item) =>
+              normalizeSheetText(item.round).toUpperCase().startsWith("SEMIFINAL")
+            )
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                  gap: 16,
-                }}
-              >
-                {items.map((matchup, idx) => (
-                  <EuroleagueMatchupCard
-                    key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                    matchup={matchup}
-                  />
-                ))}
-              </div>
-            </section>
-          )
-        }
+            return (
+              <section key={group.phaseKey}>
+                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
+                  {group.phase}
+                </div>
 
-        if (group.phaseKey === "PLAY-IN") {
-          return (
-            <section key={group.phaseKey}>
-              <div
-                style={{
-                  color: "#111827",
-                  fontWeight: 900,
-                  fontSize: 22,
-                  marginBottom: 12,
-                }}
-              >
-                {group.phase}
-              </div>
+                <div style={{ display: "grid", gap: 16 }}>
+                  {finalMatch ? (
+                    <div style={{ maxWidth: 760 }}>
+                      <EuroleagueMatchupCard matchup={finalMatch} />
+                    </div>
+                  ) : null}
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                  gap: 16,
-                }}
-              >
-                {items.map((matchup, idx) => (
-                  <EuroleagueMatchupCard
-                    key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                    matchup={matchup}
-                  />
-                ))}
-              </div>
-            </section>
-          )
-        }
+                  {semifinals.length ? (
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                        gap: 16,
+                      }}
+                    >
+                      {semifinals.map((matchup, idx) => (
+                        <EuroleagueMatchupCard
+                          key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                          matchup={matchup}
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </section>
+            )
+          }
 
-        return (
-          <section key={group.phaseKey}>
-            <div
-              style={{
-                color: "#111827",
-                fontWeight: 900,
-                fontSize: 22,
-                marginBottom: 12,
-              }}
-            >
-              {group.phase}
+          if (group.phaseKey === "PLAYOFFS") {
+            return (
+              <section key={group.phaseKey}>
+                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
+                  {group.phase}
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                    gap: 16,
+                  }}
+                >
+                  {items.map((matchup, idx) => (
+                    <EuroleagueMatchupCard
+                      key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                      matchup={matchup}
+                    />
+                  ))}
+                </div>
+              </section>
+            )
+          }
+
+          if (group.phaseKey === "PLAY-IN") {
+            return (
+              <section key={group.phaseKey}>
+                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
+                  {group.phase}
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                    gap: 16,
+                  }}
+                >
+                  {items.map((matchup, idx) => (
+                    <EuroleagueMatchupCard
+                      key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                      matchup={matchup}
+                    />
+                  ))}
+                </div>
+              </section>
+            )
+          }
+
+          return null
+        })}
+      </div>
+    )}
+  </>
+) : sheetTab === "draft" ? (
+  <>
+    <div
+      style={{
+        display: "flex",
+        gap: 10,
+        marginBottom: 18,
+        flexWrap: "wrap",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setDraftView("byPick")}
+        style={{
+          padding: "8px 14px",
+          borderRadius: 999,
+          border: draftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
+          background: draftView === "byPick" ? "#f97316" : "#fff7ed",
+          color: draftView === "byPick" ? "#ffffff" : "#9a3412",
+          fontWeight: 800,
+          cursor: "pointer",
+        }}
+      >
+        By Pick
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setDraftView("byTeam")}
+        style={{
+          padding: "8px 14px",
+          borderRadius: 999,
+          border: draftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
+          background: draftView === "byTeam" ? "#f97316" : "#fff7ed",
+          color: draftView === "byTeam" ? "#ffffff" : "#9a3412",
+          fontWeight: 800,
+          cursor: "pointer",
+        }}
+      >
+        By Team
+      </button>
+    </div>
+
+    <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Draft Results</h2>
+
+    {!sheetDraftPicks.length ? (
+      <div style={{ color: "#6b7280" }}>No draft results found.</div>
+    ) : draftView === "byPick" ? (
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={th}>Rnd</th>
+              <th style={th}>Ovr</th>
+              <th style={th}>Team</th>
+              <th style={th}>Player</th>
+              <th style={th}>Club</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sheetDraftPicks.map((pick) => (
+              <tr key={`${pick.round}-${pick.overall}`}>
+                <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
+                <td style={td}>{pick.overall}</td>
+                <td style={td}>{pick.team}</td>
+                <td style={td}>{pick.player}</td>
+                <td style={td}>{pick.club}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: 16,
+        }}
+      >
+        {draftPicksByTeam.map((entry) => (
+          <section
+            key={entry.team}
+            style={{
+              background: "#fff7ed",
+              border: "1px solid #fed7aa",
+              borderRadius: 20,
+              padding: 18,
+            }}
+          >
+            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
+              {entry.team}
             </div>
 
-            <div style={{ display: "grid", gap: 16 }}>
-              {items.map((matchup, idx) => (
-                <EuroleagueMatchupCard
-                  key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                  matchup={matchup}
-                />
-              ))}
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th style={th}>Rnd</th>
+                    <th style={th}>Ovr</th>
+                    <th style={th}>Player</th>
+                    <th style={th}>Club</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entry.picks.map((pick) => (
+                    <tr key={`${entry.team}-${pick.round}-${pick.overall}`}>
+                      <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
+                      <td style={td}>{pick.overall}</td>
+                      <td style={td}>{pick.player}</td>
+                      <td style={td}>{pick.club}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
-        )
-      })}
-    </div>
-  )}
+        ))}
+      </div>
+    )}
+  </>
+) : null}
+
 </section>
   </>
 ) : sideleague?.view === "final_standings" ? (
@@ -1648,6 +1945,8 @@ const loserScore = useMemo(() => {
         </div>
       </div>
     </section>
+
+
 
     <section
       style={{
