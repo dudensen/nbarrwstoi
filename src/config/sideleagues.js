@@ -5,7 +5,7 @@ export const SIDELEAGUES = [
     seasonLabel: "2025-26",
     leagueId: "hghqs214mo5iixxy",
     period: 1,
-    description: "NBArrwstoi Playoffs",
+    description: "NBArrwstoi Playoffs Special",
     view: "final_standings",
   },
     {
@@ -155,6 +155,24 @@ export const SIDELEAGUES = [
     leagueId: "ooofafvrle05ddu8",
     period: 1,
     description: "3-on-3 final standings.",
+    view: "final_standings",
+  },
+  {
+    key: "nbarrwstoi-playoffs-2022",
+    name: "NBArrwstoi Playoffs",
+    seasonLabel: "2021-22",
+    leagueId: "gzsyqblhl1ckrqgt",
+    period: 1,
+    description: "NBArrwstoi Playoffs Special",
+    view: "final_standings",
+  },
+  {
+    key: "nbarrwstoi-playoffs-2021",
+    name: "NBArrwstoi Playoffs",
+    seasonLabel: "2020-21",
+    leagueId: "khxqk4u2kp6tu7es",
+    period: 1,
+    description: "NBArrwstoi Playoffs Special",
     view: "final_standings",
   },
    {
