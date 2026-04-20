@@ -26,15 +26,17 @@ function formatValue(value) {
 }
 
 function TeamNameLink({ teamName }) {
-  const clean = canonicalTeamName(teamName)
-  if (!clean) return <span>—</span>
+  const displayName = decodeMaybeBrokenText(String(teamName || "").trim())
+  if (!displayName) return <span>—</span>
+
+  const canonical = canonicalTeamName(displayName)
 
   return (
     <Link
-      to={`/teams/${slugifyTeamName(clean)}`}
+      to={`/teams/${slugifyTeamName(canonical || displayName)}`}
       style={{ color: "#111827", fontWeight: 700, textDecoration: "none" }}
     >
-      {clean}
+      {displayName}
     </Link>
   )
 }
@@ -641,7 +643,26 @@ function getStandingRank(row, index) {
   return index + 1
 }
 
-function getStandingTeam(row) {
+function getStandingTeamId(row) {
+  return String(
+    row?.teamId ||
+      row?.team?.id ||
+      row?.franchiseId ||
+      row?.franchise?.id ||
+      ""
+  ).trim()
+}
+
+function getStandingTeam(row, liveTeamsById) {
+  const teamId = getStandingTeamId(row)
+
+  if (teamId && liveTeamsById?.has(teamId)) {
+    const team = liveTeamsById.get(teamId)
+    return decodeMaybeBrokenText(
+      team?.name || team?.shortName || ""
+    )
+  }
+
   return decodeMaybeBrokenText(
     row?.teamName ||
       row?.name ||
@@ -888,6 +909,7 @@ function EuroleagueMatchupCard({ matchup }) {
     </div>
   )
 }
+
 
 function TeamStatsStrip({ teamStats = {}, opponentStats = {}, scoringCategories = [] }) {
   const entries = useMemo(
@@ -1622,18 +1644,18 @@ export default function SideLeagueDetailPage() {
     return enrichRosterItems(getRosterForTeam(rostersPayload, northLiveTeam.id), playerLookup)
   }, [rostersPayload, northLiveTeam, playerLookup])
 
-  const finalStandings = useMemo(() => {
-    const rows = getStandingRows(standingsPayload)
+ const finalStandings = useMemo(() => {
+  const rows = getStandingRows(standingsPayload)
 
-    return rows
-      .map((row, index) => ({
-        rank: getStandingRank(row, index),
-        team: getStandingTeam(row),
-        points: getStandingPoints(row),
-      }))
-      .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
-      .sort((a, b) => Number(a.rank) - Number(b.rank))
-  }, [standingsPayload])
+  return rows
+    .map((row, index) => ({
+      rank: getStandingRank(row, index),
+      team: getStandingTeam(row, liveTeamsById),
+      points: getStandingPoints(row),
+    }))
+    .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
+    .sort((a, b) => Number(a.rank) - Number(b.rank))
+}, [standingsPayload, liveTeamsById])
 
   const champion = finalStandings[0] || null
 

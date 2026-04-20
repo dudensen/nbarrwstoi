@@ -10,28 +10,63 @@ export function decodeMaybeBrokenText(value) {
 export function extractTeamsFromLeagueInfo(leagueInfo) {
   const seen = new Map()
 
-  const addTeam = (team) => {
-    if (!team?.id) return
-    if (!seen.has(team.id)) {
-      seen.set(team.id, {
-        id: team.id,
-        name: decodeMaybeBrokenText(team.name || ""),
-        shortName: decodeMaybeBrokenText(team.shortName || ""),
-        ...team,
-      })
-    }
+  const addTeam = (team, priority = 0) => {
+    if (!team) return
+
+    const id = String(
+      team.id ||
+      team.teamId ||
+      team.franchiseId ||
+      ""
+    ).trim()
+
+    if (!id) return
+
+    const name = decodeMaybeBrokenText(
+      team.name ||
+      team.teamName ||
+      team.franchiseName ||
+      team.teamNameShort ||
+      team.shortName ||
+      ""
+    ).trim()
+
+    const shortName = decodeMaybeBrokenText(
+      team.shortName ||
+      team.teamNameShort ||
+      ""
+    ).trim()
+
+    if (!name && !shortName) return
+
+    const existing = seen.get(id)
+    if (existing && existing._priority > priority) return
+
+    seen.set(id, {
+      ...(existing || {}),
+      ...team,
+      id,
+      name: name || existing?.name || "",
+      shortName: shortName || existing?.shortName || "",
+      _priority: priority,
+    })
   }
 
+  // Lowest priority: matchup copies
   for (const period of leagueInfo?.matchups || []) {
     for (const matchup of period?.matchupList || []) {
-      addTeam(matchup.away)
-      addTeam(matchup.home)
+      addTeam(matchup?.away, 1)
+      addTeam(matchup?.home, 1)
     }
   }
 
-  return Array.from(seen.values()).sort((a, b) =>
-    String(a.name).localeCompare(String(b.name))
-  )
+  // Higher priority: direct team lists from league info
+  for (const team of leagueInfo?.teams || []) addTeam(team, 3)
+  for (const team of leagueInfo?.franchises || []) addTeam(team, 3)
+
+  return Array.from(seen.values())
+    .map(({ _priority, ...team }) => team)
+    .sort((a, b) => String(a.name || a.shortName || "").localeCompare(String(b.name || b.shortName || "")))
 }
 
 export function getTeamByIdFromLeagueInfo(leagueInfo, teamId) {
