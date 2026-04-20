@@ -69,7 +69,15 @@ export const SIDELEAGUES = [
     description: "3-on-3 final standings.",
     view: "final_standings",
   },
-
+ {
+    key: "nbarrwstoi-playoffs-2023",
+    name: "NBArrwstoi Playoffs",
+    seasonLabel: "2022-23",
+    leagueId: "j0595suclfqxenxj",
+    period: 1,
+    description: "NBArrwstoi Playoffs Special",
+    view: "final_standings",
+  },
   {
     key: "asg-nbarrwstoi-all-star-2023",
     name: "ASG NBArrwstoi All Star",
