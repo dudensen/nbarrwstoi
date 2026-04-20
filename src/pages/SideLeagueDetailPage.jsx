@@ -140,46 +140,6 @@ function isDraftRoundLabel(text) {
   return /^\d+ος γύρος$/i.test(value)
 }
 
-function parseDraftEntryCell(text, currentRound = null, teamNames = []) {
-  const value = normalizeSheetText(text)
-  if (!value) return null
-  if (isDraftRoundLabel(value)) return null
-  if (/^Ομάδα\s+Παίκτης$/i.test(value)) return null
-
-  const overallMatch = value.match(/^(\d+)\s+(.+)$/)
-  if (!overallMatch) return null
-
-  const overall = Number(overallMatch[1])
-  const rest = normalizeSheetText(overallMatch[2])
-
-  if (!Number.isFinite(overall) || !rest) return null
-
-  const matchedTeam =
-    [...teamNames]
-      .sort((a, b) => b.length - a.length)
-      .find((team) => rest === team || rest.startsWith(`${team} `)) || null
-
-  if (!matchedTeam) return null
-
-  const playerAndClub = normalizeSheetText(rest.slice(matchedTeam.length))
-  const playerClubMatch = playerAndClub.match(/^(.*?)\s*\(([^)]+)\)$/)
-
-  if (!playerClubMatch) return null
-
-  const player = normalizeSheetText(playerClubMatch[1])
-  const club = normalizeSheetText(playerClubMatch[2])
-
-  if (!player || !club) return null
-
-  return {
-    round: currentRound,
-    overall,
-    team: matchedTeam,
-    player,
-    club,
-  }
-}
-
 function formatDraftRoundLabel(round) {
   return String(round || "").replace(/\s*ος\s+γύρος/i, "").trim()
 }
@@ -216,7 +176,6 @@ function parseEuroleagueDraftCsv(text = "") {
 
     if (/^Ομάδα\s+Παίκτης$/i.test(joined)) continue
 
-    // Case 1: row split into columns: overall | team | player(club)
     const firstNum = Number(cells[0])
     if (Number.isFinite(firstNum) && cells.length >= 3) {
       const overall = firstNum
@@ -239,7 +198,6 @@ function parseEuroleagueDraftCsv(text = "") {
       }
     }
 
-    // Case 2: whole pick stored in one cell
     const singleCellMatch = joined.match(/^(\d+)\s+(.+)$/)
     if (singleCellMatch) {
       const overall = Number(singleCellMatch[1])
@@ -275,8 +233,6 @@ function parseEuroleagueDraftCsv(text = "") {
   })
 }
 
-
-
 function isRoundLabel(text) {
   const upper = normalizeSheetText(text).toUpperCase()
   return (
@@ -287,105 +243,6 @@ function isRoundLabel(text) {
     upper.startsWith("FINAL ")
   )
 }
-
-function MatchupScores({ matchup }) {
-  const games = Array.isArray(matchup?.games) ? matchup.games : []
-
-  if (!games.length) {
-    return (
-      <>
-        <div>
-          <strong>{matchup.team1}</strong>
-          {matchup.seed1 ? ` (${matchup.seed1})` : ""}
-          {" · "}
-          {matchup.scores1.join(" / ")}
-        </div>
-
-        <div>
-          <strong>{matchup.team2}</strong>
-          {matchup.seed2 ? ` (${matchup.seed2})` : ""}
-          {" · "}
-          {matchup.scores2.join(" / ")}
-        </div>
-      </>
-    )
-  }
-
-  return (
-    <>
-      <div>
-        <strong>{matchup.team1}</strong>
-        {matchup.seed1 ? ` (${matchup.seed1})` : ""}
-        {" · "}
-        {games.map((game, idx) => (
-          <span
-            key={`t1-${idx}`}
-            style={{
-              color: game.winner === "team1" ? "#166534" : "#111827",
-              fontWeight: game.winner === "team1" ? 900 : 500,
-            }}
-          >
-            {idx > 0 ? " / " : ""}
-            {game.team1}
-          </span>
-        ))}
-      </div>
-
-      <div>
-        <strong>{matchup.team2}</strong>
-        {matchup.seed2 ? ` (${matchup.seed2})` : ""}
-        {" · "}
-        {games.map((game, idx) => (
-          <span
-            key={`t2-${idx}`}
-            style={{
-              color: game.winner === "team2" ? "#166534" : "#111827",
-              fontWeight: game.winner === "team2" ? 900 : 500,
-            }}
-          >
-            {idx > 0 ? " / " : ""}
-            {game.team2}
-          </span>
-        ))}
-      </div>
-    </>
-  )
-}
-
-function EuroleagueMatchupCard({ matchup }) {
-  return (
-    <div
-      style={{
-        background: "#fff7ed",
-        border: "1px solid #fed7aa",
-        borderRadius: 20,
-        padding: 18,
-      }}
-    >
-      <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 10 }}>
-        {matchup.round}
-      </div>
-
-      <div style={{ display: "grid", gap: 10 }}>
-        <MatchupScores matchup={matchup} />
-
-        <div style={{ color: "#6b7280", fontWeight: 700 }}>
-          Series: {matchup.wins1}-{matchup.wins2}
-          {matchup.winner ? ` · Winner: ${matchup.winner}` : ""}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function getPhaseFromHeader(text) {
-  const upper = normalizeSheetText(text).toUpperCase()
-  if (upper.startsWith("PLAY-IN(")) return "Play-In"
-  if (upper.startsWith("PLAYOFFS(")) return "Playoffs"
-  if (upper.startsWith("FINAL FOUR(")) return "Final Four"
-  return ""
-}
-
 
 function extractSeed(text) {
   const match = String(text ?? "").match(/\((\d+)(?:ος|η|oς|th)?\)/i)
@@ -406,32 +263,6 @@ function isLikelyTeamCell(text) {
   return /\(\d+(?:ος|η|oς|th)?\)/i.test(value) || /[A-Za-zΑ-Ωα-ω]/.test(value)
 }
 
-function getRowScores(grid, rowIndex, startCol) {
-  const row = grid[rowIndex] || []
-  const scores = []
-
-  for (let c = startCol + 1; c < row.length; c += 1) {
-    const raw = normalizeSheetText(row[c])
-    if (!raw) continue
-
-    const num = parseSheetNumber(raw)
-    if (Number.isFinite(num)) {
-      scores.push(num)
-    }
-  }
-
-  return scores
-}
-
-function isPhaseHeader(text) {
-  const upper = normalizeSheetText(text).toUpperCase()
-  return (
-    upper.startsWith("PLAY-IN(") ||
-    upper.startsWith("PLAYOFFS(") ||
-    upper.startsWith("FINAL FOUR(")
-  )
-}
-
 function isMatchupLabel(text) {
   const upper = normalizeSheetText(text).toUpperCase()
   return (
@@ -441,7 +272,6 @@ function isMatchupLabel(text) {
     upper === "FINAL"
   )
 }
-
 
 function tallySeries(scoresA = [], scoresB = []) {
   const length = Math.min(scoresA.length, scoresB.length)
@@ -600,7 +430,7 @@ function parseEuroleagueResultsCsv(text = "") {
   }
 
   const matchups = matchupLabels
-    .map((label, idx) => {
+    .map((label) => {
       const sameZoneLabels = matchupLabels.filter((x) => x.zone === label.zone)
       const currentIndex = sameZoneLabels.findIndex(
         (x) => x.row === label.row && x.col === label.col && x.value === label.value
@@ -683,7 +513,6 @@ function parseEuroleagueResultsCsv(text = "") {
   }
 }
 
-
 function getComparableCategoryEntries(teamStats = {}, scoringCategories = []) {
   const statAliasMap = {
     PTS: ["points"],
@@ -744,7 +573,6 @@ function compareCategoryWins(teamAStats = {}, teamBStats = {}, scoringCategories
 
     let winner = "tie"
 
-    // lower is better only for TO
     if (entry.statKey === "to") {
       if (aVal < bVal) winner = "a"
       else if (bVal < aVal) winner = "b"
@@ -836,6 +664,80 @@ function getStandingPoints(row) {
   return null
 }
 
+function getDraftRows(payload) {
+  const candidates = [
+    payload?.draftResults,
+    payload?.results,
+    payload?.picks,
+    payload?.draftPicks,
+    payload?.rows,
+  ]
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate) && candidate.length) return candidate
+  }
+
+  if (Array.isArray(payload)) return payload
+  return []
+}
+
+function getDraftPickOverall(row, index) {
+  const candidates = [row?.overallPick, row?.overall, row?.pick, row?.selection]
+
+  for (const value of candidates) {
+    const num = Number(value)
+    if (Number.isFinite(num)) return num
+  }
+
+  return index + 1
+}
+
+function getDraftPickRound(row) {
+  const candidates = [row?.round, row?.roundNumber, row?.rnd]
+  for (const value of candidates) {
+    const num = Number(value)
+    if (Number.isFinite(num)) return num
+  }
+  return null
+}
+
+function getDraftPickTeam(row, teamsById) {
+  const teamId = String(row?.teamId || "").trim()
+  if (!teamId) return ""
+
+  const team = teamsById?.get(teamId)
+  if (team) {
+    return decodeMaybeBrokenText(team.name || team.shortName || "")
+  }
+
+  return ""
+}
+
+function getDraftPickPlayerId(row) {
+  return cleanFantraxPlayerId(row?.playerId || row?.player?.id || row?.id || "")
+}
+
+function getDraftPickPlayerName(row, playerLookup) {
+  const playerId = getDraftPickPlayerId(row)
+  if (playerId && playerLookup?.has(playerId)) {
+    return playerLookup.get(playerId)?.name || "—"
+  }
+
+  return decodeMaybeBrokenText(row?.playerName || row?.player?.name || row?.name || "") || "—"
+}
+
+function getDraftPickPos(row, playerLookup) {
+  const playerId = getDraftPickPlayerId(row)
+  if (playerId && playerLookup?.has(playerId)) {
+    return playerLookup.get(playerId)?.pos || "—"
+  }
+
+  return (
+    String(row?.pos || row?.position || row?.player?.position || row?.player?.pos || "").trim() ||
+    "—"
+  )
+}
+
 function formatStatNumber(value) {
   const num = Number(value)
   if (!Number.isFinite(num)) return "—"
@@ -895,6 +797,96 @@ function getCategoryStatEntries(teamStats = {}, scoringCategories = []) {
   }
 
   return entries
+}
+
+function MatchupScores({ matchup }) {
+  const games = Array.isArray(matchup?.games) ? matchup.games : []
+
+  if (!games.length) {
+    return (
+      <>
+        <div>
+          <strong>{matchup.team1}</strong>
+          {matchup.seed1 ? ` (${matchup.seed1})` : ""}
+          {" · "}
+          {matchup.scores1.join(" / ")}
+        </div>
+
+        <div>
+          <strong>{matchup.team2}</strong>
+          {matchup.seed2 ? ` (${matchup.seed2})` : ""}
+          {" · "}
+          {matchup.scores2.join(" / ")}
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <div>
+        <strong>{matchup.team1}</strong>
+        {matchup.seed1 ? ` (${matchup.seed1})` : ""}
+        {" · "}
+        {games.map((game, idx) => (
+          <span
+            key={`t1-${idx}`}
+            style={{
+              color: game.winner === "team1" ? "#166534" : "#111827",
+              fontWeight: game.winner === "team1" ? 900 : 500,
+            }}
+          >
+            {idx > 0 ? " / " : ""}
+            {game.team1}
+          </span>
+        ))}
+      </div>
+
+      <div>
+        <strong>{matchup.team2}</strong>
+        {matchup.seed2 ? ` (${matchup.seed2})` : ""}
+        {" · "}
+        {games.map((game, idx) => (
+          <span
+            key={`t2-${idx}`}
+            style={{
+              color: game.winner === "team2" ? "#166534" : "#111827",
+              fontWeight: game.winner === "team2" ? 900 : 500,
+            }}
+          >
+            {idx > 0 ? " / " : ""}
+            {game.team2}
+          </span>
+        ))}
+      </div>
+    </>
+  )
+}
+
+function EuroleagueMatchupCard({ matchup }) {
+  return (
+    <div
+      style={{
+        background: "#fff7ed",
+        border: "1px solid #fed7aa",
+        borderRadius: 20,
+        padding: 18,
+      }}
+    >
+      <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 10 }}>
+        {matchup.round}
+      </div>
+
+      <div style={{ display: "grid", gap: 10 }}>
+        <MatchupScores matchup={matchup} />
+
+        <div style={{ color: "#6b7280", fontWeight: 700 }}>
+          Series: {matchup.wins1}-{matchup.wins2}
+          {matchup.winner ? ` · Winner: ${matchup.winner}` : ""}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function TeamStatsStrip({ teamStats = {}, opponentStats = {}, scoringCategories = [] }) {
@@ -1153,6 +1145,20 @@ const statChipVal = {
   fontSize: 13,
 }
 
+const box = {
+  background: "#ffffff",
+  border: "1px solid #fed7aa",
+  borderRadius: 20,
+  padding: 18,
+}
+
+const errorBox = {
+  ...box,
+  color: "#b91c1c",
+  background: "#fff7f7",
+  border: "1px solid #fecaca",
+}
+
 export default function SideLeagueDetailPage() {
   const { sideleagueKey } = useParams()
   const sideleague = getSideleagueByKey(sideleagueKey)
@@ -1167,252 +1173,434 @@ export default function SideLeagueDetailPage() {
   const [sheetResults, setSheetResults] = useState(null)
   const [sheetDraftPicks, setSheetDraftPicks] = useState([])
   const [sheetTab, setSheetTab] = useState("matchups")
-const [draftView, setDraftView] = useState("byPick")
-
-  
+  const [draftView, setDraftView] = useState("byPick")
+  const [finalStandingsTab, setFinalStandingsTab] = useState("standings")
+  const [draftResultsPayload, setDraftResultsPayload] = useState(null)
+  const [finalDraftView, setFinalDraftView] = useState("byTeam")
 
   useEffect(() => {
-  let cancelled = false
+    let cancelled = false
 
-  async function load() {
-    if (!sideleague) {
-      setError("Sideleague not found.")
-      setLoading(false)
-      return
-    }
-
-    try {
-      setLoading(true)
-      setError("")
-
-      let resultsJson = null
-      let liveLeagueInfo = null
-      let liveRosters = null
-      let liveStandings = null
-      let lookup = new Map()
-
-      if (sideleague.view === "sheet_league") {
-  const resultsRes = await fetch(sideleague.resultsCsvUrl)
-  const resultsText = await resultsRes.text()
-
-  if (!resultsRes.ok) {
-    throw new Error(`Results sheet failed (${resultsRes.status}): ${resultsText}`)
-  }
-
-  const draftRes = await fetch(sideleague.draftCsvUrl)
-  const draftText = await draftRes.text()
-
-  if (!draftRes.ok) {
-    throw new Error(`Draft sheet failed (${draftRes.status}): ${draftText}`)
-  }
-
-  const parsedSheetResults = parseEuroleagueResultsCsv(resultsText)
-  const parsedDraftPicks = parseEuroleagueDraftCsv(draftText)
-
-  if (!cancelled) {
-    setResultsPayload(null)
-    setLeagueInfo(null)
-    setRostersPayload(null)
-    setStandingsPayload(null)
-    setPlayerLookup(new Map())
-    setSheetResults(parsedSheetResults)
-    setSheetDraftPicks(parsedDraftPicks)
-  }
-
-  return
-}
-
-      const resultsRes = await fetch(`/data/sideleagues/${sideleague.key}.json`)
-      const resultsText = await resultsRes.text()
-
-      if (!resultsRes.ok) {
-        throw new Error(`Sideleague results json failed (${resultsRes.status}): ${resultsText}`)
+    async function load() {
+      if (!sideleague) {
+        setError("Sideleague not found.")
+        setLoading(false)
+        return
       }
 
-      resultsJson = JSON.parse(resultsText)
+      try {
+        setLoading(true)
+        setError("")
 
-      const sideleagueRes = await fetch(
-        `/api/sideleague?leagueId=${encodeURIComponent(sideleague.leagueId)}&period=${encodeURIComponent(
-          sideleague.period || 1
-        )}`
-      )
-      const sideleagueText = await sideleagueRes.text()
+        let resultsJson = null
+        let liveLeagueInfo = null
+        let liveRosters = null
+        let liveStandings = null
+        let lookup = new Map()
 
-      if (!sideleagueRes.ok) {
-        throw new Error(`Sideleague API failed (${sideleagueRes.status}): ${sideleagueText}`)
-      }
+        if (sideleague.view === "sheet_league") {
+          const resultsRes = await fetch(sideleague.resultsCsvUrl)
+          const resultsText = await resultsRes.text()
 
-      const sideleagueJson = JSON.parse(sideleagueText)
+          if (!resultsRes.ok) {
+            throw new Error(`Results sheet failed (${resultsRes.status}): ${resultsText}`)
+          }
 
-      liveLeagueInfo = sideleagueJson?.leagueInfo || null
-      liveRosters = sideleagueJson?.rosters || null
-      liveStandings = sideleagueJson?.standings || null
+          const draftRes = await fetch(sideleague.draftCsvUrl)
+          const draftText = await draftRes.text()
 
-      if (sideleague.view === "matchup_rosters") {
-        const adpRes = await fetch(`/api/adp`)
-        const adpText = await adpRes.text()
+          if (!draftRes.ok) {
+            throw new Error(`Draft sheet failed (${draftRes.status}): ${draftText}`)
+          }
 
-        if (!adpRes.ok) {
-          throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+          const parsedSheetResults = parseEuroleagueResultsCsv(resultsText)
+          const parsedDraftPicks = parseEuroleagueDraftCsv(draftText)
+
+          if (!cancelled) {
+            setResultsPayload(null)
+            setLeagueInfo(null)
+            setRostersPayload(null)
+            setStandingsPayload(null)
+            setPlayerLookup(new Map())
+            setSheetResults(parsedSheetResults)
+            setSheetDraftPicks(parsedDraftPicks)
+            setDraftResultsPayload(null)
+          }
+
+          return
         }
 
-        let adpJson = []
-        try {
-          adpJson = JSON.parse(adpText)
-        } catch {
-          adpJson = []
-        }
+        if (sideleague.view === "final_standings") {
+          const [playerIdsRes, sideleagueRes, draftRes] = await Promise.all([
+            fetch(`/api/player-ids`),
+            fetch(
+              `/api/sideleague?leagueId=${encodeURIComponent(sideleague.leagueId)}&period=${encodeURIComponent(
+                sideleague.period || 1
+              )}`
+            ),
+            fetch(`/api/sideleague-draft-results?leagueId=${encodeURIComponent(sideleague.leagueId)}`),
+          ])
 
-        const safeAdpRows = Array.isArray(adpJson) ? adpJson : []
-
-        if (safeAdpRows.length > 0) {
-          lookup = buildPlayerLookupFromAdp(safeAdpRows)
-        } else {
-          const playerIdsRes = await fetch(`/api/player-ids`)
-          const playerIdsText = await playerIdsRes.text()
+          const [playerIdsText, sideleagueText, draftText] = await Promise.all([
+            playerIdsRes.text(),
+            sideleagueRes.text(),
+            draftRes.text(),
+          ])
 
           if (!playerIdsRes.ok) {
             throw new Error(`Player IDs failed (${playerIdsRes.status}): ${playerIdsText}`)
           }
 
+          if (!sideleagueRes.ok) {
+            throw new Error(`Sideleague API failed (${sideleagueRes.status}): ${sideleagueText}`)
+          }
+
+          if (!draftRes.ok) {
+            throw new Error(`Draft results failed (${draftRes.status}): ${draftText}`)
+          }
+
           let playerIdsJson = {}
+          let sideleagueJson = {}
+          let draftJson = {}
+
           try {
             playerIdsJson = JSON.parse(playerIdsText)
           } catch {
             playerIdsJson = {}
           }
 
+          try {
+            sideleagueJson = JSON.parse(sideleagueText)
+          } catch {
+            throw new Error(
+              `Sideleague API did not return JSON. Response starts with: ${sideleagueText.slice(0, 160)}`
+            )
+          }
+
+          try {
+            draftJson = JSON.parse(draftText)
+          } catch {
+            draftJson = {}
+          }
+
           lookup = buildPlayerLookupFromPlayerIds(
             normalizePlayerIdsPayload(playerIdsJson)
           )
+
+          if (!cancelled) {
+            setResultsPayload(null)
+            setLeagueInfo(sideleagueJson?.leagueInfo || null)
+            setRostersPayload(sideleagueJson?.rosters || null)
+            setStandingsPayload(sideleagueJson?.standings || null)
+            setDraftResultsPayload(draftJson)
+            setPlayerLookup(lookup)
+            setSheetResults(null)
+            setSheetDraftPicks([])
+          }
+
+          return
         }
-      }
 
-      if (!cancelled) {
-        setResultsPayload(resultsJson)
-        setLeagueInfo(liveLeagueInfo)
-        setRostersPayload(liveRosters)
-        setStandingsPayload(liveStandings)
-        setPlayerLookup(lookup)
-        setSheetResults(null)
-        setSheetDraftPicks([])
+        const resultsRes = await fetch(`/data/sideleagues/${sideleague.key}.json`)
+        const resultsText = await resultsRes.text()
 
+        if (!resultsRes.ok) {
+          throw new Error(`Sideleague results json failed (${resultsRes.status}): ${resultsText}`)
         }
-    } catch (err) {
-      if (!cancelled) {
-        setError(err instanceof Error ? err.message : "Unknown error")
-        setResultsPayload(null)
-        setLeagueInfo(null)
-        setRostersPayload(null)
-        setStandingsPayload(null)
-        setPlayerLookup(new Map())
-        setSheetResults(null)
-        setSheetDraftPicks([])
 
+        resultsJson = JSON.parse(resultsText)
+
+        const sideleagueRes = await fetch(
+          `/api/sideleague?leagueId=${encodeURIComponent(sideleague.leagueId)}&period=${encodeURIComponent(
+            sideleague.period || 1
+          )}`
+        )
+        const sideleagueText = await sideleagueRes.text()
+
+        if (!sideleagueRes.ok) {
+          throw new Error(`Sideleague API failed (${sideleagueRes.status}): ${sideleagueText}`)
+        }
+
+        const sideleagueJson = JSON.parse(sideleagueText)
+
+        liveLeagueInfo = sideleagueJson?.leagueInfo || null
+        liveRosters = sideleagueJson?.rosters || null
+        liveStandings = sideleagueJson?.standings || null
+
+        if (sideleague.view === "matchup_rosters") {
+          const adpRes = await fetch(`/api/adp`)
+          const adpText = await adpRes.text()
+
+          if (!adpRes.ok) {
+            throw new Error(`ADP failed (${adpRes.status}): ${adpText}`)
+          }
+
+          let adpJson = []
+          try {
+            adpJson = JSON.parse(adpText)
+          } catch {
+            adpJson = []
+          }
+
+          const safeAdpRows = Array.isArray(adpJson) ? adpJson : []
+
+          if (safeAdpRows.length > 0) {
+            lookup = buildPlayerLookupFromAdp(safeAdpRows)
+          } else {
+            const playerIdsRes = await fetch(`/api/player-ids`)
+            const playerIdsText = await playerIdsRes.text()
+
+            if (!playerIdsRes.ok) {
+              throw new Error(`Player IDs failed (${playerIdsRes.status}): ${playerIdsText}`)
+            }
+
+            let playerIdsJson = {}
+            try {
+              playerIdsJson = JSON.parse(playerIdsText)
+            } catch {
+              playerIdsJson = {}
+            }
+
+            lookup = buildPlayerLookupFromPlayerIds(
+              normalizePlayerIdsPayload(playerIdsJson)
+            )
+          }
+        }
+
+        if (!cancelled) {
+          setResultsPayload(resultsJson)
+          setLeagueInfo(liveLeagueInfo)
+          setRostersPayload(liveRosters)
+          setStandingsPayload(liveStandings)
+          setPlayerLookup(lookup)
+          setSheetResults(null)
+          setSheetDraftPicks([])
+          setDraftResultsPayload(null)
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Unknown error")
+          setResultsPayload(null)
+          setLeagueInfo(null)
+          setRostersPayload(null)
+          setStandingsPayload(null)
+          setPlayerLookup(new Map())
+          setSheetResults(null)
+          setSheetDraftPicks([])
+          setDraftResultsPayload(null)
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-    } finally {
-      if (!cancelled) setLoading(false)
     }
-  }
 
-  load()
-  return () => {
-    cancelled = true
-  }
-}, [sideleague])
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [sideleague])
 
   const matchups = useMemo(() => {
-  return Array.isArray(resultsPayload?.matchups) ? resultsPayload.matchups : []
-}, [resultsPayload])
-
-const groupedSheetMatchups = useMemo(() => {
-  return groupEuroleagueMatchups(sheetResults?.matchups || [])
-}, [sheetResults])
-
-const southSourceTeam = useMemo(() => {
-  const target = normalizeName(sideleague?.teams?.[0] || "South")
-
-  for (const matchup of matchups) {
-    const teams = Array.isArray(matchup?.teams) ? matchup.teams : []
-    const found = teams.find((team) => normalizeName(team?.name || "") === target)
-    if (found) return found
-  }
-
-  return null
-}, [matchups, sideleague])
-
-const northSourceTeam = useMemo(() => {
-  const target = normalizeName(sideleague?.teams?.[1] || "North")
-
-  for (const matchup of matchups) {
-    const teams = Array.isArray(matchup?.teams) ? matchup.teams : []
-    const found = teams.find((team) => normalizeName(team?.name || "") === target)
-    if (found) return found
-  }
-
-  return null
-}, [matchups, sideleague])
-
-const rulesData = useMemo(() => {
-  const scoringSystem = leagueInfo?.scoringSystem || {}
-
-  const categories =
-    scoringSystem?.scoringCategorySettings?.[0]?.configs?.map((cfg) => ({
-      shortName: cfg?.scoringCategory?.shortName || "—",
-      name: cfg?.scoringCategory?.name || "—",
-      weight: cfg?.weight ?? "—",
-    })) || []
-
-  return { categories }
-}, [leagueInfo])
-
-const categoryComparison = useMemo(() => {
-  return compareCategoryWins(
-    southSourceTeam?.stats || {},
-    northSourceTeam?.stats || {},
-    rulesData.categories
-  )
-}, [southSourceTeam, northSourceTeam, rulesData.categories])
-
-const southCategoryWins = useMemo(() => {
-  return categoryComparison.filter((item) => item.winner === "a").length
-}, [categoryComparison])
-
-const northCategoryWins = useMemo(() => {
-  return categoryComparison.filter((item) => item.winner === "b").length
-}, [categoryComparison])
-
-const computedWinnerTeam = useMemo(() => {
-  if (!southSourceTeam && !northSourceTeam) return null
-  if (!southSourceTeam) return northSourceTeam
-  if (!northSourceTeam) return southSourceTeam
-
-  if (southCategoryWins > northCategoryWins) return southSourceTeam
-  if (northCategoryWins > southCategoryWins) return northSourceTeam
-
-  return southSourceTeam
-}, [southSourceTeam, northSourceTeam, southCategoryWins, northCategoryWins])
-
-const computedLoserTeam = useMemo(() => {
-  if (!southSourceTeam || !northSourceTeam) return null
-  return computedWinnerTeam?.name === southSourceTeam?.name ? northSourceTeam : southSourceTeam
-}, [southSourceTeam, northSourceTeam, computedWinnerTeam])
-
-const winnerScore = useMemo(() => {
-  if (!computedWinnerTeam) return null
-  return computedWinnerTeam?.name === southSourceTeam?.name
-    ? southCategoryWins
-    : northCategoryWins
-}, [computedWinnerTeam, southSourceTeam, southCategoryWins, northCategoryWins])
-
-const loserScore = useMemo(() => {
-  if (!computedLoserTeam) return null
-  return computedLoserTeam?.name === southSourceTeam?.name
-    ? southCategoryWins
-    : northCategoryWins
-}, [computedLoserTeam, southSourceTeam, southCategoryWins, northCategoryWins])
+    return Array.isArray(resultsPayload?.matchups) ? resultsPayload.matchups : []
+  }, [resultsPayload])
 
   const liveTeams = useMemo(() => extractTeamsFromLeagueInfo(leagueInfo || {}), [leagueInfo])
+
+  const liveTeamsById = useMemo(() => {
+  const map = new Map()
+
+  const addTeam = (teamLike) => {
+    const id = String(
+      teamLike?.id ||
+      teamLike?.teamId ||
+      teamLike?.franchiseId ||
+      ""
+    ).trim()
+
+    if (!id) return
+
+    const name = decodeMaybeBrokenText(
+      teamLike?.name ||
+      teamLike?.teamName ||
+      teamLike?.teamNameShort ||
+      teamLike?.franchiseName ||
+      teamLike?.shortName ||
+      ""
+    ).trim()
+
+    if (!name) return
+
+    map.set(id, {
+      id,
+      name,
+      shortName: decodeMaybeBrokenText(teamLike?.shortName || "").trim(),
+    })
+  }
+
+  extractTeamsFromLeagueInfo(leagueInfo || {}).forEach(addTeam)
+
+  const standingRows = getStandingRows(standingsPayload)
+  standingRows.forEach((row) => {
+    addTeam({
+      id: row?.teamId || row?.id || row?.franchiseId,
+      name:
+        row?.teamName ||
+        row?.name ||
+        row?.team ||
+        row?.franchiseName ||
+        row?.teamNameShort,
+      shortName: row?.teamNameShort || row?.shortName,
+    })
+  })
+
+  const rosterGroups = Array.isArray(rostersPayload)
+    ? rostersPayload
+    : Array.isArray(rostersPayload?.teams)
+      ? rostersPayload.teams
+      : Array.isArray(rostersPayload?.rosters)
+        ? rostersPayload.rosters
+        : []
+
+  rosterGroups.forEach((row) => {
+    addTeam({
+      id: row?.teamId || row?.id || row?.franchiseId,
+      name:
+        row?.teamName ||
+        row?.name ||
+        row?.team ||
+        row?.franchiseName ||
+        row?.teamNameShort,
+      shortName: row?.teamNameShort || row?.shortName,
+    })
+  })
+
+  return map
+}, [leagueInfo, standingsPayload, rostersPayload])
+
+  const liveDraftPicks = useMemo(() => {
+  const rows = getDraftRows(draftResultsPayload)
+
+  return rows
+    .map((row, index) => ({
+      overall: getDraftPickOverall(row, index),
+      round: getDraftPickRound(row),
+      team: getDraftPickTeam(row, liveTeamsById),
+      teamId: String(row?.teamId || "").trim(),
+      player: getDraftPickPlayerName(row, playerLookup),
+      pos: getDraftPickPos(row, playerLookup),
+    }))
+    .filter((row) => row.teamId || row.player !== "—")
+    .sort((a, b) => Number(a.overall) - Number(b.overall))
+}, [draftResultsPayload, playerLookup, liveTeamsById])
+
+  const liveDraftPicksByTeam = useMemo(() => {
+    const map = new Map()
+
+    for (const pick of liveDraftPicks) {
+      const teamKey = pick?.team || pick?.teamId || "—"
+      if (!map.has(teamKey)) map.set(teamKey, [])
+      map.get(teamKey).push(pick)
+    }
+
+    return [...map.entries()]
+      .map(([team, picks]) => ({
+        team,
+        picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
+      }))
+      .sort((a, b) =>
+        String(a.team).localeCompare(String(b.team), undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      )
+  }, [liveDraftPicks])
+
+  const groupedSheetMatchups = useMemo(() => {
+    return groupEuroleagueMatchups(sheetResults?.matchups || [])
+  }, [sheetResults])
+
+  const southSourceTeam = useMemo(() => {
+    const target = normalizeName(sideleague?.teams?.[0] || "South")
+
+    for (const matchup of matchups) {
+      const teams = Array.isArray(matchup?.teams) ? matchup.teams : []
+      const found = teams.find((team) => normalizeName(team?.name || "") === target)
+      if (found) return found
+    }
+
+    return null
+  }, [matchups, sideleague])
+
+  const northSourceTeam = useMemo(() => {
+    const target = normalizeName(sideleague?.teams?.[1] || "North")
+
+    for (const matchup of matchups) {
+      const teams = Array.isArray(matchup?.teams) ? matchup.teams : []
+      const found = teams.find((team) => normalizeName(team?.name || "") === target)
+      if (found) return found
+    }
+
+    return null
+  }, [matchups, sideleague])
+
+  const rulesData = useMemo(() => {
+    const scoringSystem = leagueInfo?.scoringSystem || {}
+
+    const categories =
+      scoringSystem?.scoringCategorySettings?.[0]?.configs?.map((cfg) => ({
+        shortName: cfg?.scoringCategory?.shortName || "—",
+        name: cfg?.scoringCategory?.name || "—",
+        weight: cfg?.weight ?? "—",
+      })) || []
+
+    return { categories }
+  }, [leagueInfo])
+
+  const categoryComparison = useMemo(() => {
+    return compareCategoryWins(
+      southSourceTeam?.stats || {},
+      northSourceTeam?.stats || {},
+      rulesData.categories
+    )
+  }, [southSourceTeam, northSourceTeam, rulesData.categories])
+
+  const southCategoryWins = useMemo(() => {
+    return categoryComparison.filter((item) => item.winner === "a").length
+  }, [categoryComparison])
+
+  const northCategoryWins = useMemo(() => {
+    return categoryComparison.filter((item) => item.winner === "b").length
+  }, [categoryComparison])
+
+  const computedWinnerTeam = useMemo(() => {
+    if (!southSourceTeam && !northSourceTeam) return null
+    if (!southSourceTeam) return northSourceTeam
+    if (!northSourceTeam) return southSourceTeam
+
+    if (southCategoryWins > northCategoryWins) return southSourceTeam
+    if (northCategoryWins > southCategoryWins) return northSourceTeam
+
+    return southSourceTeam
+  }, [southSourceTeam, northSourceTeam, southCategoryWins, northCategoryWins])
+
+  const computedLoserTeam = useMemo(() => {
+    if (!southSourceTeam || !northSourceTeam) return null
+    return computedWinnerTeam?.name === southSourceTeam?.name ? northSourceTeam : southSourceTeam
+  }, [southSourceTeam, northSourceTeam, computedWinnerTeam])
+
+  const winnerScore = useMemo(() => {
+    if (!computedWinnerTeam) return null
+    return computedWinnerTeam?.name === southSourceTeam?.name
+      ? southCategoryWins
+      : northCategoryWins
+  }, [computedWinnerTeam, southSourceTeam, southCategoryWins, northCategoryWins])
+
+  const loserScore = useMemo(() => {
+    if (!computedLoserTeam) return null
+    return computedLoserTeam?.name === southSourceTeam?.name
+      ? southCategoryWins
+      : northCategoryWins
+  }, [computedLoserTeam, southSourceTeam, southCategoryWins, northCategoryWins])
 
   const southLiveTeam = useMemo(
     () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[0] || "South"),
@@ -1446,27 +1634,25 @@ const loserScore = useMemo(() => {
       .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
       .sort((a, b) => Number(a.rank) - Number(b.rank))
   }, [standingsPayload])
-  
-  const draftPicksByTeam = useMemo(() => {
-  const map = new Map()
-
-  for (const pick of sheetDraftPicks) {
-    const team = pick?.team || "—"
-    if (!map.has(team)) map.set(team, [])
-    map.get(team).push(pick)
-  }
-
-  return [...map.entries()]
-    .map(([team, picks]) => ({
-      team,
-      picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
-    }))
-    .sort((a, b) => a.team.localeCompare(b.team))
-}, [sheetDraftPicks])
 
   const champion = finalStandings[0] || null
 
- 
+  const draftPicksByTeam = useMemo(() => {
+    const map = new Map()
+
+    for (const pick of sheetDraftPicks) {
+      const team = pick?.team || "—"
+      if (!map.has(team)) map.set(team, [])
+      map.get(team).push(pick)
+    }
+
+    return [...map.entries()]
+      .map(([team, picks]) => ({
+        team,
+        picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
+      }))
+      .sort((a, b) => String(a.team).localeCompare(String(b.team)))
+  }, [sheetDraftPicks])
 
   return (
     <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
@@ -1499,487 +1685,686 @@ const loserScore = useMemo(() => {
           Year: {sideleague?.seasonLabel || "—"}
         </div>
 
-        {sideleague?.view === "matchup_rosters" ? (
+        {(sideleague?.view === "matchup_rosters" || sideleague?.view === "final_standings") ? (
           <RulesStrip categories={rulesData.categories} />
         ) : null}
       </section>
 
       {loading ? (
-  <div style={box}>Loading sideleague...</div>
-) : error ? (
-  <div style={errorBox}>{error}</div>
-) : sideleague?.view === "sheet_league" ? (
-  <>
-    <section
-      style={{
-        background: "#ffffff",
-        border: "1px solid #fed7aa",
-        borderRadius: 24,
-        padding: 24,
-        marginBottom: 20,
-      }}
-    >
-      <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 12 }}>
-        Euroleague
-      </div>
-
-      <h2 style={{ margin: "0 0 8px", fontSize: 28, color: "#111827" }}>
-        {sideleague?.name || "Euroleague"}
-      </h2>
-
-      <div style={{ color: "#6b7280", fontWeight: 600 }}>
-        Season: {sideleague?.seasonLabel || "—"}
-      </div>
-
-      <div style={{ marginTop: 16, color: "#6b7280", lineHeight: 1.7 }}>
-        Champion: <strong>{sheetResults?.champion || "—"}</strong>
-        <br />
-        Runner-up: <strong>{sheetResults?.runnerUp || "—"}</strong>
-      </div>
-    </section>
-
-    <section style={sectionCard}>
-  <div
-    style={{
-      display: "flex",
-      gap: 10,
-      marginBottom: 18,
-      flexWrap: "wrap",
-    }}
-  >
-    <button
-      type="button"
-      onClick={() => setSheetTab("matchups")}
-      style={{
-        padding: "10px 16px",
-        borderRadius: 999,
-        border: sheetTab === "matchups" ? "1px solid #fb923c" : "1px solid #fed7aa",
-        background: sheetTab === "matchups" ? "#f97316" : "#fff7ed",
-        color: sheetTab === "matchups" ? "#ffffff" : "#9a3412",
-        fontWeight: 800,
-        cursor: "pointer",
-      }}
-    >
-      Matchups
-    </button>
-
-    <button
-      type="button"
-      onClick={() => setSheetTab("draft")}
-      style={{
-        padding: "10px 16px",
-        borderRadius: 999,
-        border: sheetTab === "draft" ? "1px solid #fb923c" : "1px solid #fed7aa",
-        background: sheetTab === "draft" ? "#f97316" : "#fff7ed",
-        color: sheetTab === "draft" ? "#ffffff" : "#9a3412",
-        fontWeight: 800,
-        cursor: "pointer",
-      }}
-    >
-      Draft
-    </button>
-
-
-  </div>
-
-  {sheetTab === "matchups" ? (
-  <>
-    <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Matchups</h2>
-
-    {!groupedSheetMatchups.length ? (
-      <div style={{ color: "#6b7280" }}>No matchups found.</div>
-    ) : (
-      <div style={{ display: "grid", gap: 24 }}>
-        {groupedSheetMatchups.map((group) => {
-          const items = Array.isArray(group.items) ? group.items : []
-
-          if (group.phaseKey === "FINAL FOUR") {
-            const finalMatch =
-              items.find((item) => normalizeSheetText(item.round).toUpperCase() === "FINAL") || null
-
-            const semifinals = items.filter((item) =>
-              normalizeSheetText(item.round).toUpperCase().startsWith("SEMIFINAL")
-            )
-
-            return (
-              <section key={group.phaseKey}>
-                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
-                  {group.phase}
-                </div>
-
-                <div style={{ display: "grid", gap: 16 }}>
-                  {finalMatch ? (
-                    <div style={{ maxWidth: 760 }}>
-                      <EuroleagueMatchupCard matchup={finalMatch} />
-                    </div>
-                  ) : null}
-
-                  {semifinals.length ? (
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                        gap: 16,
-                      }}
-                    >
-                      {semifinals.map((matchup, idx) => (
-                        <EuroleagueMatchupCard
-                          key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                          matchup={matchup}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-            )
-          }
-
-          if (group.phaseKey === "PLAYOFFS") {
-            return (
-              <section key={group.phaseKey}>
-                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
-                  {group.phase}
-                </div>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                    gap: 16,
-                  }}
-                >
-                  {items.map((matchup, idx) => (
-                    <EuroleagueMatchupCard
-                      key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                      matchup={matchup}
-                    />
-                  ))}
-                </div>
-              </section>
-            )
-          }
-
-          if (group.phaseKey === "PLAY-IN") {
-            return (
-              <section key={group.phaseKey}>
-                <div style={{ color: "#111827", fontWeight: 900, fontSize: 22, marginBottom: 12 }}>
-                  {group.phase}
-                </div>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                    gap: 16,
-                  }}
-                >
-                  {items.map((matchup, idx) => (
-                    <EuroleagueMatchupCard
-                      key={`${group.phaseKey}-${matchup.round}-${idx}`}
-                      matchup={matchup}
-                    />
-                  ))}
-                </div>
-              </section>
-            )
-          }
-
-          return null
-        })}
-      </div>
-    )}
-  </>
-) : sheetTab === "draft" ? (
-  <>
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        marginBottom: 18,
-        flexWrap: "wrap",
-      }}
-    >
-      <button
-        type="button"
-        onClick={() => setDraftView("byPick")}
-        style={{
-          padding: "8px 14px",
-          borderRadius: 999,
-          border: draftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
-          background: draftView === "byPick" ? "#f97316" : "#fff7ed",
-          color: draftView === "byPick" ? "#ffffff" : "#9a3412",
-          fontWeight: 800,
-          cursor: "pointer",
-        }}
-      >
-        By Pick
-      </button>
-
-      <button
-        type="button"
-        onClick={() => setDraftView("byTeam")}
-        style={{
-          padding: "8px 14px",
-          borderRadius: 999,
-          border: draftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
-          background: draftView === "byTeam" ? "#f97316" : "#fff7ed",
-          color: draftView === "byTeam" ? "#ffffff" : "#9a3412",
-          fontWeight: 800,
-          cursor: "pointer",
-        }}
-      >
-        By Team
-      </button>
-    </div>
-
-    <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Draft Results</h2>
-
-    {!sheetDraftPicks.length ? (
-      <div style={{ color: "#6b7280" }}>No draft results found.</div>
-    ) : draftView === "byPick" ? (
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={th}>Rnd</th>
-              <th style={th}>Ovr</th>
-              <th style={th}>Team</th>
-              <th style={th}>Player</th>
-              <th style={th}>Club</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sheetDraftPicks.map((pick) => (
-              <tr key={`${pick.round}-${pick.overall}`}>
-                <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
-                <td style={td}>{pick.overall}</td>
-                <td style={td}>{pick.team}</td>
-                <td style={td}>{pick.player}</td>
-                <td style={td}>{pick.club}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gap: 16,
-        }}
-      >
-        {draftPicksByTeam.map((entry) => (
+        <div style={box}>Loading sideleague...</div>
+      ) : error ? (
+        <div style={errorBox}>{error}</div>
+      ) : sideleague?.view === "sheet_league" ? (
+        <>
           <section
-            key={entry.team}
             style={{
-              background: "#fff7ed",
+              background: "#ffffff",
               border: "1px solid #fed7aa",
-              borderRadius: 20,
-              padding: 18,
+              borderRadius: 24,
+              padding: 24,
+              marginBottom: 20,
             }}
           >
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
-              {entry.team}
+            <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 12 }}>
+              Euroleague
             </div>
 
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr>
-                    <th style={th}>Rnd</th>
-                    <th style={th}>Ovr</th>
-                    <th style={th}>Player</th>
-                    <th style={th}>Club</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {entry.picks.map((pick) => (
-                    <tr key={`${entry.team}-${pick.round}-${pick.overall}`}>
-                      <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
-                      <td style={td}>{pick.overall}</td>
-                      <td style={td}>{pick.player}</td>
-                      <td style={td}>{pick.club}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <h2 style={{ margin: "0 0 8px", fontSize: 28, color: "#111827" }}>
+              {sideleague?.name || "Euroleague"}
+            </h2>
+
+            <div style={{ color: "#6b7280", fontWeight: 600 }}>
+              Season: {sideleague?.seasonLabel || "—"}
+            </div>
+
+            <div style={{ marginTop: 16, color: "#6b7280", lineHeight: 1.7 }}>
+              Champion: <strong>{sheetResults?.champion || "—"}</strong>
+              <br />
+              Runner-up: <strong>{sheetResults?.runnerUp || "—"}</strong>
             </div>
           </section>
-        ))}
-      </div>
-    )}
-  </>
-) : null}
 
-</section>
-  </>
-) : sideleague?.view === "final_standings" ? (
-  <>
-    <ChampionCard champion={champion} seasonLabel={sideleague?.seasonLabel} />
-    <FinalStandingsCard rows={finalStandings} />
-  </>
-) : (
-  <>
-    <section
-      style={{
-        background: "#ffffff",
-        border: "1px solid #fed7aa",
-        borderRadius: 24,
-        padding: 24,
-        marginBottom: 20,
-      }}
-    >
-      <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 12 }}>
-        Final Result
-      </div>
+          <section style={sectionCard}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginBottom: 18,
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setSheetTab("matchups")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border: sheetTab === "matchups" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                  background: sheetTab === "matchups" ? "#f97316" : "#fff7ed",
+                  color: sheetTab === "matchups" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Matchups
+              </button>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gap: 16,
-        }}
-      >
-        <div
-          style={{
-            background: "#fff7ed",
-            border: "1px solid #fed7aa",
-            borderRadius: 20,
-            padding: 18,
-          }}
-        >
-          <div style={{ color: "#f97316", fontWeight: 800, fontSize: 13, marginBottom: 8 }}>
-            WINNER
-          </div>
-          <div
+              <button
+                type="button"
+                onClick={() => setSheetTab("draft")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border: sheetTab === "draft" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                  background: sheetTab === "draft" ? "#f97316" : "#fff7ed",
+                  color: sheetTab === "draft" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Draft
+              </button>
+            </div>
+
+            {sheetTab === "matchups" ? (
+              <>
+                <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Matchups</h2>
+
+                {!groupedSheetMatchups.length ? (
+                  <div style={{ color: "#6b7280" }}>No matchups found.</div>
+                ) : (
+                  <div style={{ display: "grid", gap: 24 }}>
+                    {groupedSheetMatchups.map((group) => {
+                      const items = Array.isArray(group.items) ? group.items : []
+
+                      if (group.phaseKey === "FINAL FOUR") {
+                        const finalMatch =
+                          items.find(
+                            (item) => normalizeSheetText(item.round).toUpperCase() === "FINAL"
+                          ) || null
+
+                        const semifinals = items.filter((item) =>
+                          normalizeSheetText(item.round).toUpperCase().startsWith("SEMIFINAL")
+                        )
+
+                        return (
+                          <section key={group.phaseKey}>
+                            <div
+                              style={{
+                                color: "#111827",
+                                fontWeight: 900,
+                                fontSize: 22,
+                                marginBottom: 12,
+                              }}
+                            >
+                              {group.phase}
+                            </div>
+
+                            <div style={{ display: "grid", gap: 16 }}>
+                              {finalMatch ? (
+                                <div style={{ maxWidth: 760 }}>
+                                  <EuroleagueMatchupCard matchup={finalMatch} />
+                                </div>
+                              ) : null}
+
+                              {semifinals.length ? (
+                                <div
+                                  style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                                    gap: 16,
+                                  }}
+                                >
+                                  {semifinals.map((matchup, idx) => (
+                                    <EuroleagueMatchupCard
+                                      key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                                      matchup={matchup}
+                                    />
+                                  ))}
+                                </div>
+                              ) : null}
+                            </div>
+                          </section>
+                        )
+                      }
+
+                      if (group.phaseKey === "PLAYOFFS") {
+                        return (
+                          <section key={group.phaseKey}>
+                            <div
+                              style={{
+                                color: "#111827",
+                                fontWeight: 900,
+                                fontSize: 22,
+                                marginBottom: 12,
+                              }}
+                            >
+                              {group.phase}
+                            </div>
+
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                                gap: 16,
+                              }}
+                            >
+                              {items.map((matchup, idx) => (
+                                <EuroleagueMatchupCard
+                                  key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                                  matchup={matchup}
+                                />
+                              ))}
+                            </div>
+                          </section>
+                        )
+                      }
+
+                      if (group.phaseKey === "PLAY-IN") {
+                        return (
+                          <section key={group.phaseKey}>
+                            <div
+                              style={{
+                                color: "#111827",
+                                fontWeight: 900,
+                                fontSize: 22,
+                                marginBottom: 12,
+                              }}
+                            >
+                              {group.phase}
+                            </div>
+
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                                gap: 16,
+                              }}
+                            >
+                              {items.map((matchup, idx) => (
+                                <EuroleagueMatchupCard
+                                  key={`${group.phaseKey}-${matchup.round}-${idx}`}
+                                  matchup={matchup}
+                                />
+                              ))}
+                            </div>
+                          </section>
+                        )
+                      }
+
+                      return null
+                    })}
+                  </div>
+                )}
+              </>
+            ) : sheetTab === "draft" ? (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    marginBottom: 18,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setDraftView("byPick")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border: draftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                      background: draftView === "byPick" ? "#f97316" : "#fff7ed",
+                      color: draftView === "byPick" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Pick
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDraftView("byTeam")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border: draftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                      background: draftView === "byTeam" ? "#f97316" : "#fff7ed",
+                      color: draftView === "byTeam" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Team
+                  </button>
+                </div>
+
+                <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Draft Results</h2>
+
+                {!sheetDraftPicks.length ? (
+                  <div style={{ color: "#6b7280" }}>No draft results found.</div>
+                ) : draftView === "byPick" ? (
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr>
+                          <th style={th}>Rnd</th>
+                          <th style={th}>Ovr</th>
+                          <th style={th}>Team</th>
+                          <th style={th}>Player</th>
+                          <th style={th}>Club</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sheetDraftPicks.map((pick) => (
+                          <tr key={`${pick.round}-${pick.overall}`}>
+                            <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
+                            <td style={td}>{pick.overall}</td>
+                            <td style={td}>{pick.team}</td>
+                            <td style={td}>{pick.player}</td>
+                            <td style={td}>{pick.club}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 16,
+                    }}
+                  >
+                    {draftPicksByTeam.map((entry) => (
+                      <section
+                        key={entry.team}
+                        style={{
+                          background: "#fff7ed",
+                          border: "1px solid #fed7aa",
+                          borderRadius: 20,
+                          padding: 18,
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 900,
+                            color: "#111827",
+                            marginBottom: 10,
+                          }}
+                        >
+                          {entry.team}
+                        </div>
+
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr>
+                                <th style={th}>Rnd</th>
+                                <th style={th}>Ovr</th>
+                                <th style={th}>Player</th>
+                                <th style={th}>Club</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {entry.picks.map((pick) => (
+                                <tr key={`${entry.team}-${pick.round}-${pick.overall}`}>
+                                  <td style={td}>{formatDraftRoundLabel(pick.round) || "—"}</td>
+                                  <td style={td}>{pick.overall}</td>
+                                  <td style={td}>{pick.player}</td>
+                                  <td style={td}>{pick.club}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : null}
+          </section>
+        </>
+      ) : sideleague?.view === "final_standings" ? (
+        <>
+          <ChampionCard champion={champion} seasonLabel={sideleague?.seasonLabel} />
+
+          <section style={sectionCard}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginBottom: 18,
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setFinalStandingsTab("standings")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "standings"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "standings" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "standings" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Standings
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFinalStandingsTab("draft")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "draft"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "draft" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "draft" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Draft
+              </button>
+            </div>
+
+            {finalStandingsTab === "standings" ? (
+              <FinalStandingsCard rows={finalStandings} />
+            ) : (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    marginBottom: 18,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setFinalDraftView("byPick")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border:
+                        finalDraftView === "byPick"
+                          ? "1px solid #fb923c"
+                          : "1px solid #fed7aa",
+                      background: finalDraftView === "byPick" ? "#f97316" : "#fff7ed",
+                      color: finalDraftView === "byPick" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Pick
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFinalDraftView("byTeam")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border:
+                        finalDraftView === "byTeam"
+                          ? "1px solid #fb923c"
+                          : "1px solid #fed7aa",
+                      background: finalDraftView === "byTeam" ? "#f97316" : "#fff7ed",
+                      color: finalDraftView === "byTeam" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Team
+                  </button>
+                </div>
+
+                {!liveDraftPicks.length ? (
+                  <div style={{ color: "#6b7280" }}>No draft results found.</div>
+                ) : finalDraftView === "byPick" ? (
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr>
+                          <th style={th}>Rnd</th>
+                          <th style={th}>Ovr</th>
+                          <th style={th}>Team</th>
+                          <th style={th}>Player</th>
+                          <th style={th}>Pos</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {liveDraftPicks.map((pick, idx) => (
+                          <tr key={`${pick.overall}-${pick.player}-${idx}`}>
+                            <td style={td}>{pick.round ?? "—"}</td>
+                            <td style={td}>{pick.overall}</td>
+                            <td style={td}>{pick.team || "—"}</td>
+                            <td style={td}>{pick.player || "—"}</td>
+                            <td style={td}>{pick.pos || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 16,
+                    }}
+                  >
+                    {liveDraftPicksByTeam.map((entry) => (
+                      <section
+                        key={entry.team}
+                        style={{
+                          background: "#fff7ed",
+                          border: "1px solid #fed7aa",
+                          borderRadius: 20,
+                          padding: 18,
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 900,
+                            color: "#111827",
+                            marginBottom: 10,
+                          }}
+                        >
+                          {entry.team}
+                        </div>
+
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr>
+                                <th style={th}>Rnd</th>
+                                <th style={th}>Ovr</th>
+                                <th style={th}>Player</th>
+                                <th style={th}>Pos</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {entry.picks.map((pick, idx) => (
+                                <tr key={`${entry.team}-${pick.overall}-${idx}`}>
+                                  <td style={td}>{pick.round ?? "—"}</td>
+                                  <td style={td}>{pick.overall}</td>
+                                  <td style={td}>{pick.player || "—"}</td>
+                                  <td style={td}>{pick.pos || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+        </>
+      ) : (
+        <>
+          <section
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 16,
+              background: "#ffffff",
+              border: "1px solid #fed7aa",
+              borderRadius: 24,
+              padding: 24,
+              marginBottom: 20,
             }}
           >
-            <div
-              style={{
-                fontSize: 30,
-                lineHeight: 1.1,
-                fontWeight: 900,
-                color: "#111827",
-                minWidth: 0,
-              }}
-            >
-              <SideleagueTeamLink teamName={computedWinnerTeam?.name || "—"} />
+            <div style={{ color: "#f97316", fontWeight: 800, marginBottom: 12 }}>
+              Final Result
             </div>
 
             <div
               style={{
-                fontSize: 46,
-                lineHeight: 1,
-                fontWeight: 900,
-                color: "#f97316",
-                flexShrink: 0,
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                gap: 16,
               }}
             >
-              {winnerScore ?? "—"}
+              <div
+                style={{
+                  background: "#fff7ed",
+                  border: "1px solid #fed7aa",
+                  borderRadius: 20,
+                  padding: 18,
+                }}
+              >
+                <div style={{ color: "#f97316", fontWeight: 800, fontSize: 13, marginBottom: 8 }}>
+                  WINNER
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 16,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 30,
+                      lineHeight: 1.1,
+                      fontWeight: 900,
+                      color: "#111827",
+                      minWidth: 0,
+                    }}
+                  >
+                    <SideleagueTeamLink teamName={computedWinnerTeam?.name || "—"} />
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 46,
+                      lineHeight: 1,
+                      fontWeight: 900,
+                      color: "#f97316",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {winnerScore ?? "—"}
+                  </div>
+                </div>
+
+                <TeamStatsStrip
+                  teamStats={computedWinnerTeam?.stats || {}}
+                  opponentStats={computedLoserTeam?.stats || {}}
+                  scoringCategories={rulesData.categories}
+                />
+              </div>
+
+              <div
+                style={{
+                  background: "#fff7ed",
+                  border: "1px solid #fed7aa",
+                  borderRadius: 20,
+                  padding: 18,
+                }}
+              >
+                <div style={{ color: "#f97316", fontWeight: 800, fontSize: 13, marginBottom: 8 }}>
+                  LOSER
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 16,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 30,
+                      lineHeight: 1.1,
+                      fontWeight: 900,
+                      color: "#111827",
+                      minWidth: 0,
+                    }}
+                  >
+                    <SideleagueTeamLink teamName={computedLoserTeam?.name || "—"} />
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 46,
+                      lineHeight: 1,
+                      fontWeight: 900,
+                      color: "#f97316",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {loserScore ?? "—"}
+                  </div>
+                </div>
+
+                <TeamStatsStrip
+                  teamStats={computedLoserTeam?.stats || {}}
+                  opponentStats={computedWinnerTeam?.stats || {}}
+                  scoringCategories={rulesData.categories}
+                />
+              </div>
             </div>
-          </div>
+          </section>
 
-          <TeamStatsStrip
-            teamStats={computedWinnerTeam?.stats || {}}
-            opponentStats={computedLoserTeam?.stats || {}}
-            scoringCategories={rulesData.categories}
-          />
-        </div>
-
-        <div
-          style={{
-            background: "#fff7ed",
-            border: "1px solid #fed7aa",
-            borderRadius: 20,
-            padding: 18,
-          }}
-        >
-          <div style={{ color: "#f97316", fontWeight: 800, fontSize: 13, marginBottom: 8 }}>
-            LOSER
-          </div>
-          <div
+          <section
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 16,
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+              gap: 20,
             }}
           >
-            <div
-              style={{
-                fontSize: 30,
-                lineHeight: 1.1,
-                fontWeight: 900,
-                color: "#111827",
-                minWidth: 0,
-              }}
-            >
-              <SideleagueTeamLink teamName={computedLoserTeam?.name || "—"} />
-            </div>
-
-            <div
-              style={{
-                fontSize: 46,
-                lineHeight: 1,
-                fontWeight: 900,
-                color: "#f97316",
-                flexShrink: 0,
-              }}
-            >
-              {loserScore ?? "—"}
-            </div>
-          </div>
-
-          <TeamStatsStrip
-            teamStats={computedLoserTeam?.stats || {}}
-            opponentStats={computedWinnerTeam?.stats || {}}
-            scoringCategories={rulesData.categories}
-          />
-        </div>
-      </div>
-    </section>
-
-
-
-    <section
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-        gap: 20,
-      }}
-    >
-      <TeamRosterCard
-        title={southLiveTeam?.name || sideleague?.teams?.[0] || "South"}
-        rows={southRoster}
-      />
-      <TeamRosterCard
-        title={northLiveTeam?.name || sideleague?.teams?.[1] || "North"}
-        rows={northRoster}
-      />
-    </section>
-  </>
-)}
+            <TeamRosterCard
+              title={southLiveTeam?.name || sideleague?.teams?.[0] || "South"}
+              rows={southRoster}
+            />
+            <TeamRosterCard
+              title={northLiveTeam?.name || sideleague?.teams?.[1] || "North"}
+              rows={northRoster}
+            />
+          </section>
+        </>
+      )}
     </main>
   )
-}
-
-const box = {
-  background: "#ffffff",
-  border: "1px solid #fed7aa",
-  borderRadius: 20,
-  padding: 18,
-}
-
-const errorBox = {
-  ...box,
-  color: "#b91c1c",
-  background: "#fff7f7",
-  border: "1px solid #fecaca",
 }

@@ -1,4 +1,13 @@
 export const SIDELEAGUES = [
+     {
+    key: "nbarrwstoi-playoffs-2026",
+    name: "NBArrwstoi Playoffs",
+    seasonLabel: "2025-26",
+    leagueId: "hghqs214mo5iixxy",
+    period: 1,
+    description: "NBArrwstoi Playoffs",
+    view: "final_standings",
+  },
     {
   key: "euroleague-2025-26",
   name: "Euroleague",
