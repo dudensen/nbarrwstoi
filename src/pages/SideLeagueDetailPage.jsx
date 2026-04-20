@@ -14,7 +14,6 @@ import {
 } from "../utils/fantrax"
 import { canonicalTeamName, slugifyTeamName } from "../utils/history"
 
-
 const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
   query: "?raw",
   import: "default",
@@ -149,8 +148,6 @@ async function buildSideleaguePlayerLookup(playerIdsJson, seasonLabel) {
     const csvText = await csvLoader()
     const csvRows = parsePlayerCsv(csvText || "")
     const csvLookup = buildPlayerLookupFromCsvRows(csvRows)
-
-    // playerIds first, CSV only as fallback
     return mergePlayerLookups(playerIdsLookup, csvLookup)
   } catch {
     return playerIdsLookup
@@ -438,7 +435,7 @@ function parseEuroleagueResultsCsv(text = "") {
       const zoneOrder = { "FINAL FOUR": 1, PLAYOFFS: 2, "PLAY-IN": 3 }
       const zd = (zoneOrder[a.zone] || 99) - (zoneOrder[b.zone] || 99)
       if (zd !== 0) return zd
-      return (a.row - b.row) || (a.col - b.col)
+      return a.row - b.row || a.col - b.col
     })
 
   function getRowScores(gridRows, rowIndex, startCol, zone) {
@@ -452,9 +449,7 @@ function parseEuroleagueResultsCsv(text = "") {
       if (!raw) continue
 
       const num = parseSheetNumber(raw)
-      if (Number.isFinite(num)) {
-        scores.push(num)
-      }
+      if (Number.isFinite(num)) scores.push(num)
     }
 
     if (zone === "PLAY-IN" || zone === "FINAL FOUR") {
@@ -480,7 +475,7 @@ function parseEuroleagueResultsCsv(text = "") {
           if (Math.abs(cell.col - label.col) > 4) return false
           return isLikelyTeamCell(cell.value)
         })
-        .sort((a, b) => (a.row - b.row) || (a.col - b.col))
+        .sort((a, b) => a.row - b.row || a.col - b.col)
 
       const teams = []
       const seenRows = new Set()
@@ -691,9 +686,7 @@ function getStandingTeam(row, liveTeamsById) {
 
   if (teamId && liveTeamsById?.has(teamId)) {
     const team = liveTeamsById.get(teamId)
-    return decodeMaybeBrokenText(
-      team?.name || team?.shortName || ""
-    )
+    return decodeMaybeBrokenText(team?.name || team?.shortName || "")
   }
 
   return decodeMaybeBrokenText(
@@ -708,11 +701,30 @@ function getStandingTeam(row, liveTeamsById) {
 }
 
 function getStandingPoints(row) {
-  const candidates = [row?.points, row?.pts, row?.rotisseriePoints, row?.score, row?.totalPoints]
+  const candidates = [
+    row?.points,
+    row?.pts,
+    row?.rotisseriePoints,
+    row?.score,
+    row?.totalPoints,
+  ]
 
   for (const value of candidates) {
-    const num = Number(value)
-    if (Number.isFinite(num)) return num
+    if (value == null || value === "") continue
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return Number.isInteger(value) ? String(value) : String(value)
+    }
+
+    const text = String(value).trim()
+    if (!text) continue
+
+    const numeric = Number(text)
+    if (Number.isFinite(numeric)) {
+      return Number.isInteger(numeric) ? String(numeric) : String(numeric)
+    }
+
+    return text
   }
 
   return null
@@ -955,7 +967,6 @@ function EuroleagueMatchupCard({ matchup }) {
     </div>
   )
 }
-
 
 function TeamStatsStrip({ teamStats = {}, opponentStats = {}, scoringCategories = [] }) {
   const entries = useMemo(
@@ -1227,6 +1238,24 @@ const errorBox = {
   border: "1px solid #fecaca",
 }
 
+function formatPlayoffScoreValue(value) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return "—"
+  return Number.isInteger(num) ? String(num) : String(num)
+}
+
+function parsePlayoffScoreText(scoreText = "") {
+  const parts = String(scoreText || "").split("-").map((part) => Number(part.trim()))
+  if (parts.length !== 2 || !Number.isFinite(parts[0]) || !Number.isFinite(parts[1])) {
+    return null
+  }
+
+  return {
+    score1: parts[0],
+    score2: parts[1],
+  }
+}
+
 export default function SideLeagueDetailPage() {
   const { sideleagueKey } = useParams()
   const sideleague = getSideleagueByKey(sideleagueKey)
@@ -1245,7 +1274,6 @@ export default function SideLeagueDetailPage() {
   const [finalStandingsTab, setFinalStandingsTab] = useState("standings")
   const [draftResultsPayload, setDraftResultsPayload] = useState(null)
   const [finalDraftView, setFinalDraftView] = useState("byTeam")
-
 
   useEffect(() => {
     let cancelled = false
@@ -1300,7 +1328,7 @@ export default function SideLeagueDetailPage() {
         }
 
         if (sideleague.view === "final_standings") {
-          const [playerIdsRes, sideleagueRes, draftRes] = await Promise.all([
+          const [playerIdsRes, sideleagueRes, draftRes, resultsRes] = await Promise.all([
             fetch(`/api/player-ids`),
             fetch(
               `/api/sideleague?leagueId=${encodeURIComponent(sideleague.leagueId)}&period=${encodeURIComponent(
@@ -1308,12 +1336,14 @@ export default function SideLeagueDetailPage() {
               )}`
             ),
             fetch(`/api/sideleague-draft-results?leagueId=${encodeURIComponent(sideleague.leagueId)}`),
+            fetch(`/data/sideleagues/${sideleague.key}.json`),
           ])
 
-          const [playerIdsText, sideleagueText, draftText] = await Promise.all([
+          const [playerIdsText, sideleagueText, draftText, resultsText] = await Promise.all([
             playerIdsRes.text(),
             sideleagueRes.text(),
             draftRes.text(),
+            resultsRes.text(),
           ])
 
           if (!playerIdsRes.ok) {
@@ -1328,9 +1358,14 @@ export default function SideLeagueDetailPage() {
             throw new Error(`Draft results failed (${draftRes.status}): ${draftText}`)
           }
 
+          if (!resultsRes.ok) {
+            throw new Error(`Sideleague results json failed (${resultsRes.status}): ${resultsText}`)
+          }
+
           let playerIdsJson = {}
           let sideleagueJson = {}
           let draftJson = {}
+          let finalResultsJson = {}
 
           try {
             playerIdsJson = JSON.parse(playerIdsText)
@@ -1352,13 +1387,19 @@ export default function SideLeagueDetailPage() {
             draftJson = {}
           }
 
-         lookup = await buildSideleaguePlayerLookup(
-  playerIdsJson,
-  sideleague?.seasonLabel
-)
+          try {
+            finalResultsJson = JSON.parse(resultsText)
+          } catch {
+            finalResultsJson = {}
+          }
+
+          lookup = await buildSideleaguePlayerLookup(
+            playerIdsJson,
+            sideleague?.seasonLabel
+          )
 
           if (!cancelled) {
-            setResultsPayload(null)
+            setResultsPayload(finalResultsJson)
             setLeagueInfo(sideleagueJson?.leagueInfo || null)
             setRostersPayload(sideleagueJson?.rosters || null)
             setStandingsPayload(sideleagueJson?.standings || null)
@@ -1378,7 +1419,11 @@ export default function SideLeagueDetailPage() {
           throw new Error(`Sideleague results json failed (${resultsRes.status}): ${resultsText}`)
         }
 
-        resultsJson = JSON.parse(resultsText)
+        try {
+          resultsJson = JSON.parse(resultsText)
+        } catch {
+          resultsJson = {}
+        }
 
         const sideleagueRes = await fetch(
           `/api/sideleague?leagueId=${encodeURIComponent(sideleague.leagueId)}&period=${encodeURIComponent(
@@ -1474,127 +1519,139 @@ export default function SideLeagueDetailPage() {
     return Array.isArray(resultsPayload?.matchups) ? resultsPayload.matchups : []
   }, [resultsPayload])
 
+  const playoffMatchups = useMemo(() => {
+    return (resultsPayload?.periods || [])
+      .filter((p) => {
+        const period = Number(p?.period)
+        return sideleague?.playoffs && period >= Number(sideleague?.playoffStartPeriod || 0)
+      })
+      .flatMap((p) => p?.matchups || [])
+  }, [resultsPayload, sideleague])
+
   const liveTeams = useMemo(() => extractTeamsFromLeagueInfo(leagueInfo || {}), [leagueInfo])
 
+  const southLiveTeam = useMemo(
+    () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[0] || "South"),
+    [liveTeams, sideleague]
+  )
 
-
-const southLiveTeam = useMemo(
-  () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[0] || "South"),
-  [liveTeams, sideleague]
-)
+  const northLiveTeam = useMemo(
+    () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[1] || "North"),
+    [liveTeams, sideleague]
+  )
 
   const liveTeamsById = useMemo(() => {
-  const map = new Map()
+    const map = new Map()
 
-  const addTeam = (teamLike) => {
-    const id = String(
-      teamLike?.id ||
-      teamLike?.teamId ||
-      teamLike?.franchiseId ||
-      ""
-    ).trim()
+    const addTeam = (teamLike) => {
+      const id = String(
+        teamLike?.id ||
+          teamLike?.teamId ||
+          teamLike?.franchiseId ||
+          ""
+      ).trim()
 
-    if (!id) return
+      if (!id) return
 
-    const name = decodeMaybeBrokenText(
-      teamLike?.name ||
-      teamLike?.teamName ||
-      teamLike?.teamNameShort ||
-      teamLike?.franchiseName ||
-      teamLike?.shortName ||
-      ""
-    ).trim()
+      const name = decodeMaybeBrokenText(
+        teamLike?.name ||
+          teamLike?.teamName ||
+          teamLike?.teamNameShort ||
+          teamLike?.franchiseName ||
+          teamLike?.shortName ||
+          ""
+      ).trim()
 
-    if (!name) return
+      if (!name) return
 
-    map.set(id, {
-      id,
-      name,
-      shortName: decodeMaybeBrokenText(teamLike?.shortName || "").trim(),
-    })
-  }
-
-  extractTeamsFromLeagueInfo(leagueInfo || {}).forEach(addTeam)
-
-  const standingRows = getStandingRows(standingsPayload)
-  standingRows.forEach((row) => {
-    addTeam({
-      id: row?.teamId || row?.id || row?.franchiseId,
-      name:
-        row?.teamName ||
-        row?.name ||
-        row?.team ||
-        row?.franchiseName ||
-        row?.teamNameShort,
-      shortName: row?.teamNameShort || row?.shortName,
-    })
-  })
-
-  const rosterGroups = Array.isArray(rostersPayload)
-    ? rostersPayload
-    : Array.isArray(rostersPayload?.teams)
-      ? rostersPayload.teams
-      : Array.isArray(rostersPayload?.rosters)
-        ? rostersPayload.rosters
-        : []
-
-  rosterGroups.forEach((row) => {
-    addTeam({
-      id: row?.teamId || row?.id || row?.franchiseId,
-      name:
-        row?.teamName ||
-        row?.name ||
-        row?.team ||
-        row?.franchiseName ||
-        row?.teamNameShort,
-      shortName: row?.teamNameShort || row?.shortName,
-    })
-  })
-
-  return map
-}, [leagueInfo, standingsPayload, rostersPayload])
-
-const finalRostersByTeam = useMemo(() => {
-  const teamsSource =
-    liveTeams.length > 0
-      ? liveTeams
-      : [...liveTeamsById.values()]
-
-  return teamsSource
-    .map((team) => {
-      const id = String(team?.id || "").trim()
-      if (!id) return null
-
-      const players = enrichRosterItems(
-        getRosterForTeam(rostersPayload, id),
-        playerLookup
-      )
-
-      return {
+      map.set(id, {
         id,
-        name: decodeMaybeBrokenText(team?.name || team?.shortName || "—"),
-        players,
-      }
+        name,
+        shortName: decodeMaybeBrokenText(teamLike?.shortName || "").trim(),
+      })
+    }
+
+    extractTeamsFromLeagueInfo(leagueInfo || {}).forEach(addTeam)
+
+    const standingRows = getStandingRows(standingsPayload)
+    standingRows.forEach((row) => {
+      addTeam({
+        id: row?.teamId || row?.id || row?.franchiseId,
+        name:
+          row?.teamName ||
+          row?.name ||
+          row?.team ||
+          row?.franchiseName ||
+          row?.teamNameShort,
+        shortName: row?.teamNameShort || row?.shortName,
+      })
     })
-    .filter(Boolean)
-    .filter((team) => team.players.length > 0)
-}, [liveTeams, liveTeamsById, rostersPayload, playerLookup])
+
+    const rosterGroups = Array.isArray(rostersPayload)
+      ? rostersPayload
+      : Array.isArray(rostersPayload?.teams)
+        ? rostersPayload.teams
+        : Array.isArray(rostersPayload?.rosters)
+          ? rostersPayload.rosters
+          : []
+
+    rosterGroups.forEach((row) => {
+      addTeam({
+        id: row?.teamId || row?.id || row?.franchiseId,
+        name:
+          row?.teamName ||
+          row?.name ||
+          row?.team ||
+          row?.franchiseName ||
+          row?.teamNameShort,
+        shortName: row?.teamNameShort || row?.shortName,
+      })
+    })
+
+    return map
+  }, [leagueInfo, standingsPayload, rostersPayload])
+
+  const finalRostersByTeam = useMemo(() => {
+    const teamsSource =
+      liveTeams.length > 0
+        ? liveTeams
+        : [...liveTeamsById.values()]
+
+    return teamsSource
+      .map((team) => {
+        const id = String(team?.id || "").trim()
+        if (!id) return null
+
+        const players = enrichRosterItems(
+          getRosterForTeam(rostersPayload, id),
+          playerLookup
+        )
+
+        return {
+          id,
+          name: decodeMaybeBrokenText(team?.name || team?.shortName || "—"),
+          players,
+        }
+      })
+      .filter(Boolean)
+      .filter((team) => team.players.length > 0)
+  }, [liveTeams, liveTeamsById, rostersPayload, playerLookup])
 
   const liveDraftPicks = useMemo(() => {
-  const rows = getDraftRows(draftResultsPayload)
+    const rows = getDraftRows(draftResultsPayload)
 
-  return rows
-    .map((row, index) => ({
-      overall: getDraftPickOverall(row, index),
-      round: getDraftPickRound(row),
-      team: getDraftPickTeam(row, liveTeamsById),
-      teamId: String(row?.teamId || "").trim(),
-      player: getDraftPickPlayerName(row, playerLookup),
-      pos: getDraftPickPos(row, playerLookup),
-    }))
-    .filter((row) => row.teamId || row.player !== "—")
-    .sort((a, b) => Number(a.overall) - Number(b.overall))
-}, [draftResultsPayload, playerLookup, liveTeamsById])
+    return rows
+      .map((row, index) => ({
+        overall: getDraftPickOverall(row, index),
+        round: getDraftPickRound(row),
+        team: getDraftPickTeam(row, liveTeamsById),
+        teamId: String(row?.teamId || "").trim(),
+        player: getDraftPickPlayerName(row, playerLookup),
+        pos: getDraftPickPos(row, playerLookup),
+      }))
+      .filter((row) => row.teamId || row.player !== "—")
+      .sort((a, b) => Number(a.overall) - Number(b.overall))
+  }, [draftResultsPayload, playerLookup, liveTeamsById])
 
   const liveDraftPicksByTeam = useMemo(() => {
     const map = new Map()
@@ -1705,13 +1762,6 @@ const finalRostersByTeam = useMemo(() => {
       : northCategoryWins
   }, [computedLoserTeam, southSourceTeam, southCategoryWins, northCategoryWins])
 
- 
-
-  const northLiveTeam = useMemo(
-    () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[1] || "North"),
-    [liveTeams, sideleague]
-  )
-
   const southRoster = useMemo(() => {
     if (!rostersPayload || !southLiveTeam?.id) return []
     return enrichRosterItems(getRosterForTeam(rostersPayload, southLiveTeam.id), playerLookup)
@@ -1722,20 +1772,54 @@ const finalRostersByTeam = useMemo(() => {
     return enrichRosterItems(getRosterForTeam(rostersPayload, northLiveTeam.id), playerLookup)
   }, [rostersPayload, northLiveTeam, playerLookup])
 
- const finalStandings = useMemo(() => {
-  const rows = getStandingRows(standingsPayload)
+  const finalStandings = useMemo(() => {
+    const rows = getStandingRows(standingsPayload)
 
-  return rows
-    .map((row, index) => ({
-      rank: getStandingRank(row, index),
-      team: getStandingTeam(row, liveTeamsById),
-      points: getStandingPoints(row),
-    }))
-    .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
-    .sort((a, b) => Number(a.rank) - Number(b.rank))
-}, [standingsPayload, liveTeamsById])
+    return rows
+      .map((row, index) => ({
+        rank: getStandingRank(row, index),
+        team: getStandingTeam(row, liveTeamsById),
+        points: getStandingPoints(row),
+      }))
+      .filter((row) => row.team && !/^\d+$/.test(String(row.team).trim()))
+      .sort((a, b) => Number(a.rank) - Number(b.rank))
+  }, [standingsPayload, liveTeamsById])
 
-  const champion = finalStandings[0] || null
+  const champion = useMemo(() => {
+  const finalMatch = [...playoffMatchups]
+    .sort((a, b) => Number(b?.period || 0) - Number(a?.period || 0))[0] || null
+
+  if (!finalMatch) {
+    return finalStandings[0] || null
+  }
+
+  const winnerId = String(finalMatch?.winnerTeamId || "")
+  const teams = Array.isArray(finalMatch?.teams) ? finalMatch.teams : []
+  const team1 = teams[0] || {}
+  const team2 = teams[1] || {}
+
+  let winnerName = ""
+  if (winnerId && String(team1?.id || "") === winnerId) {
+    winnerName = decodeMaybeBrokenText(team1?.name || "")
+  } else if (winnerId && String(team2?.id || "") === winnerId) {
+    winnerName = decodeMaybeBrokenText(team2?.name || "")
+  }
+
+  if (!winnerName) {
+    return finalStandings[0] || null
+  }
+
+  const standingMatch =
+    finalStandings.find((row) => normalizeName(row.team) === normalizeName(winnerName)) || null
+
+  return (
+    standingMatch || {
+      rank: "—",
+      team: winnerName,
+      points: null,
+    }
+  )
+}, [playoffMatchups, finalStandings])
 
   const draftPicksByTeam = useMemo(() => {
     const map = new Map()
@@ -2142,244 +2226,331 @@ const finalRostersByTeam = useMemo(() => {
               }}
             >
               <button
-  type="button"
-  onClick={() => setFinalStandingsTab("standings")}
-  style={{
-    padding: "10px 16px",
-    borderRadius: 999,
-    border:
-      finalStandingsTab === "standings"
-        ? "1px solid #fb923c"
-        : "1px solid #fed7aa",
-    background:
-      finalStandingsTab === "standings" ? "#f97316" : "#fff7ed",
-    color:
-      finalStandingsTab === "standings" ? "#ffffff" : "#9a3412",
-    fontWeight: 800,
-    cursor: "pointer",
-  }}
->
-  Standings
-</button>
+                type="button"
+                onClick={() => setFinalStandingsTab("standings")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "standings"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "standings" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "standings" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Standings
+              </button>
 
-<button
-  type="button"
-  onClick={() => setFinalStandingsTab("draft")}
-  style={{
-    padding: "10px 16px",
-    borderRadius: 999,
-    border:
-      finalStandingsTab === "draft"
-        ? "1px solid #fb923c"
-        : "1px solid #fed7aa",
-    background:
-      finalStandingsTab === "draft" ? "#f97316" : "#fff7ed",
-    color:
-      finalStandingsTab === "draft" ? "#ffffff" : "#9a3412",
-    fontWeight: 800,
-    cursor: "pointer",
-  }}
->
-  Draft
-</button>
+              <button
+                type="button"
+                onClick={() => setFinalStandingsTab("draft")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "draft"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "draft" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "draft" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Draft
+              </button>
 
-<button
-  type="button"
-  onClick={() => setFinalStandingsTab("rosters")}
-  style={{
-    padding: "10px 16px",
-    borderRadius: 999,
-    border:
-      finalStandingsTab === "rosters"
-        ? "1px solid #fb923c"
-        : "1px solid #fed7aa",
-    background:
-      finalStandingsTab === "rosters" ? "#f97316" : "#fff7ed",
-    color:
-      finalStandingsTab === "rosters" ? "#ffffff" : "#9a3412",
-    fontWeight: 800,
-    cursor: "pointer",
-  }}
->
-  Rosters
-</button>
+              <button
+                type="button"
+                onClick={() => setFinalStandingsTab("playoffs")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "playoffs"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "playoffs" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "playoffs" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Playoffs
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFinalStandingsTab("rosters")}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 999,
+                  border:
+                    finalStandingsTab === "rosters"
+                      ? "1px solid #fb923c"
+                      : "1px solid #fed7aa",
+                  background:
+                    finalStandingsTab === "rosters" ? "#f97316" : "#fff7ed",
+                  color:
+                    finalStandingsTab === "rosters" ? "#ffffff" : "#9a3412",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                }}
+              >
+                Rosters
+              </button>
             </div>
 
             {finalStandingsTab === "standings" ? (
-  <FinalStandingsCard rows={finalStandings} />
-) : finalStandingsTab === "draft" ? (
-  <>
-    <div
-      style={{
-        display: "flex",
-        gap: 10,
-        marginBottom: 18,
-        flexWrap: "wrap",
-      }}
-    >
-      <button
-        type="button"
-        onClick={() => setFinalDraftView("byPick")}
-        style={{
-          padding: "8px 14px",
-          borderRadius: 999,
-          border: finalDraftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
-          background: finalDraftView === "byPick" ? "#f97316" : "#fff7ed",
-          color: finalDraftView === "byPick" ? "#ffffff" : "#9a3412",
-          fontWeight: 800,
-          cursor: "pointer",
-        }}
-      >
-        By Pick
-      </button>
+              <FinalStandingsCard rows={finalStandings} />
+            ) : finalStandingsTab === "draft" ? (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    marginBottom: 18,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setFinalDraftView("byPick")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border: finalDraftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                      background: finalDraftView === "byPick" ? "#f97316" : "#fff7ed",
+                      color: finalDraftView === "byPick" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Pick
+                  </button>
 
-      <button
-        type="button"
-        onClick={() => setFinalDraftView("byTeam")}
-        style={{
-          padding: "8px 14px",
-          borderRadius: 999,
-          border: finalDraftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
-          background: finalDraftView === "byTeam" ? "#f97316" : "#fff7ed",
-          color: finalDraftView === "byTeam" ? "#ffffff" : "#9a3412",
-          fontWeight: 800,
-          cursor: "pointer",
-        }}
-      >
-        By Team
-      </button>
-    </div>
+                  <button
+                    type="button"
+                    onClick={() => setFinalDraftView("byTeam")}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      border: finalDraftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                      background: finalDraftView === "byTeam" ? "#f97316" : "#fff7ed",
+                      color: finalDraftView === "byTeam" ? "#ffffff" : "#9a3412",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                    }}
+                  >
+                    By Team
+                  </button>
+                </div>
 
-    {!liveDraftPicks.length ? (
-      <div style={{ color: "#6b7280" }}>No draft results found.</div>
-    ) : finalDraftView === "byPick" ? (
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={th}>Rnd</th>
-              <th style={th}>Ovr</th>
-              <th style={th}>Team</th>
-              <th style={th}>Player</th>
-              <th style={th}>Pos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {liveDraftPicks.map((pick, idx) => (
-              <tr key={`${pick.overall}-${pick.player}-${idx}`}>
-                <td style={td}>{pick.round ?? "—"}</td>
-                <td style={td}>{pick.overall}</td>
-                <td style={td}>{pick.team || "—"}</td>
-                <td style={td}>{pick.player || "—"}</td>
-                <td style={td}>{pick.pos || "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    ) : (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gap: 16,
-        }}
-      >
-        {liveDraftPicksByTeam.map((entry) => (
-          <section
-            key={entry.team}
-            style={{
-              background: "#fff7ed",
-              border: "1px solid #fed7aa",
-              borderRadius: 20,
-              padding: 18,
-            }}
-          >
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
-              {entry.team}
-            </div>
+                {!liveDraftPicks.length ? (
+                  <div style={{ color: "#6b7280" }}>No draft results found.</div>
+                ) : finalDraftView === "byPick" ? (
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                        <tr>
+                          <th style={th}>Rnd</th>
+                          <th style={th}>Ovr</th>
+                          <th style={th}>Team</th>
+                          <th style={th}>Player</th>
+                          <th style={th}>Pos</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {liveDraftPicks.map((pick, idx) => (
+                          <tr key={`${pick.overall}-${pick.player}-${idx}`}>
+                            <td style={td}>{pick.round ?? "—"}</td>
+                            <td style={td}>{pick.overall}</td>
+                            <td style={td}>{pick.team || "—"}</td>
+                            <td style={td}>{pick.player || "—"}</td>
+                            <td style={td}>{pick.pos || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 16,
+                    }}
+                  >
+                    {liveDraftPicksByTeam.map((entry) => (
+                      <section
+                        key={entry.team}
+                        style={{
+                          background: "#fff7ed",
+                          border: "1px solid #fed7aa",
+                          borderRadius: 20,
+                          padding: 18,
+                        }}
+                      >
+                        <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
+                          {entry.team}
+                        </div>
 
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr>
-                    <th style={th}>Rnd</th>
-                    <th style={th}>Ovr</th>
-                    <th style={th}>Player</th>
-                    <th style={th}>Pos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {entry.picks.map((pick, idx) => (
-                    <tr key={`${entry.team}-${pick.overall}-${idx}`}>
-                      <td style={td}>{pick.round ?? "—"}</td>
-                      <td style={td}>{pick.overall}</td>
-                      <td style={td}>{pick.player || "—"}</td>
-                      <td style={td}>{pick.pos || "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        ))}
-      </div>
-    )}
-  </>
-) : (
-  <>
-    {!finalRostersByTeam.length ? (
-      <div style={{ color: "#6b7280" }}>No rosters found.</div>
-    ) : (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gap: 16,
-        }}
-      >
-        {finalRostersByTeam.map((team) => (
-          <section
-            key={team.id}
-            style={{
-              background: "#fff7ed",
-              border: "1px solid #fed7aa",
-              borderRadius: 20,
-              padding: 18,
-            }}
-          >
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
-              {team.name}
-            </div>
-
-            {!team.players.length ? (
-              <div style={{ color: "#6b7280" }}>No players found.</div>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr>
-                      <th style={th}>Player</th>
-                      <th style={th}>Pos</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {team.players.map((player, idx) => (
-                      <tr key={`${team.id}-${player.id || player.playerName}-${idx}`}>
-                        <td style={td}>{player.playerName || "—"}</td>
-                        <td style={td}>{player.playerPos || "—"}</td>
-                      </tr>
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr>
+                                <th style={th}>Rnd</th>
+                                <th style={th}>Ovr</th>
+                                <th style={th}>Player</th>
+                                <th style={th}>Pos</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {entry.picks.map((pick, idx) => (
+                                <tr key={`${entry.team}-${pick.overall}-${idx}`}>
+                                  <td style={td}>{pick.round ?? "—"}</td>
+                                  <td style={td}>{pick.overall}</td>
+                                  <td style={td}>{pick.player || "—"}</td>
+                                  <td style={td}>{pick.pos || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </section>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
+                )}
+              </>
+            ) : finalStandingsTab === "playoffs" ? (
+              !playoffMatchups.length ? (
+                <div style={{ color: "#6b7280" }}>No playoff matchups found.</div>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr>
+                        <th style={th}>Period</th>
+                        <th style={th}>Team 1</th>
+                        <th style={th}>Score</th>
+                        <th style={th}>Team 2</th>
+                        <th style={th}>Winner</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {playoffMatchups.map((matchup, idx) => {
+                        const teams = Array.isArray(matchup?.teams) ? matchup.teams : []
+                        const team1 = teams[0] || {}
+                        const team2 = teams[1] || {}
+                        const winnerId = String(matchup?.winnerTeamId || "")
+
+                        const winnerName =
+                          winnerId && String(team1?.id || "") === winnerId
+                            ? decodeMaybeBrokenText(team1?.name || "")
+                            : winnerId && String(team2?.id || "") === winnerId
+                              ? decodeMaybeBrokenText(team2?.name || "")
+                              : matchup?.result === "TIE"
+                                ? "Tie"
+                                : "—"
+
+                        return (
+                          <tr key={`${matchup?.matchupId || idx}-${idx}`}>
+                            <td style={td}>{matchup?.period ?? "—"}</td>
+                            <td style={td}>{decodeMaybeBrokenText(team1?.name || "—")}</td>
+                            <td style={td}>
+                            {(() => {
+                                const parsed = parsePlayoffScoreText(matchup?.scoreText || "")
+                                if (!parsed) return matchup?.scoreText || "—"
+
+                                const { score1, score2 } = parsed
+                                const team1Wins = score1 > score2
+                                const team2Wins = score2 > score1
+
+                                return (
+                                <span style={{ fontWeight: 900 }}>
+                                    <span style={{ color: team1Wins ? "#166534" : team2Wins ? "#b91c1c" : "#111827" }}>
+                                    {formatPlayoffScoreValue(score1)}
+                                    </span>
+                                    {" - "}
+                                    <span style={{ color: team2Wins ? "#166534" : team1Wins ? "#b91c1c" : "#111827" }}>
+                                    {formatPlayoffScoreValue(score2)}
+                                    </span>
+                                </span>
+                                )
+                            })()}
+                            </td>
+                            <td style={td}>{decodeMaybeBrokenText(team2?.name || "—")}</td>
+                            <td style={td}>{winnerName}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            ) : (
+              <>
+                {!finalRostersByTeam.length ? (
+                  <div style={{ color: "#6b7280" }}>No rosters found.</div>
+                ) : (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                      gap: 16,
+                    }}
+                  >
+                    {finalRostersByTeam.map((team) => (
+                      <section
+                        key={team.id}
+                        style={{
+                          background: "#fff7ed",
+                          border: "1px solid #fed7aa",
+                          borderRadius: 20,
+                          padding: 18,
+                        }}
+                      >
+                        <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
+                          {team.name}
+                        </div>
+
+                        {!team.players.length ? (
+                          <div style={{ color: "#6b7280" }}>No players found.</div>
+                        ) : (
+                          <div style={{ overflowX: "auto" }}>
+                            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                              <thead>
+                                <tr>
+                                  <th style={th}>Player</th>
+                                  <th style={th}>Pos</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {team.players.map((player, idx) => (
+                                  <tr key={`${team.id}-${player.id || player.playerName}-${idx}`}>
+                                    <td style={td}>{player.playerName || "—"}</td>
+                                    <td style={td}>{player.playerPos || "—"}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </section>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
-          </section>
-        ))}
-      </div>
-    )}
-  </>
-)}
           </section>
         </>
       ) : (

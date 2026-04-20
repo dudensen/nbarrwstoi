@@ -21,6 +21,17 @@ export const SIDELEAGUES = [
   rostersCsvUrl:
     "https://docs.google.com/spreadsheets/d/1ut1Pt_7PEXLvk-0CTZD_9Hc46nr0WQxf-ifXgpzKBfM/export?format=csv&gid=0",
     },
+    {
+        key: "konti-yearly-2024",
+        name: "KONTI Yearly",
+        seasonLabel: "2023-24",
+        leagueId: "t6ycigy6lmzy3wku",
+        period: 1,
+        playoffs: true,
+        playoffStartPeriod: 19,
+        description: "Yearly SideLeague",
+        view: "final_standings",
+        },
   {
     key: "asg-nbarrwstoi-all-star-2024",
     name: "ASG NBArrwstoi All Star",
