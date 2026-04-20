@@ -50,15 +50,17 @@ function TeamNameLink({ teamName }) {
 }
 
 function SideleagueTeamLink({ teamName }) {
-  const clean = String(teamName || "").trim()
-  if (!clean) return <span>—</span>
+  const displayName = decodeMaybeBrokenText(String(teamName || "").trim())
+  if (!displayName) return <span>—</span>
+
+  const canonical = canonicalTeamName(displayName)
 
   return (
     <Link
-      to={`/sideleagues/teams/${encodeURIComponent(clean)}`}
+      to={`/teams/${slugifyTeamName(canonical || displayName)}`}
       style={{ color: "#111827", fontWeight: 800, textDecoration: "none" }}
     >
-      {clean}
+      {displayName}
     </Link>
   )
 }
@@ -2465,7 +2467,9 @@ export default function SideLeagueDetailPage() {
                         return (
                           <tr key={`${matchup?.matchupId || idx}-${idx}`}>
                             <td style={td}>{matchup?.period ?? "—"}</td>
-                            <td style={td}>{decodeMaybeBrokenText(team1?.name || "—")}</td>
+                            <td style={td}>
+                            <TeamNameLink teamName={team1?.name || "—"} />
+                            </td>
                             <td style={td}>
                             {(() => {
                                 const parsed = parsePlayoffScoreText(matchup?.scoreText || "")
@@ -2488,8 +2492,16 @@ export default function SideLeagueDetailPage() {
                                 )
                             })()}
                             </td>
-                            <td style={td}>{decodeMaybeBrokenText(team2?.name || "—")}</td>
-                            <td style={td}>{winnerName}</td>
+                            <td style={td}>
+                            <TeamNameLink teamName={team2?.name || "—"} />
+                            </td>
+                            <td style={td}>
+                            {winnerName && winnerName !== "—" && winnerName !== "Tie" ? (
+                                <TeamNameLink teamName={winnerName} />
+                            ) : (
+                                winnerName
+                            )}
+                            </td>
                           </tr>
                         )
                       })}
