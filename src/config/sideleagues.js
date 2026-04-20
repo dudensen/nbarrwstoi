@@ -157,6 +157,15 @@ export const SIDELEAGUES = [
     description: "3-on-3 final standings.",
     view: "final_standings",
   },
+   {
+    key: "nbarrwstoi-playoffs-2019",
+    name: "NBArrwstoi Playoffs",
+    seasonLabel: "2018-19",
+    leagueId: "djhqozjgjtzqpq1b",
+    period: 1,
+    description: "Pilot Fantrax League",
+    view: "final_standings",
+  },
 ]
 
 export function getSideleagueByKey(key) {

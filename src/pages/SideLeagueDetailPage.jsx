@@ -8,8 +8,17 @@ import {
   enrichRosterItems,
   buildPlayerLookupFromAdp,
   cleanFantraxPlayerId,
+  buildPlayerLookupFromCsvRows,
+  parsePlayerCsv,
+  mergePlayerLookups,
 } from "../utils/fantrax"
 import { canonicalTeamName, slugifyTeamName } from "../utils/history"
+
+
+const playerCsvFiles = import.meta.glob("../config/playerCsv/*.csv", {
+  query: "?raw",
+  import: "default",
+})
 
 function normalizeName(value) {
   return String(value ?? "")
@@ -122,6 +131,30 @@ function parseCsvGrid(text = "") {
   row.push(cell)
   rows.push(row)
   return rows
+}
+
+async function buildSideleaguePlayerLookup(playerIdsJson, seasonLabel) {
+  const playerIdsLookup = buildPlayerLookupFromPlayerIds(
+    normalizePlayerIdsPayload(playerIdsJson)
+  )
+
+  const seasonKey = String(seasonLabel || "").trim()
+  const csvLoader = playerCsvFiles[`../config/playerCsv/${seasonKey}.csv`]
+
+  if (!csvLoader) {
+    return playerIdsLookup
+  }
+
+  try {
+    const csvText = await csvLoader()
+    const csvRows = parsePlayerCsv(csvText || "")
+    const csvLookup = buildPlayerLookupFromCsvRows(csvRows)
+
+    // playerIds first, CSV only as fallback
+    return mergePlayerLookups(playerIdsLookup, csvLookup)
+  } catch {
+    return playerIdsLookup
+  }
 }
 
 function normalizeSheetText(value) {
@@ -734,6 +767,19 @@ function getDraftPickTeam(row, teamsById) {
   return ""
 }
 
+function buildRostersByTeam(rostersPayload, liveTeams = [], playerLookup = new Map()) {
+  return liveTeams
+    .map((team) => ({
+      id: team?.id || "",
+      name: decodeMaybeBrokenText(team?.name || team?.shortName || "—"),
+      players: enrichRosterItems(
+        getRosterForTeam(rostersPayload, team?.id),
+        playerLookup
+      ),
+    }))
+    .filter((team) => team.id)
+}
+
 function getDraftPickPlayerId(row) {
   return cleanFantraxPlayerId(row?.playerId || row?.player?.id || row?.id || "")
 }
@@ -1200,6 +1246,7 @@ export default function SideLeagueDetailPage() {
   const [draftResultsPayload, setDraftResultsPayload] = useState(null)
   const [finalDraftView, setFinalDraftView] = useState("byTeam")
 
+
   useEffect(() => {
     let cancelled = false
 
@@ -1305,9 +1352,10 @@ export default function SideLeagueDetailPage() {
             draftJson = {}
           }
 
-          lookup = buildPlayerLookupFromPlayerIds(
-            normalizePlayerIdsPayload(playerIdsJson)
-          )
+         lookup = await buildSideleaguePlayerLookup(
+  playerIdsJson,
+  sideleague?.seasonLabel
+)
 
           if (!cancelled) {
             setResultsPayload(null)
@@ -1428,6 +1476,13 @@ export default function SideLeagueDetailPage() {
 
   const liveTeams = useMemo(() => extractTeamsFromLeagueInfo(leagueInfo || {}), [leagueInfo])
 
+
+
+const southLiveTeam = useMemo(
+  () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[0] || "South"),
+  [liveTeams, sideleague]
+)
+
   const liveTeamsById = useMemo(() => {
   const map = new Map()
 
@@ -1498,6 +1553,32 @@ export default function SideLeagueDetailPage() {
 
   return map
 }, [leagueInfo, standingsPayload, rostersPayload])
+
+const finalRostersByTeam = useMemo(() => {
+  const teamsSource =
+    liveTeams.length > 0
+      ? liveTeams
+      : [...liveTeamsById.values()]
+
+  return teamsSource
+    .map((team) => {
+      const id = String(team?.id || "").trim()
+      if (!id) return null
+
+      const players = enrichRosterItems(
+        getRosterForTeam(rostersPayload, id),
+        playerLookup
+      )
+
+      return {
+        id,
+        name: decodeMaybeBrokenText(team?.name || team?.shortName || "—"),
+        players,
+      }
+    })
+    .filter(Boolean)
+    .filter((team) => team.players.length > 0)
+}, [liveTeams, liveTeamsById, rostersPayload, playerLookup])
 
   const liveDraftPicks = useMemo(() => {
   const rows = getDraftRows(draftResultsPayload)
@@ -1624,10 +1705,7 @@ export default function SideLeagueDetailPage() {
       : northCategoryWins
   }, [computedLoserTeam, southSourceTeam, southCategoryWins, northCategoryWins])
 
-  const southLiveTeam = useMemo(
-    () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[0] || "South"),
-    [liveTeams, sideleague]
-  )
+ 
 
   const northLiveTeam = useMemo(
     () => getTeamByConfiguredName(liveTeams, sideleague?.teams?.[1] || "North"),
@@ -2064,183 +2142,244 @@ export default function SideLeagueDetailPage() {
               }}
             >
               <button
-                type="button"
-                onClick={() => setFinalStandingsTab("standings")}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: 999,
-                  border:
-                    finalStandingsTab === "standings"
-                      ? "1px solid #fb923c"
-                      : "1px solid #fed7aa",
-                  background:
-                    finalStandingsTab === "standings" ? "#f97316" : "#fff7ed",
-                  color:
-                    finalStandingsTab === "standings" ? "#ffffff" : "#9a3412",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                }}
-              >
-                Standings
-              </button>
+  type="button"
+  onClick={() => setFinalStandingsTab("standings")}
+  style={{
+    padding: "10px 16px",
+    borderRadius: 999,
+    border:
+      finalStandingsTab === "standings"
+        ? "1px solid #fb923c"
+        : "1px solid #fed7aa",
+    background:
+      finalStandingsTab === "standings" ? "#f97316" : "#fff7ed",
+    color:
+      finalStandingsTab === "standings" ? "#ffffff" : "#9a3412",
+    fontWeight: 800,
+    cursor: "pointer",
+  }}
+>
+  Standings
+</button>
 
-              <button
-                type="button"
-                onClick={() => setFinalStandingsTab("draft")}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: 999,
-                  border:
-                    finalStandingsTab === "draft"
-                      ? "1px solid #fb923c"
-                      : "1px solid #fed7aa",
-                  background:
-                    finalStandingsTab === "draft" ? "#f97316" : "#fff7ed",
-                  color:
-                    finalStandingsTab === "draft" ? "#ffffff" : "#9a3412",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                }}
-              >
-                Draft
-              </button>
+<button
+  type="button"
+  onClick={() => setFinalStandingsTab("draft")}
+  style={{
+    padding: "10px 16px",
+    borderRadius: 999,
+    border:
+      finalStandingsTab === "draft"
+        ? "1px solid #fb923c"
+        : "1px solid #fed7aa",
+    background:
+      finalStandingsTab === "draft" ? "#f97316" : "#fff7ed",
+    color:
+      finalStandingsTab === "draft" ? "#ffffff" : "#9a3412",
+    fontWeight: 800,
+    cursor: "pointer",
+  }}
+>
+  Draft
+</button>
+
+<button
+  type="button"
+  onClick={() => setFinalStandingsTab("rosters")}
+  style={{
+    padding: "10px 16px",
+    borderRadius: 999,
+    border:
+      finalStandingsTab === "rosters"
+        ? "1px solid #fb923c"
+        : "1px solid #fed7aa",
+    background:
+      finalStandingsTab === "rosters" ? "#f97316" : "#fff7ed",
+    color:
+      finalStandingsTab === "rosters" ? "#ffffff" : "#9a3412",
+    fontWeight: 800,
+    cursor: "pointer",
+  }}
+>
+  Rosters
+</button>
             </div>
 
             {finalStandingsTab === "standings" ? (
-              <FinalStandingsCard rows={finalStandings} />
+  <FinalStandingsCard rows={finalStandings} />
+) : finalStandingsTab === "draft" ? (
+  <>
+    <div
+      style={{
+        display: "flex",
+        gap: 10,
+        marginBottom: 18,
+        flexWrap: "wrap",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setFinalDraftView("byPick")}
+        style={{
+          padding: "8px 14px",
+          borderRadius: 999,
+          border: finalDraftView === "byPick" ? "1px solid #fb923c" : "1px solid #fed7aa",
+          background: finalDraftView === "byPick" ? "#f97316" : "#fff7ed",
+          color: finalDraftView === "byPick" ? "#ffffff" : "#9a3412",
+          fontWeight: 800,
+          cursor: "pointer",
+        }}
+      >
+        By Pick
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setFinalDraftView("byTeam")}
+        style={{
+          padding: "8px 14px",
+          borderRadius: 999,
+          border: finalDraftView === "byTeam" ? "1px solid #fb923c" : "1px solid #fed7aa",
+          background: finalDraftView === "byTeam" ? "#f97316" : "#fff7ed",
+          color: finalDraftView === "byTeam" ? "#ffffff" : "#9a3412",
+          fontWeight: 800,
+          cursor: "pointer",
+        }}
+      >
+        By Team
+      </button>
+    </div>
+
+    {!liveDraftPicks.length ? (
+      <div style={{ color: "#6b7280" }}>No draft results found.</div>
+    ) : finalDraftView === "byPick" ? (
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th style={th}>Rnd</th>
+              <th style={th}>Ovr</th>
+              <th style={th}>Team</th>
+              <th style={th}>Player</th>
+              <th style={th}>Pos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {liveDraftPicks.map((pick, idx) => (
+              <tr key={`${pick.overall}-${pick.player}-${idx}`}>
+                <td style={td}>{pick.round ?? "—"}</td>
+                <td style={td}>{pick.overall}</td>
+                <td style={td}>{pick.team || "—"}</td>
+                <td style={td}>{pick.player || "—"}</td>
+                <td style={td}>{pick.pos || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: 16,
+        }}
+      >
+        {liveDraftPicksByTeam.map((entry) => (
+          <section
+            key={entry.team}
+            style={{
+              background: "#fff7ed",
+              border: "1px solid #fed7aa",
+              borderRadius: 20,
+              padding: 18,
+            }}
+          >
+            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
+              {entry.team}
+            </div>
+
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th style={th}>Rnd</th>
+                    <th style={th}>Ovr</th>
+                    <th style={th}>Player</th>
+                    <th style={th}>Pos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entry.picks.map((pick, idx) => (
+                    <tr key={`${entry.team}-${pick.overall}-${idx}`}>
+                      <td style={td}>{pick.round ?? "—"}</td>
+                      <td style={td}>{pick.overall}</td>
+                      <td style={td}>{pick.player || "—"}</td>
+                      <td style={td}>{pick.pos || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ))}
+      </div>
+    )}
+  </>
+) : (
+  <>
+    {!finalRostersByTeam.length ? (
+      <div style={{ color: "#6b7280" }}>No rosters found.</div>
+    ) : (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: 16,
+        }}
+      >
+        {finalRostersByTeam.map((team) => (
+          <section
+            key={team.id}
+            style={{
+              background: "#fff7ed",
+              border: "1px solid #fed7aa",
+              borderRadius: 20,
+              padding: 18,
+            }}
+          >
+            <div style={{ fontSize: 20, fontWeight: 900, color: "#111827", marginBottom: 10 }}>
+              {team.name}
+            </div>
+
+            {!team.players.length ? (
+              <div style={{ color: "#6b7280" }}>No players found.</div>
             ) : (
-              <>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 10,
-                    marginBottom: 18,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setFinalDraftView("byPick")}
-                    style={{
-                      padding: "8px 14px",
-                      borderRadius: 999,
-                      border:
-                        finalDraftView === "byPick"
-                          ? "1px solid #fb923c"
-                          : "1px solid #fed7aa",
-                      background: finalDraftView === "byPick" ? "#f97316" : "#fff7ed",
-                      color: finalDraftView === "byPick" ? "#ffffff" : "#9a3412",
-                      fontWeight: 800,
-                      cursor: "pointer",
-                    }}
-                  >
-                    By Pick
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setFinalDraftView("byTeam")}
-                    style={{
-                      padding: "8px 14px",
-                      borderRadius: 999,
-                      border:
-                        finalDraftView === "byTeam"
-                          ? "1px solid #fb923c"
-                          : "1px solid #fed7aa",
-                      background: finalDraftView === "byTeam" ? "#f97316" : "#fff7ed",
-                      color: finalDraftView === "byTeam" ? "#ffffff" : "#9a3412",
-                      fontWeight: 800,
-                      cursor: "pointer",
-                    }}
-                  >
-                    By Team
-                  </button>
-                </div>
-
-                {!liveDraftPicks.length ? (
-                  <div style={{ color: "#6b7280" }}>No draft results found.</div>
-                ) : finalDraftView === "byPick" ? (
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                      <thead>
-                        <tr>
-                          <th style={th}>Rnd</th>
-                          <th style={th}>Ovr</th>
-                          <th style={th}>Team</th>
-                          <th style={th}>Player</th>
-                          <th style={th}>Pos</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {liveDraftPicks.map((pick, idx) => (
-                          <tr key={`${pick.overall}-${pick.player}-${idx}`}>
-                            <td style={td}>{pick.round ?? "—"}</td>
-                            <td style={td}>{pick.overall}</td>
-                            <td style={td}>{pick.team || "—"}</td>
-                            <td style={td}>{pick.player || "—"}</td>
-                            <td style={td}>{pick.pos || "—"}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                      gap: 16,
-                    }}
-                  >
-                    {liveDraftPicksByTeam.map((entry) => (
-                      <section
-                        key={entry.team}
-                        style={{
-                          background: "#fff7ed",
-                          border: "1px solid #fed7aa",
-                          borderRadius: 20,
-                          padding: 18,
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: 20,
-                            fontWeight: 900,
-                            color: "#111827",
-                            marginBottom: 10,
-                          }}
-                        >
-                          {entry.team}
-                        </div>
-
-                        <div style={{ overflowX: "auto" }}>
-                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                            <thead>
-                              <tr>
-                                <th style={th}>Rnd</th>
-                                <th style={th}>Ovr</th>
-                                <th style={th}>Player</th>
-                                <th style={th}>Pos</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {entry.picks.map((pick, idx) => (
-                                <tr key={`${entry.team}-${pick.overall}-${idx}`}>
-                                  <td style={td}>{pick.round ?? "—"}</td>
-                                  <td style={td}>{pick.overall}</td>
-                                  <td style={td}>{pick.player || "—"}</td>
-                                  <td style={td}>{pick.pos || "—"}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </section>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr>
+                      <th style={th}>Player</th>
+                      <th style={th}>Pos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {team.players.map((player, idx) => (
+                      <tr key={`${team.id}-${player.id || player.playerName}-${idx}`}>
+                        <td style={td}>{player.playerName || "—"}</td>
+                        <td style={td}>{player.playerPos || "—"}</td>
+                      </tr>
                     ))}
-                  </div>
-                )}
-              </>
+                  </tbody>
+                </table>
+              </div>
             )}
+          </section>
+        ))}
+      </div>
+    )}
+  </>
+)}
           </section>
         </>
       ) : (
