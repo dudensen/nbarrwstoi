@@ -22,6 +22,22 @@ const TABS = [
   { key: 'records', label: 'Records' },
 ]
 
+const RECORD_BADGES = {
+  wins: "/badges/badge-CATWINS.png",
+  pts: "/badges/badge-PTS.webp",
+  ast: "/badges/badge-AST.png",
+  stl: "/badges/badge-STL.png",
+  blk: "/badges/badge-BLK.png",
+  fgm: "/badges/badge-FGM.png",
+  threePm: "/badges/badge-3PTS.png",
+  oreb: "/badges/badge-OREB.png",
+  dreb: "/badges/badge-DREB.png",
+  fgPct: "/badges/badge-FGPCT.png",
+  threePct: "/badges/badge-3PTPCT.png",
+  ftPct: "/badges/badge-FTPCT.png",
+  ato: "/badges/badge-ATO.png",
+}
+
 function TeamLink({ teamName }) {
   const clean = canonicalTeamName(teamName)
   if (!clean) return <span>—</span>
@@ -324,7 +340,29 @@ export default function HistoryPage() {
                   <tbody>
                     {recordRows.map((record) => (
                       <tr key={record.key}>
-                        <td style={td}>{record.label}</td>
+                        <td style={td}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 10,
+                          }}
+                        >
+                          {RECORD_BADGES[record.key] ? (
+                            <img
+                              src={RECORD_BADGES[record.key]}
+                              alt={record.label}
+                              style={{
+                                width: 34,
+                                height: 34,
+                                objectFit: "contain",
+                                flexShrink: 0,
+                              }}
+                            />
+                          ) : null}
+                          <span>{record.label}</span>
+                        </div>
+                      </td>
                         <td style={td}>{record.top ? <TeamLink teamName={record.top.team} /> : '—'}</td>
                         <td style={td}>{record.top ? String(record.top[record.key]) : '—'}</td>
                         <td style={td}>{record.top?.year ?? '—'}</td>

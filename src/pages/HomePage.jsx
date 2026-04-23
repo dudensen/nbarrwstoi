@@ -117,7 +117,8 @@ export default function HomePage() {
         </h2>
 
         <div style={{ color: "#374151", lineHeight: 1.7 }}>
-          <div>• SideLeagues</div>
+          <div>• More SideLeagues</div>
+          <div>• Record Badges</div>
           <div>• Minor Bugs</div>
         </div>
       </section>
