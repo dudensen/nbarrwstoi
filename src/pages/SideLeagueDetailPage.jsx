@@ -49,6 +49,599 @@ function TeamNameLink({ teamName }) {
   )
 }
 
+function FantasyBoxOfficeView({ sideleague }) {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [moviesById, setMoviesById] = useState({})
+  const [moviesError, setMoviesError] = useState("")
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        setLoading(true)
+        setError("")
+        setData(null)
+        setMoviesById({})
+        setMoviesError("")
+
+        const res = await fetch(sideleague.dataUrl)
+        const text = await res.text()
+
+        if (!res.ok) {
+          throw new Error(`Fantasy Box Office data failed (${res.status}): ${text}`)
+        }
+
+        const json = JSON.parse(text)
+
+        if (!cancelled) {
+          setData(json)
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Unknown error")
+          setData(null)
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [sideleague.dataUrl])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadMovies() {
+      try {
+        setMoviesError("")
+        setMoviesById({})
+
+        const drafts = data?.drafts || {}
+
+        const ids = Array.from(
+          new Set(
+            Object.values(drafts)
+              .flat()
+              .map((pick) => pick?.imdbId || pick?.imdb_id)
+              .filter(Boolean)
+          )
+        )
+
+        if (!ids.length) return
+
+        const res = await fetch(
+          `/api/fbo-movies?ids=${encodeURIComponent(ids.join(","))}`
+        )
+        const text = await res.text()
+
+        if (!res.ok) {
+          throw new Error(`Movie data failed (${res.status}): ${text.slice(0, 200)}`)
+        }
+
+        const json = JSON.parse(text)
+
+        if (!cancelled) {
+          setMoviesById(json?.movies || {})
+        }
+      } catch {
+            if (!cancelled) {
+                setMoviesError("")
+                setMoviesById({})
+            }
+            }
+    }
+
+    if (data) loadMovies()
+
+    return () => {
+      cancelled = true
+    }
+  }, [data])
+
+  const studios = Array.isArray(data?.studios) ? data.studios : []
+
+  const allDraftRows = [
+    ...(data?.drafts?.WINTER || []),
+    ...(data?.drafts?.SUMMER || []),
+  ]
+
+  const hitRows = data?.drafts?.HITS || []
+  const bombRows = data?.drafts?.BOMBS || []
+
+  function studioName(userId) {
+    return (
+      studios.find((studio) => studio.userId === userId)?.studioName ||
+      userId ||
+      "—"
+    )
+  }
+
+  function getMovie(pick) {
+    const imdbId = pick?.imdbId || pick?.imdb_id
+    return moviesById?.[imdbId] || null
+  }
+
+  function movieTitle(pick) {
+    const movie = getMovie(pick)
+
+    return (
+      movie?.title ||
+      pick.title ||
+      pick.movieTitle ||
+      pick.movieName ||
+      pick.name ||
+      pick.imdbId ||
+      "—"
+    )
+  }
+
+  function movieReleaseDate(pick) {
+    const movie = getMovie(pick)
+    const value = movie?.releaseDate || pick.releaseDate || ""
+
+    if (!value) return "—"
+
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return String(value)
+
+    return date.toLocaleDateString()
+  }
+
+  function movieStatus(pick) {
+    const movie = getMovie(pick)
+    return movie?.status || pick.status || "—"
+  }
+
+
+  function movieBudget(pick) {
+  const movie = getMovie(pick)
+  const value = movie?.budget ?? pick.budget
+
+  const num = Number(value)
+  if (!Number.isFinite(num)) return null
+
+  return num
+}
+
+function movieEstimatedBudget(pick) {
+  const movie = getMovie(pick)
+
+  if (typeof movie?.estimatedBudget === "boolean") return movie.estimatedBudget
+  if (typeof pick.estimatedBudget === "boolean") return pick.estimatedBudget
+  if (typeof pick.estimated_budget === "boolean") return pick.estimated_budget
+
+  return null
+}
+
+function movieScoreValue(pick) {
+  const movie = getMovie(pick)
+
+  const directScore = movie?.score ?? pick.score
+  const directNum = Number(directScore)
+
+  const gross = Number(
+    movie?.worldwideGross ??
+      pick.worldwideGross ??
+      pick.worldwide_gross ??
+      pick.grossToDate
+  )
+
+  const budget = Number(movie?.budget ?? pick.budget)
+
+  if (!Number.isFinite(gross) || gross <= 0) return null
+  if (!Number.isFinite(budget)) return null
+
+  if (Number.isFinite(directNum)) return directNum
+
+  return gross - budget * 2.5
+}
+
+function formatMoneySigned(value) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return "—"
+
+  const sign = num > 0 ? "+" : num < 0 ? "-" : ""
+  const abs = Math.abs(num)
+
+  if (abs >= 1_000_000_000) return `${sign}$${(abs / 1_000_000_000).toFixed(1)}B`
+  if (abs >= 1_000_000) return `${sign}$${(abs / 1_000_000).toFixed(1)}M`
+  if (abs >= 1_000) return `${sign}$${(abs / 1_000).toFixed(1)}K`
+
+  return `${sign}$${abs}`
+}
+
+function formatMoneyPlain(value) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return "—"
+
+  if (Math.abs(num) >= 1_000_000_000) return `$${(num / 1_000_000_000).toFixed(1)}B`
+  if (Math.abs(num) >= 1_000_000) return `$${(num / 1_000_000).toFixed(1)}M`
+  if (Math.abs(num) >= 1_000) return `$${(num / 1_000).toFixed(1)}K`
+
+  return `$${num}`
+}
+
+function scoreColor(value) {
+  const num = Number(value)
+  if (!Number.isFinite(num)) return "#111827"
+  if (num > 0) return "#166534"
+  if (num < 0) return "#b91c1c"
+  return "#111827"
+}
+
+  function movieWorldwideGross(pick) {
+    const movie = getMovie(pick)
+    const value =
+      movie?.worldwideGross ??
+      pick.worldwideGross ??
+      pick.worldwide_gross ??
+      pick.grossToDate
+
+    const num = Number(value)
+    if (!Number.isFinite(num)) return "—"
+
+    if (Math.abs(num) >= 1_000_000_000) {
+      return `$${(num / 1_000_000_000).toFixed(1)}B`
+    }
+
+    if (Math.abs(num) >= 1_000_000) {
+      return `$${(num / 1_000_000).toFixed(1)}M`
+    }
+
+    if (Math.abs(num) >= 1_000) {
+      return `$${(num / 1_000).toFixed(1)}K`
+    }
+
+    return `$${num}`
+  }
+
+  function groupStudioBoards(draftRows = [], hitRows = [], bombRows = []) {
+  const map = new Map()
+
+  function ensureStudio(studio) {
+    if (!map.has(studio)) {
+      map.set(studio, {
+        studio,
+        draftPicks: [],
+        hitPick: null,
+        bombPick: null,
+        total: 0,
+      })
+    }
+
+    return map.get(studio)
+  }
+
+  for (const pick of draftRows) {
+    const studio = pick.studioName || studioName(pick.userId)
+    const group = ensureStudio(studio)
+    group.draftPicks.push(pick)
+  }
+
+  for (const pick of hitRows) {
+    const studio = pick.studioName || studioName(pick.userId)
+    const group = ensureStudio(studio)
+    group.hitPick = pick
+  }
+
+  for (const pick of bombRows) {
+    const studio = pick.studioName || studioName(pick.userId)
+    const group = ensureStudio(studio)
+    group.bombPick = pick
+  }
+
+  return [...map.values()]
+    .map((group) => {
+      const sortedDraftPicks = [...group.draftPicks].sort((a, b) => {
+        const scoreA = movieScoreValue(a)
+        const scoreB = movieScoreValue(b)
+
+        if (scoreA == null && scoreB == null) {
+          return Number(a.pickOrder || 9999) - Number(b.pickOrder || 9999)
+        }
+
+        if (scoreA == null) return 1
+        if (scoreB == null) return -1
+
+        return scoreB - scoreA
+      })
+
+      const draftTotal = sortedDraftPicks.reduce((sum, pick) => {
+        const score = movieScoreValue(pick)
+        return Number.isFinite(score) ? sum + score : sum
+      }, 0)
+
+      const hitScore = movieScoreValue(group.hitPick)
+      const total =
+        draftTotal + (Number.isFinite(hitScore) ? hitScore : 0)
+
+      return {
+        ...group,
+        draftPicks: sortedDraftPicks,
+        total,
+      }
+    })
+    .sort((a, b) => b.total - a.total)
+}
+
+  function MovieLink({ pick }) {
+    const imdbId = pick?.imdbId || pick?.imdb_id
+
+    if (!imdbId) {
+      return <span>{movieTitle(pick)}</span>
+    }
+
+    return (
+      <a
+        href={`https://www.imdb.com/title/${imdbId}/`}
+        target="_blank"
+        rel="noreferrer"
+        style={linkStyle}
+      >
+        {movieTitle(pick)}
+      </a>
+    )
+  }
+
+
+  function SpecialPickBox({ label, pick, countsTowardTotal }) {
+  return (
+    <div style={specialPickBox}>
+      <div style={specialPickLabel}>{label}</div>
+
+      {!pick ? (
+        <div style={specialPickEmpty}>—</div>
+      ) : (
+        <>
+          <div style={specialPickMovie}>
+            <MovieLink pick={pick} />
+          </div>
+
+          <div style={specialPickMeta}>
+            {movieReleaseDate(pick)} · {movieStatus(pick)}
+          </div>
+
+          <div
+            style={{
+              ...specialPickScore,
+              color: scoreColor(movieScoreValue(pick)),
+            }}
+          >
+            {formatMoneySigned(movieScoreValue(pick))}
+          </div>
+
+          <div style={specialPickNote}>
+            {countsTowardTotal ? "Counts toward total" : "Not counted in total"}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+  function DraftBoardTable({ title, draftRows, hitRows, bombRows }) {
+  const groups = groupStudioBoards(draftRows, hitRows, bombRows)
+
+  return (
+    <section style={section}>
+      <div style={sectionHeader}>
+        <h2 style={sectionTitle}>{title}</h2>
+        <p style={sectionSub}>Sorted by studio total</p>
+      </div>
+
+      {!groups.length ? (
+        <div style={emptyBox}>No picks found.</div>
+      ) : (
+        <div style={pickStudioGrid}>
+          {groups.map((group) => (
+            <section key={`${title}-${group.studio}`} style={pickStudioCard}>
+              <div style={pickStudioTitle}>
+                <span>{group.studio}</span>
+                <span
+                  style={{
+                    color: scoreColor(group.total),
+                    fontSize: 16,
+                    fontWeight: 900,
+                  }}
+                >
+                  {formatMoneySigned(group.total)}
+                </span>
+              </div>
+
+              <div style={specialPickGrid}>
+                <SpecialPickBox
+                  label="Hit Pick"
+                  pick={group.hitPick}
+                  countsTowardTotal={true}
+                />
+                <SpecialPickBox
+                  label="Bomb Pick"
+                  pick={group.bombPick}
+                  countsTowardTotal={false}
+                />
+              </div>
+
+              <div style={tableWrap}>
+                <table style={table}>
+                  <thead>
+                    <tr>
+                      <th style={th}>Movie</th>
+                      <th style={th}>Stage</th>
+                      <th style={th}>Release</th>
+                      <th style={th}>Status</th>
+                      <th style={th}>Budget</th>
+                      <th style={th}>Worldwide</th>
+                      <th style={th}>+/-</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {group.draftPicks.map((pick, index) => (
+                      <tr key={`${title}-${group.studio}-${pick.imdbId || index}`}>
+                        <td style={td}>
+                          <MovieLink pick={pick} />
+                        </td>
+                        <td style={td}>{pick.stage || "—"}</td>
+                        <td style={td}>{movieReleaseDate(pick)}</td>
+                        <td style={td}>{movieStatus(pick)}</td>
+                        <td style={td}>
+                          {formatMoneyPlain(movieBudget(pick))}
+                          {movieEstimatedBudget(pick) === true ? (
+                            <span style={{ color: "#9a3412", fontWeight: 800 }}>
+                              {" "}est.
+                            </span>
+                          ) : null}
+                        </td>
+                        <td style={td}>{movieWorldwideGross(pick)}</td>
+                        <td
+                          style={{
+                            ...td,
+                            color: scoreColor(movieScoreValue(pick)),
+                            fontWeight: 900,
+                          }}
+                        >
+                          {formatMoneySigned(movieScoreValue(pick))}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+  function MovieStudioTable({ title, rows }) {
+    return (
+      <section style={section}>
+        <div style={sectionHeader}>
+          <h2 style={sectionTitle}>{title}</h2>
+          <p style={sectionSub}>{rows.length} picks</p>
+        </div>
+
+        {rows.length === 0 ? (
+          <div style={emptyBox}>No picks found.</div>
+        ) : (
+          <div style={tableWrap}>
+            <table style={table}>
+              <thead>
+                <tr>
+  <th style={th}>Movie</th>
+  <th style={th}>Studio</th>
+  <th style={th}>Stage</th>
+  <th style={th}>Release</th>
+  <th style={th}>Status</th>
+  <th style={th}>Budget</th>
+  <th style={th}>Worldwide</th>
+  <th style={th}>+/-</th>
+</tr>
+              </thead>
+              <tbody>
+                {rows.map((pick, index) => (
+                  <tr key={`${title}-${pick.imdbId || index}`}>
+  <td style={td}>
+    <MovieLink pick={pick} />
+  </td>
+  <td style={td}>{pick.studioName || studioName(pick.userId)}</td>
+  <td style={td}>{pick.stage || "—"}</td>
+  <td style={td}>{movieReleaseDate(pick)}</td>
+  <td style={td}>{movieStatus(pick)}</td>
+  <td style={td}>
+    {formatMoneyPlain(movieBudget(pick))}
+    {movieEstimatedBudget(pick) === true ? (
+      <span style={{ color: "#9a3412", fontWeight: 800 }}> est.</span>
+    ) : null}
+  </td>
+  <td style={td}>{movieWorldwideGross(pick)}</td>
+  <td
+    style={{
+      ...td,
+      color: scoreColor(movieScoreValue(pick)),
+      fontWeight: 900,
+    }}
+  >
+    {formatMoneySigned(movieScoreValue(pick))}
+  </td>
+</tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    )
+  }
+
+  return (
+    <main style={main}>
+      <a href="/sideleagues" style={backLink}>
+        ← Back to Sideleagues
+      </a>
+
+      <section style={hero}>
+        <div style={eyebrow}>Sideleague</div>
+        <h1 style={heroTitle}>{sideleague.name}</h1>
+        <p style={heroSub}>
+          {sideleague.description ||
+            "Movie box office sideleague from Fantasy Box Office."}
+        </p>
+        <p style={heroMeta}>
+          Year: <strong>{data?.year || sideleague.seasonLabel || "—"}</strong>
+        </p>
+      </section>
+
+      {loading ? (
+        <div style={infoBox}>Loading Fantasy Box Office data...</div>
+      ) : error ? (
+        <div style={errorBox}>{error}</div>
+      ) : (
+        <>
+          
+
+          
+
+          <section style={section}>
+            <div style={sectionHeader}>
+              <h2 style={sectionTitle}>Studios</h2>
+              <p style={sectionSub}>Fantasy Box Office league members.</p>
+            </div>
+
+            <div style={studioGrid}>
+              {studios.map((studio) => (
+                <div key={studio.userId} style={studioCard}>
+                  <div style={studioNameStyle}>{studio.studioName || "—"}</div>
+                  {studio.playerName ? (
+                    <div style={studioMeta}>{studio.playerName}</div>
+                  ) : null}
+                 
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <DraftBoardTable
+            title="Studio Boards"
+            draftRows={allDraftRows}
+            hitRows={hitRows}
+            bombRows={bombRows}
+            />
+        </>
+      )}
+    </main>
+  )
+}
+
 function SideleagueTeamLink({ teamName }) {
   const displayName = decodeMaybeBrokenText(String(teamName || "").trim())
   if (!displayName) return <span>—</span>
@@ -1282,14 +1875,28 @@ export default function SideLeagueDetailPage() {
 
     async function load() {
       if (!sideleague) {
-        setError("Sideleague not found.")
-        setLoading(false)
-        return
-      }
+  setError("Sideleague not found.")
+  setLoading(false)
+  return
+}
 
-      try {
-        setLoading(true)
-        setError("")
+if (sideleague.view === "fantasy_box_office") {
+  setResultsPayload(null)
+  setLeagueInfo(null)
+  setRostersPayload(null)
+  setStandingsPayload(null)
+  setPlayerLookup(new Map())
+  setSheetResults(null)
+  setSheetDraftPicks([])
+  setDraftResultsPayload(null)
+  setError("")
+  setLoading(false)
+  return
+}
+
+try {
+  setLoading(true)
+  setError("")
 
         let resultsJson = null
         let liveLeagueInfo = null
@@ -1510,6 +2117,7 @@ export default function SideLeagueDetailPage() {
         if (!cancelled) setLoading(false)
       }
     }
+
 
     load()
     return () => {
@@ -1824,24 +2432,28 @@ export default function SideLeagueDetailPage() {
 }, [playoffMatchups, finalStandings])
 
   const draftPicksByTeam = useMemo(() => {
-    const map = new Map()
+  const map = new Map()
 
-    for (const pick of sheetDraftPicks) {
-      const team = pick?.team || "—"
-      if (!map.has(team)) map.set(team, [])
-      map.get(team).push(pick)
-    }
+  for (const pick of sheetDraftPicks) {
+    const team = pick?.team || "—"
+    if (!map.has(team)) map.set(team, [])
+    map.get(team).push(pick)
+  }
 
-    return [...map.entries()]
-      .map(([team, picks]) => ({
-        team,
-        picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
-      }))
-      .sort((a, b) => String(a.team).localeCompare(String(b.team)))
-  }, [sheetDraftPicks])
+  return [...map.entries()]
+    .map(([team, picks]) => ({
+      team,
+      picks: [...picks].sort((a, b) => Number(a.overall) - Number(b.overall)),
+    }))
+    .sort((a, b) => String(a.team).localeCompare(String(b.team)))
+}, [sheetDraftPicks])
 
-  return (
-    <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
+if (sideleague?.view === "fantasy_box_office") {
+  return <FantasyBoxOfficeView sideleague={sideleague} />
+}
+
+return (
+  <main style={{ maxWidth: 1200, margin: "0 auto", padding: "32px 20px" }}>
       <div style={{ marginBottom: 16 }}>
         <Link to="/sideleagues" style={{ color: "#ea580c", fontWeight: 700 }}>
           ← Back to Sideleagues
@@ -2711,4 +3323,237 @@ export default function SideLeagueDetailPage() {
       )}
     </main>
   )
+}
+
+const main = {
+  maxWidth: 1200,
+  margin: "0 auto",
+  padding: "32px 20px",
+}
+
+const backLink = {
+  display: "inline-flex",
+  marginBottom: 16,
+  color: "#ea580c",
+  fontWeight: 800,
+  textDecoration: "none",
+}
+
+const hero = {
+  background: "#ffffff",
+  border: "1px solid #fed7aa",
+  borderRadius: 24,
+  padding: 24,
+  marginBottom: 20,
+}
+
+const heroTitle = {
+  margin: "14px 0 8px",
+  fontSize: "clamp(28px, 4vw, 40px)",
+  color: "#111827",
+}
+
+const heroSub = {
+  margin: 0,
+  color: "#6b7280",
+  lineHeight: 1.6,
+}
+
+const infoBox = {
+  ...box,
+  color: "#6b7280",
+}
+
+const section = {
+  background: "#ffffff",
+  border: "1px solid #fed7aa",
+  borderRadius: 24,
+  padding: 20,
+  marginBottom: 20,
+}
+
+const sectionHeader = {
+  display: "flex",
+  alignItems: "flex-end",
+  justifyContent: "space-between",
+  gap: 12,
+  marginBottom: 14,
+}
+
+const sectionTitle = {
+  margin: 0,
+  fontSize: 24,
+  color: "#111827",
+}
+
+const sectionSub = {
+  margin: 0,
+  color: "#6b7280",
+  fontWeight: 600,
+}
+
+const tableWrap = {
+  overflowX: "auto",
+}
+
+const table = {
+  width: "100%",
+  borderCollapse: "collapse",
+}
+
+
+const summaryGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+  gap: 16,
+  marginBottom: 20,
+}
+
+const summaryCard = {
+  background: "#ffffff",
+  border: "1px solid #fed7aa",
+  borderRadius: 20,
+  padding: 18,
+}
+
+const summaryLabel = {
+  fontSize: 12,
+  fontWeight: 800,
+  color: "#ea580c",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  marginBottom: 8,
+}
+
+const summaryValue = {
+  fontSize: 28,
+  fontWeight: 900,
+  color: "#111827",
+}
+
+const studioGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+  gap: 14,
+}
+
+const studioCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 18,
+  padding: 16,
+}
+
+const studioNameStyle = {
+  fontWeight: 900,
+  color: "#111827",
+  fontSize: 18,
+}
+
+const studioMeta = {
+  color: "#6b7280",
+  marginTop: 6,
+  fontSize: 14,
+}
+
+const linkStyle = {
+  color: "#ea580c",
+  fontWeight: 800,
+}
+
+const emptyBox = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 16,
+  padding: 16,
+  color: "#6b7280",
+}
+
+const heroMeta = {
+  color: "#64748b",
+  margin: "12px 0 0",
+}
+
+const pickStudioGrid = {
+  display: "grid",
+  gridTemplateColumns: "1fr",
+  gap: 16,
+}
+
+const pickStudioCard = {
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  borderRadius: 20,
+  padding: 18,
+}
+
+const pickStudioTitle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: 12,
+  fontSize: 20,
+  fontWeight: 900,
+  color: "#111827",
+  marginBottom: 12,
+}
+
+const specialPickGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+  gap: 12,
+  marginBottom: 16,
+}
+
+const specialPickBox = {
+  background: "#ffffff",
+  border: "1px solid #fed7aa",
+  borderRadius: 16,
+  padding: 14,
+}
+
+const specialPickLabel = {
+  display: "inline-flex",
+  padding: "6px 10px",
+  borderRadius: 999,
+  background: "#fff7ed",
+  border: "1px solid #fed7aa",
+  color: "#ea580c",
+  fontSize: 12,
+  fontWeight: 900,
+  textTransform: "uppercase",
+  letterSpacing: "0.04em",
+  marginBottom: 10,
+}
+
+const specialPickMovie = {
+  fontSize: 16,
+  fontWeight: 900,
+  color: "#111827",
+  lineHeight: 1.25,
+}
+
+const specialPickMeta = {
+  marginTop: 6,
+  color: "#6b7280",
+  fontSize: 13,
+  fontWeight: 600,
+}
+
+const specialPickScore = {
+  marginTop: 8,
+  fontSize: 20,
+  fontWeight: 900,
+}
+
+const specialPickNote = {
+  marginTop: 4,
+  color: "#9ca3af",
+  fontSize: 12,
+  fontWeight: 700,
+}
+
+const specialPickEmpty = {
+  color: "#9ca3af",
+  fontWeight: 800,
 }

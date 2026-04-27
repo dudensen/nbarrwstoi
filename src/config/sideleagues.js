@@ -1,4 +1,24 @@
 export const SIDELEAGUES = [
+    {
+  key: "fbo-nbarrwstoi-2026",
+  name: "Fantasy Box Office - NBArrwstoi",
+  seasonLabel: "2026",
+  source: "fantasyboxoffice",
+  view: "fantasy_box_office",
+  fboLeagueId: "AxJ8VtiHMhgJNc4fUGb3",
+  dataUrl: "/data/sideleagues/fbo-nbarrwstoi-2026.json",
+  description: "Fantasy Box Office sideleague.",
+},
+{
+  key: "fbo-nbarrwstoteroi-2026",
+  name: "Fantasy Box Office - NBArrwstoteroi",
+  seasonLabel: "2026",
+  source: "fantasyboxoffice",
+  view: "fantasy_box_office",
+  fboLeagueId: "iXrQWvD3uZpw5W8B8xT2",
+  dataUrl: "/data/sideleagues/fbo-nbarrwstoteroi-2026.json",
+  description: "Fantasy Box Office sideleague.",
+},
      {
     key: "nbarrwstoi-playoffs-2026",
     name: "NBArrwstoi Playoffs",
