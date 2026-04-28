@@ -128,6 +128,7 @@ function normalizePick(rawPick, studioLookup) {
     grossToDate: null,
     score: null,
     posterPath: "",
+    posterUrl: "",
     movieSlug: "",
     isLastAvailableMovie: Boolean(rawPick?.isLastAvailableMovie),
   }
@@ -228,6 +229,22 @@ function calculateMovieScore(worldwideGross, budget) {
   return gross - cost * 2.5
 }
 
+function buildPosterUrl(value) {
+  const poster = cleanText(value)
+
+  if (!poster) return ""
+
+  if (/^https?:\/\//i.test(poster)) {
+    return poster
+  }
+
+  if (poster.startsWith("/")) {
+    return `https://image.tmdb.org/t/p/w342${poster}`
+  }
+
+  return `https://image.tmdb.org/t/p/w342/${poster}`
+}
+
 function enrichPickWithMovie(pick, moviesById) {
   const movie = moviesById?.[pick.imdbId] || null
 
@@ -273,6 +290,7 @@ function enrichPickWithMovie(pick, moviesById) {
     grossToDate: moneyNumber(movie.grossToDate),
     score: calculateMovieScore(worldwideGross, budget),
     posterPath: cleanText(movie.poster_path),
+    posterUrl: buildPosterUrl(movie.poster_path || movie.posterUrl || movie.poster_url),
     movieSlug: cleanText(movie.movie_slug),
   }
 }

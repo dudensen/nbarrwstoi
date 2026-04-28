@@ -9,10 +9,31 @@
   "source": "Fantasy Box Office / Firestore + movies-by-ids",
   "studios": [
     {
+      "userId": "7gGz8ZQLWLRaAlxkzTTU5yfALuI3",
+      "studioName": "Burning Bridges",
+      "playerName": "",
+      "color": "orange",
+      "description": ""
+    },
+    {
+      "userId": "KNxGfrmxaaZsGnab3gdseCeIBjJ3",
+      "studioName": "Fourogatos",
+      "playerName": "",
+      "color": "tertiary",
+      "description": ""
+    },
+    {
       "userId": "WNHbVQgPpgPnMI8YwX8DzPomuCV2",
       "studioName": "Duden Bros Entertainment",
       "playerName": "Dudensen",
       "color": "primary",
+      "description": ""
+    },
+    {
+      "userId": "BvTCbpKq39XT90jHUoB2zI5lZko2",
+      "studioName": "Devils' Productions",
+      "playerName": "",
+      "color": "secondary",
       "description": ""
     },
     {
@@ -23,32 +44,11 @@
       "description": ""
     },
     {
-      "userId": "7gGz8ZQLWLRaAlxkzTTU5yfALuI3",
-      "studioName": "Burning Bridges",
-      "playerName": "",
-      "color": "orange",
-      "description": ""
-    },
-    {
       "userId": "VP6GytX3TBOvIipsmm2DkwIDVEo1",
       "studioName": "Pho3n1x",
       "playerName": "",
       "color": "teal",
       "description": "Cult classics in the making."
-    },
-    {
-      "userId": "BvTCbpKq39XT90jHUoB2zI5lZko2",
-      "studioName": "Devils' Productions",
-      "playerName": "",
-      "color": "secondary",
-      "description": ""
-    },
-    {
-      "userId": "KNxGfrmxaaZsGnab3gdseCeIBjJ3",
-      "studioName": "Fourogatos",
-      "playerName": "",
-      "color": "tertiary",
-      "description": ""
     }
   ],
   "drafts": {
@@ -67,11 +67,12 @@
         "status": "SCHEDULED",
         "budget": 45000000,
         "estimatedBudget": false,
-        "worldwideGross": 213819000,
-        "domesticGross": 121919000,
-        "grossToDate": 213819000,
-        "score": 101319000,
+        "worldwideGross": 213819032,
+        "domesticGross": 121919032,
+        "grossToDate": 213819032,
+        "score": 101319032,
         "posterPath": "/jjyuk0edLiW8vOSnlfwWCCLpbh5.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/jjyuk0edLiW8vOSnlfwWCCLpbh5.jpg",
         "movieSlug": "m-d3c725c0e0e9",
         "isLastAvailableMovie": false
       },
@@ -89,11 +90,12 @@
         "status": "SCHEDULED",
         "budget": 200000000,
         "estimatedBudget": true,
-        "worldwideGross": 217365000,
-        "domesticGross": 97000000,
-        "grossToDate": 217365000,
-        "score": -282635000,
-        "posterPath": "/rsJscoA5nIo2r1aJq7ES0T5oJSS.jpg",
+        "worldwideGross": 218830874,
+        "domesticGross": 97206874,
+        "grossToDate": 218830874,
+        "score": -281169126,
+        "posterPath": "/3Qud19bBUrrJAzy0Ilm8gRJlJXP.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/3Qud19bBUrrJAzy0Ilm8gRJlJXP.jpg",
         "movieSlug": "m-348c46e8d71f",
         "isLastAvailableMovie": false
       },
@@ -116,6 +118,7 @@
         "grossToDate": 241701072,
         "score": 41701072,
         "posterPath": "/3YBce6dTh1D5oCMITXk2S5QhPt.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/3YBce6dTh1D5oCMITXk2S5QhPt.jpg",
         "movieSlug": "m-5eb842cdffb3",
         "isLastAvailableMovie": false
       },
@@ -133,11 +136,12 @@
         "status": "SCHEDULED",
         "budget": 80000000,
         "estimatedBudget": false,
-        "worldwideGross": 190346992,
-        "domesticGross": 103246992,
-        "grossToDate": 190346992,
-        "score": -9653008,
+        "worldwideGross": 190402678,
+        "domesticGross": 103302678,
+        "grossToDate": 190402678,
+        "score": -9597322,
         "posterPath": "/wfuqMlaExcoYiUEvKfVpUTt1v4u.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/wfuqMlaExcoYiUEvKfVpUTt1v4u.jpg",
         "movieSlug": "m-c91213a57b19",
         "isLastAvailableMovie": false
       },
@@ -160,6 +164,7 @@
         "grossToDate": 42414609,
         "score": -87585391,
         "posterPath": "/dYRqA50yd0nB3qBR7AtWEJJQ8q.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/dYRqA50yd0nB3qBR7AtWEJJQ8q.jpg",
         "movieSlug": "m-73f30912ded0",
         "isLastAvailableMovie": false
       },
@@ -177,11 +182,12 @@
         "status": "SCHEDULED",
         "budget": 200000000,
         "estimatedBudget": false,
-        "worldwideGross": 613432000,
-        "domesticGross": 305432000,
-        "grossToDate": 613432000,
-        "score": 113432000,
+        "worldwideGross": 613067658,
+        "domesticGross": 305067658,
+        "grossToDate": 613067658,
+        "score": 113067658,
         "posterPath": "/yihdXomYb5kTeSivtFndMy5iDmf.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/yihdXomYb5kTeSivtFndMy5iDmf.jpg",
         "movieSlug": "m-a88403ecf42d",
         "isLastAvailableMovie": false
       },
@@ -204,6 +210,7 @@
         "grossToDate": 101813210,
         "score": 31813210,
         "posterPath": "/ikcNOWB6Qo1ER1H1BJL6Vf0W22s.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/ikcNOWB6Qo1ER1H1BJL6Vf0W22s.jpg",
         "movieSlug": "m-7ba4c50d7532",
         "isLastAvailableMovie": false
       },
@@ -221,11 +228,12 @@
         "status": "SCHEDULED",
         "budget": 22000000,
         "estimatedBudget": false,
-        "worldwideGross": 65452000,
-        "domesticGross": 23452000,
-        "grossToDate": 65452000,
-        "score": 10452000,
+        "worldwideGross": 65322828,
+        "domesticGross": 23322828,
+        "grossToDate": 65322828,
+        "score": 10322828,
         "posterPath": "/8L8efNkz8rUmwR7sV0g3vnC9yjn.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/8L8efNkz8rUmwR7sV0g3vnC9yjn.jpg",
         "movieSlug": "m-5263b122a0ce",
         "isLastAvailableMovie": false
       },
@@ -243,11 +251,12 @@
         "status": "SCHEDULED",
         "budget": 150000000,
         "estimatedBudget": false,
-        "worldwideGross": 370642642,
-        "domesticGross": 164156679,
-        "grossToDate": 370642642,
-        "score": -4357358,
+        "worldwideGross": 375067520,
+        "domesticGross": 164161918,
+        "grossToDate": 375067520,
+        "score": 67520,
         "posterPath": "/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
         "movieSlug": "m-bf841fc42ea8",
         "isLastAvailableMovie": false
       },
@@ -270,6 +279,7 @@
         "grossToDate": 10182876,
         "score": -11067124,
         "posterPath": "/yPHwX78mcwJw3I6YOJ9qh2wQBFr.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/yPHwX78mcwJw3I6YOJ9qh2wQBFr.jpg",
         "movieSlug": "m-f2deff186d39",
         "isLastAvailableMovie": false
       },
@@ -287,11 +297,12 @@
         "status": "SCHEDULED",
         "budget": 14000000,
         "estimatedBudget": true,
-        "worldwideGross": 40806808,
-        "domesticGross": 22894172,
-        "grossToDate": 40806808,
-        "score": 5806808,
+        "worldwideGross": 41744504,
+        "domesticGross": 22890734,
+        "grossToDate": 41744504,
+        "score": 6744504,
         "posterPath": "/jRf89HVEtBZiSnOXXWDhZOfuTwW.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/jRf89HVEtBZiSnOXXWDhZOfuTwW.jpg",
         "movieSlug": "m-35845116fb71",
         "isLastAvailableMovie": false
       },
@@ -314,6 +325,7 @@
         "grossToDate": 94041481,
         "score": -5958519,
         "posterPath": "/mjkS2iAgWj3ik1DTjvI15nHZ7yl.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/mjkS2iAgWj3ik1DTjvI15nHZ7yl.jpg",
         "movieSlug": "m-a74d22872021",
         "isLastAvailableMovie": false
       },
@@ -336,6 +348,7 @@
         "grossToDate": 18739746,
         "score": -26260254,
         "posterPath": "/A4A8YgAzBwDnlXDzuxoc5ZLchO7.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/A4A8YgAzBwDnlXDzuxoc5ZLchO7.jpg",
         "movieSlug": "m-cec4a08dfb42",
         "isLastAvailableMovie": false
       },
@@ -358,6 +371,7 @@
         "grossToDate": 51226173,
         "score": 43726173,
         "posterPath": "/sIwakdbMGS1krtgendTWpxTY9Hw.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/sIwakdbMGS1krtgendTWpxTY9Hw.jpg",
         "movieSlug": "m-a6970e7539dc",
         "isLastAvailableMovie": false
       },
@@ -375,11 +389,12 @@
         "status": "SCHEDULED",
         "budget": 20000000,
         "estimatedBudget": false,
-        "worldwideGross": 9042852,
+        "worldwideGross": 9068735,
         "domesticGross": 8431443,
-        "grossToDate": 9042852,
-        "score": -40957148,
+        "grossToDate": 9068735,
+        "score": -40931265,
         "posterPath": "/rWcfOdY7TU6lTdazWj0ebDZnAfO.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/rWcfOdY7TU6lTdazWj0ebDZnAfO.jpg",
         "movieSlug": "m-fb184780867a",
         "isLastAvailableMovie": false
       },
@@ -402,6 +417,7 @@
         "grossToDate": 2555070,
         "score": -22444930,
         "posterPath": "/5xgxxmLivJXL8aF0HdZfpx8aAIo.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/5xgxxmLivJXL8aF0HdZfpx8aAIo.jpg",
         "movieSlug": "m-64c3422bcc80",
         "isLastAvailableMovie": false
       },
@@ -424,6 +440,7 @@
         "grossToDate": 4965912,
         "score": -5034088,
         "posterPath": "/dYgCgTqqMnWdsnP2XirdcFB28ch.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/dYgCgTqqMnWdsnP2XirdcFB28ch.jpg",
         "movieSlug": "m-15299c30e96e",
         "isLastAvailableMovie": false
       },
@@ -441,11 +458,12 @@
         "status": "SCHEDULED",
         "budget": 20000000,
         "estimatedBudget": false,
-        "worldwideGross": 18944180,
-        "domesticGross": 10844180,
-        "grossToDate": 18944180,
-        "score": -31055820,
-        "posterPath": "/nSXCFSvI2p5WLgMrOHACbVnEJSR.jpg",
+        "worldwideGross": 18975525,
+        "domesticGross": 10875525,
+        "grossToDate": 18975525,
+        "score": -31024475,
+        "posterPath": "/uJrK6uHu9GT8rXpFOT2OkbaOg1Z.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/uJrK6uHu9GT8rXpFOT2OkbaOg1Z.jpg",
         "movieSlug": "m-b6a2723087a4",
         "isLastAvailableMovie": false
       },
@@ -463,11 +481,12 @@
         "status": "SCHEDULED",
         "budget": 25000000,
         "estimatedBudget": false,
-        "worldwideGross": 87164291,
-        "domesticGross": 48474000,
-        "grossToDate": 87164291,
-        "score": 24664291,
+        "worldwideGross": 87173826,
+        "domesticGross": 48483535,
+        "grossToDate": 87173826,
+        "score": 24673826,
         "posterPath": "/7L6rceYgzQ0NeHD7PRDNrRoQ291.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/7L6rceYgzQ0NeHD7PRDNrRoQ291.jpg",
         "movieSlug": "m-4cbddb709d78",
         "isLastAvailableMovie": false
       },
@@ -490,6 +509,7 @@
         "grossToDate": 4611692,
         "score": -20388308,
         "posterPath": "/fcDXgGL14qL46It1XOozEjX5Jws.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/fcDXgGL14qL46It1XOozEjX5Jws.jpg",
         "movieSlug": "m-d7c9bdf947cc",
         "isLastAvailableMovie": false
       }
@@ -514,6 +534,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/pe5cCoX5iIb5IWKPsbPkCwjLFHt.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/pe5cCoX5iIb5IWKPsbPkCwjLFHt.jpg",
         "movieSlug": "m-8be2d4eb0f37",
         "isLastAvailableMovie": false
       },
@@ -536,6 +557,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/p35IoKfBtJDNiWJMO8ZEtIMZSfW.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/p35IoKfBtJDNiWJMO8ZEtIMZSfW.jpg",
         "movieSlug": "m-c03643260ee9",
         "isLastAvailableMovie": false
       },
@@ -558,6 +580,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/7QujwMB124KqSPbWlLRHBO5wygE.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/7QujwMB124KqSPbWlLRHBO5wygE.jpg",
         "movieSlug": "m-47e3f67fa03d",
         "isLastAvailableMovie": false
       },
@@ -580,6 +603,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/6pzI1DIlxwAFffw9OZcG6cr031U.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/6pzI1DIlxwAFffw9OZcG6cr031U.jpg",
         "movieSlug": "m-b425a1f5d2ff",
         "isLastAvailableMovie": false
       },
@@ -602,6 +626,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/lIsMeDbwntNXSUVHmWMMRXEZOVc.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/lIsMeDbwntNXSUVHmWMMRXEZOVc.jpg",
         "movieSlug": "m-9bb82d2f0bb4",
         "isLastAvailableMovie": false
       },
@@ -624,6 +649,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/vUPE82BWRZwq6M5Xc9UNuf8AffK.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/vUPE82BWRZwq6M5Xc9UNuf8AffK.jpg",
         "movieSlug": "m-04082fdb31ee",
         "isLastAvailableMovie": false
       },
@@ -646,6 +672,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/3o5YPjDGDTcTDL5ftDA9NwN9dLd.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/3o5YPjDGDTcTDL5ftDA9NwN9dLd.jpg",
         "movieSlug": "m-ea2a904ac647",
         "isLastAvailableMovie": false
       },
@@ -668,6 +695,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/zKVgiv5qHCvCLT4A2ymJi5QeXDH.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/zKVgiv5qHCvCLT4A2ymJi5QeXDH.jpg",
         "movieSlug": "m-d600fdc5b5b2",
         "isLastAvailableMovie": false
       },
@@ -690,6 +718,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/vpkNMkbisv5cTaIfCzUduYzXnjb.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/vpkNMkbisv5cTaIfCzUduYzXnjb.jpg",
         "movieSlug": "m-b00c56b2cad4",
         "isLastAvailableMovie": false
       },
@@ -712,6 +741,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/3US9zyWBUbLTASwNwMSuZ0fO6hC.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/3US9zyWBUbLTASwNwMSuZ0fO6hC.jpg",
         "movieSlug": "m-c94e1af49a27",
         "isLastAvailableMovie": false
       },
@@ -734,6 +764,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/4tTrW9dXCByS5wt2pXVWb58zNjz.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/4tTrW9dXCByS5wt2pXVWb58zNjz.jpg",
         "movieSlug": "m-32f89efa0f78",
         "isLastAvailableMovie": false
       },
@@ -756,6 +787,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/6STiyzQmAktD7tvJI65Citj8q3h.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/6STiyzQmAktD7tvJI65Citj8q3h.jpg",
         "movieSlug": "m-a3770ddb90ce",
         "isLastAvailableMovie": false
       },
@@ -778,6 +810,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/9RkDrI8V8QJBjhtyRX7y6Qow3aq.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/9RkDrI8V8QJBjhtyRX7y6Qow3aq.jpg",
         "movieSlug": "m-9f057196ade2",
         "isLastAvailableMovie": false
       },
@@ -800,6 +833,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/yXjPI3nVQdtxYtS2w60P1k2qyua.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/yXjPI3nVQdtxYtS2w60P1k2qyua.jpg",
         "movieSlug": "m-c0e62bfa960b",
         "isLastAvailableMovie": false
       },
@@ -822,6 +856,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/u9jha7bkttIrc5RO1TWeSn7QVyI.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/u9jha7bkttIrc5RO1TWeSn7QVyI.jpg",
         "movieSlug": "m-82cf7d96db61",
         "isLastAvailableMovie": false
       },
@@ -844,6 +879,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/5fudu2BSuUcwsMycHDNA0l1FDPH.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/5fudu2BSuUcwsMycHDNA0l1FDPH.jpg",
         "movieSlug": "m-6de7de3a6868",
         "isLastAvailableMovie": false
       },
@@ -866,6 +902,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/4cD7KeABHyzeJmzdA6QKe36fp2d.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/4cD7KeABHyzeJmzdA6QKe36fp2d.jpg",
         "movieSlug": "m-bbdd08e1e751",
         "isLastAvailableMovie": false
       },
@@ -888,6 +925,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "",
+        "posterUrl": "",
         "movieSlug": "m-c52f36ec58a1",
         "isLastAvailableMovie": false
       },
@@ -910,6 +948,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/4apG9Xk6HQvV48JKEjSUeiebju7.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/4apG9Xk6HQvV48JKEjSUeiebju7.jpg",
         "movieSlug": "m-20b8f7336f29",
         "isLastAvailableMovie": false
       },
@@ -932,6 +971,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/40I66L7QKguTFDPvcLcdiTbAD7I.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/40I66L7QKguTFDPvcLcdiTbAD7I.jpg",
         "movieSlug": "m-0816d821a226",
         "isLastAvailableMovie": false
       }
@@ -956,6 +996,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/dWIAOC9EKFehGs3CYvDQih3hxaG.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/dWIAOC9EKFehGs3CYvDQih3hxaG.jpg",
         "movieSlug": "m-981fc309465b",
         "isLastAvailableMovie": false
       },
@@ -973,11 +1014,12 @@
         "status": "SCHEDULED",
         "budget": 110000000,
         "estimatedBudget": false,
-        "worldwideGross": 831474000,
-        "domesticGross": 386493000,
-        "grossToDate": 831474000,
-        "score": 556474000,
+        "worldwideGross": 830857730,
+        "domesticGross": 385876730,
+        "grossToDate": 830857730,
+        "score": 555857730,
         "posterPath": "/eJGWx219ZcEMVQJhAgMiqo8tYY.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/eJGWx219ZcEMVQJhAgMiqo8tYY.jpg",
         "movieSlug": "m-4578c97350c6",
         "isLastAvailableMovie": false
       },
@@ -1000,6 +1042,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/pspkSVP39NGa6G2rvK5KlMjvYUe.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/pspkSVP39NGa6G2rvK5KlMjvYUe.jpg",
         "movieSlug": "m-e9a3019bc43e",
         "isLastAvailableMovie": false
       },
@@ -1022,6 +1065,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "",
+        "posterUrl": "",
         "movieSlug": "m-832bdab0155a",
         "isLastAvailableMovie": false
       },
@@ -1043,7 +1087,8 @@
         "domesticGross": 0,
         "grossToDate": 0,
         "score": null,
-        "posterPath": "/prDTGLRRxp1T1f3910mRjBxWdeS.jpg",
+        "posterPath": "/s2IruLQG6577vX9SBMhuoEqK4WF.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/s2IruLQG6577vX9SBMhuoEqK4WF.jpg",
         "movieSlug": "m-defce4124491",
         "isLastAvailableMovie": false
       }
@@ -1068,6 +1113,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/nm2ianYVp7OXElUZVeeAbNTqBLr.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/nm2ianYVp7OXElUZVeeAbNTqBLr.jpg",
         "movieSlug": "m-29e2d87dc9b8",
         "isLastAvailableMovie": false
       },
@@ -1089,7 +1135,8 @@
         "domesticGross": 0,
         "grossToDate": 0,
         "score": null,
-        "posterPath": "/niSvU02l2BONH9ivubV6K1a5QiK.jpg",
+        "posterPath": "/lV8Yuhz36hds5dvEIwB7DThixH.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/lV8Yuhz36hds5dvEIwB7DThixH.jpg",
         "movieSlug": "m-58bd4075037e",
         "isLastAvailableMovie": false
       },
@@ -1112,6 +1159,7 @@
         "grossToDate": 23844025,
         "score": -201155975,
         "posterPath": "/lV8YHwGkYZsm6EfIqnhaSz2avKt.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/lV8YHwGkYZsm6EfIqnhaSz2avKt.jpg",
         "movieSlug": "m-a34e72446230",
         "isLastAvailableMovie": false
       },
@@ -1134,6 +1182,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "",
+        "posterUrl": "",
         "movieSlug": "m-cb1255907dda",
         "isLastAvailableMovie": false
       },
@@ -1156,6 +1205,7 @@
         "grossToDate": 0,
         "score": null,
         "posterPath": "/3WkDXYtOwYHFFkpysAPxPgUMox0.jpg",
+        "posterUrl": "https://image.tmdb.org/t/p/w342/3WkDXYtOwYHFFkpysAPxPgUMox0.jpg",
         "movieSlug": "m-0bdc0872dd8e",
         "isLastAvailableMovie": false
       }

@@ -372,6 +372,18 @@ function scoreColor(value) {
     .sort((a, b) => b.total - a.total)
 }
 
+function moviePosterUrl(pick) {
+  const movie = getMovie(pick)
+
+  return (
+    movie?.posterUrl ||
+    movie?.poster_url ||
+    pick.posterUrl ||
+    pick.poster_url ||
+    ""
+  )
+}
+
   function MovieLink({ pick }) {
     const imdbId = pick?.imdbId || pick?.imdb_id
 
@@ -391,8 +403,42 @@ function scoreColor(value) {
     )
   }
 
+  function buildPosterUrl(value) {
+  const poster = String(value || "").trim()
+
+  if (!poster) return ""
+
+  if (/^https?:\/\//i.test(poster)) {
+    return poster
+  }
+
+  if (poster.startsWith("/")) {
+    return `https://image.tmdb.org/t/p/w342${poster}`
+  }
+
+  return `https://image.tmdb.org/t/p/w342/${poster}`
+}
+
+function moviePosterUrl(pick) {
+  const movie = getMovie(pick)
+
+  const rawPoster =
+    movie?.posterUrl ||
+    movie?.poster_url ||
+    movie?.posterPath ||
+    movie?.poster_path ||
+    pick?.posterUrl ||
+    pick?.poster_url ||
+    pick?.posterPath ||
+    pick?.poster_path ||
+    ""
+
+  return buildPosterUrl(rawPoster)
+}
 
   function SpecialPickBox({ label, pick, countsTowardTotal }) {
+  const posterUrl = pick ? moviePosterUrl(pick) : ""
+
   return (
     <div style={specialPickBox}>
       <div style={specialPickLabel}>{label}</div>
@@ -400,28 +446,39 @@ function scoreColor(value) {
       {!pick ? (
         <div style={specialPickEmpty}>—</div>
       ) : (
-        <>
-          <div style={specialPickMovie}>
-            <MovieLink pick={pick} />
-          </div>
+        <div style={specialPickContent}>
+          {posterUrl ? (
+            <img
+              src={posterUrl}
+              alt={`${movieTitle(pick)} poster`}
+              style={specialPickPoster}
+              loading="lazy"
+            />
+          ) : null}
 
-          <div style={specialPickMeta}>
-            {movieReleaseDate(pick)} · {movieStatus(pick)}
-          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={specialPickMovie}>
+              <MovieLink pick={pick} />
+            </div>
 
-          <div
-            style={{
-              ...specialPickScore,
-              color: scoreColor(movieScoreValue(pick)),
-            }}
-          >
-            {formatMoneySigned(movieScoreValue(pick))}
-          </div>
+            <div style={specialPickMeta}>
+              {movieReleaseDate(pick)} · {movieStatus(pick)}
+            </div>
 
-          <div style={specialPickNote}>
-            {countsTowardTotal ? "Counts toward total" : "Not counted in total"}
+            <div
+              style={{
+                ...specialPickScore,
+                color: scoreColor(movieScoreValue(pick)),
+              }}
+            >
+              {formatMoneySigned(movieScoreValue(pick))}
+            </div>
+
+            <div style={specialPickNote}>
+              {countsTowardTotal ? "Counts toward total" : "Not counted in total"}
+            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   )
@@ -3557,3 +3614,20 @@ const specialPickEmpty = {
   color: "#9ca3af",
   fontWeight: 800,
 }
+
+const specialPickContent = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 12,
+}
+
+const specialPickPoster = {
+  width: 62,
+  height: 92,
+  objectFit: "cover",
+  borderRadius: 10,
+  border: "1px solid #fed7aa",
+  background: "#fff7ed",
+  flexShrink: 0,
+}
+
