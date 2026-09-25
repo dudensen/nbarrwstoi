@@ -29,6 +29,18 @@ export const SIDELEAGUES = [
     view: "final_standings",
   },
     {
+  key: "euroleague-2026-27",
+  name: "Euroleague",
+  seasonLabel: "2026-27",
+  view: "sheet_league",
+  draftFormat: "round_columns",
+  description: "Euroleague sideleague.",
+  draftCsvUrl:
+    "https://docs.google.com/spreadsheets/d/1tYNzs0DQLfsgYu855ZadJbKezyCZ-5y1E1gE-4f3EPY/export?format=csv&gid=1412809261",
+  rostersCsvUrl:
+    "https://docs.google.com/spreadsheets/d/1tYNzs0DQLfsgYu855ZadJbKezyCZ-5y1E1gE-4f3EPY/export?format=csv&gid=0",
+    },
+    {
   key: "euroleague-2025-26",
   name: "Euroleague",
   seasonLabel: "2025-26",

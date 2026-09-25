@@ -917,6 +917,86 @@ function parseEuroleagueDraftCsv(text = "") {
   })
 }
 
+function euroleaguePlayerKey(name) {
+  return normalizeSheetText(name)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .split(/\s+/)
+    .sort()
+    .join(" ")
+}
+
+function parseEuroleagueRosterBoardCsv(text = "") {
+  const grid = parseCsvGrid(text)
+  const clubs = new Map()
+
+  for (const row of grid) {
+    const player = normalizeSheetText(row[1])
+    const club = normalizeSheetText(row[3])
+    if (player && club && player !== "Surname") {
+      clubs.set(euroleaguePlayerKey(player), club)
+    }
+  }
+
+  const rosters = []
+  for (const positionCol of [7, 12, 17]) {
+    let currentTeam = null
+
+    for (const row of grid) {
+      const label = normalizeSheetText(row[positionCol])
+      const player = normalizeSheetText(row[positionCol + 1])
+
+      if (label && !["G", "F", "C"].includes(label)) {
+        currentTeam = { team: label, players: [] }
+        rosters.push(currentTeam)
+      } else if (currentTeam && player) {
+        currentTeam.players.push({
+          player,
+          position: label,
+          club: clubs.get(euroleaguePlayerKey(player)) || "",
+        })
+      }
+    }
+  }
+
+  return { rosters, clubs }
+}
+
+function parseEuroleagueColumnDraftCsv(text = "", clubs = new Map()) {
+  const grid = parseCsvGrid(text)
+  let currentRound = ""
+  let overall = 0
+  const picks = []
+
+  for (const row of grid) {
+    const roundOrPick = normalizeSheetText(row[1])
+    if (isDraftRoundLabel(roundOrPick)) {
+      currentRound = roundOrPick
+      continue
+    }
+
+    if (!currentRound || !/^\d+$/.test(roundOrPick)) continue
+    overall += 1 // Count empty draft slots so later picks keep their true overall number.
+
+    const team = normalizeSheetText(row[2])
+    const player = normalizeSheetText(row[3])
+    if (!team || !player) continue
+
+    picks.push({
+      round: currentRound,
+      overall,
+      team,
+      player,
+      club: clubs.get(euroleaguePlayerKey(player)) || "",
+    })
+  }
+
+  return picks
+}
+
 function isRoundLabel(text) {
   const upper = normalizeSheetText(text).toUpperCase()
   return (
@@ -1921,6 +2001,7 @@ export default function SideLeagueDetailPage() {
   const [error, setError] = useState("")
   const [sheetResults, setSheetResults] = useState(null)
   const [sheetDraftPicks, setSheetDraftPicks] = useState([])
+  const [sheetRosters, setSheetRosters] = useState([])
   const [sheetTab, setSheetTab] = useState("matchups")
   const [draftView, setDraftView] = useState("byPick")
   const [finalStandingsTab, setFinalStandingsTab] = useState("standings")
@@ -1962,22 +2043,39 @@ try {
         let lookup = new Map()
 
         if (sideleague.view === "sheet_league") {
-          const resultsRes = await fetch(sideleague.resultsCsvUrl)
-          const resultsText = await resultsRes.text()
+          const isColumnDraft = sideleague.draftFormat === "round_columns"
+          const [resultsRes, draftRes, rostersRes] = await Promise.all([
+            sideleague.resultsCsvUrl ? fetch(sideleague.resultsCsvUrl) : null,
+            fetch(sideleague.draftCsvUrl),
+            isColumnDraft && sideleague.rostersCsvUrl
+              ? fetch(sideleague.rostersCsvUrl)
+              : null,
+          ])
 
-          if (!resultsRes.ok) {
-            throw new Error(`Results sheet failed (${resultsRes.status}): ${resultsText}`)
+          if (resultsRes && !resultsRes.ok) {
+            throw new Error(`Results sheet failed (${resultsRes.status})`)
           }
-
-          const draftRes = await fetch(sideleague.draftCsvUrl)
-          const draftText = await draftRes.text()
-
           if (!draftRes.ok) {
-            throw new Error(`Draft sheet failed (${draftRes.status}): ${draftText}`)
+            throw new Error(`Draft sheet failed (${draftRes.status})`)
+          }
+          if (rostersRes && !rostersRes.ok) {
+            throw new Error(`Rosters sheet failed (${rostersRes.status})`)
           }
 
-          const parsedSheetResults = parseEuroleagueResultsCsv(resultsText)
-          const parsedDraftPicks = parseEuroleagueDraftCsv(draftText)
+          const [resultsText, draftText, rostersText] = await Promise.all([
+            resultsRes ? resultsRes.text() : "",
+            draftRes.text(),
+            rostersRes ? rostersRes.text() : "",
+          ])
+          const rosterBoard = isColumnDraft
+            ? parseEuroleagueRosterBoardCsv(rostersText)
+            : { rosters: [], clubs: new Map() }
+          const parsedSheetResults = resultsRes
+            ? parseEuroleagueResultsCsv(resultsText)
+            : { matchups: [], champion: null, runnerUp: null }
+          const parsedDraftPicks = isColumnDraft
+            ? parseEuroleagueColumnDraftCsv(draftText, rosterBoard.clubs)
+            : parseEuroleagueDraftCsv(draftText)
 
           if (!cancelled) {
             setResultsPayload(null)
@@ -1987,6 +2085,8 @@ try {
             setPlayerLookup(new Map())
             setSheetResults(parsedSheetResults)
             setSheetDraftPicks(parsedDraftPicks)
+            setSheetRosters(rosterBoard.rosters)
+            setSheetTab(sideleague.resultsCsvUrl ? "matchups" : "draft")
             setDraftResultsPayload(null)
           }
 
@@ -2572,11 +2672,13 @@ return (
               Season: {sideleague?.seasonLabel || "—"}
             </div>
 
-            <div style={{ marginTop: 16, color: "#6b7280", lineHeight: 1.7 }}>
-              Champion: <strong>{sheetResults?.champion || "—"}</strong>
-              <br />
-              Runner-up: <strong>{sheetResults?.runnerUp || "—"}</strong>
-            </div>
+            {sideleague?.resultsCsvUrl ? (
+              <div style={{ marginTop: 16, color: "#6b7280", lineHeight: 1.7 }}>
+                Champion: <strong>{sheetResults?.champion || "—"}</strong>
+                <br />
+                Runner-up: <strong>{sheetResults?.runnerUp || "—"}</strong>
+              </div>
+            ) : null}
           </section>
 
           <section style={sectionCard}>
@@ -2588,7 +2690,7 @@ return (
                 flexWrap: "wrap",
               }}
             >
-              <button
+              {sideleague?.resultsCsvUrl ? <button
                 type="button"
                 onClick={() => setSheetTab("matchups")}
                 style={{
@@ -2602,7 +2704,7 @@ return (
                 }}
               >
                 Matchups
-              </button>
+              </button> : null}
 
               <button
                 type="button"
@@ -2619,6 +2721,23 @@ return (
               >
                 Draft
               </button>
+              {sideleague?.draftFormat === "round_columns" ? (
+                <button
+                  type="button"
+                  onClick={() => setSheetTab("rosters")}
+                  style={{
+                    padding: "10px 16px",
+                    borderRadius: 999,
+                    border: sheetTab === "rosters" ? "1px solid #fb923c" : "1px solid #fed7aa",
+                    background: sheetTab === "rosters" ? "#f97316" : "#fff7ed",
+                    color: sheetTab === "rosters" ? "#ffffff" : "#9a3412",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                  }}
+                >
+                  Rosters
+                </button>
+              ) : null}
             </div>
 
             {sheetTab === "matchups" ? (
@@ -2879,6 +2998,33 @@ return (
                     ))}
                   </div>
                 )}
+              </>
+            ) : sheetTab === "rosters" ? (
+              <>
+                <h2 style={{ margin: "0 0 14px", fontSize: 24 }}>Rosters</h2>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
+                  {sheetRosters.map((entry) => (
+                    <section key={entry.team} style={{ background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 20, padding: 18 }}>
+                      <h3 style={{ margin: "0 0 12px", color: "#111827" }}>{entry.team}</h3>
+                      {entry.players.length ? (
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                            <thead><tr><th style={th}>Pos</th><th style={th}>Player</th><th style={th}>Club</th></tr></thead>
+                            <tbody>
+                              {entry.players.map((item, index) => (
+                                <tr key={`${entry.team}-${item.player}-${index}`}>
+                                  <td style={td}>{item.position || "—"}</td>
+                                  <td style={td}>{item.player}</td>
+                                  <td style={td}>{item.club || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : <div style={{ color: "#6b7280" }}>No players drafted yet.</div>}
+                    </section>
+                  ))}
+                </div>
               </>
             ) : null}
           </section>
