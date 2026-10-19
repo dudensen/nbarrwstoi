@@ -16,3 +16,5 @@ __pycache__/
 /export_sideleague_results - Copy.py
 /src/pages/StandingsPage.google-sheet-playoffs.jsx
 /src/pages/StandingsPage.with-playoffs.jsx
+
+/dist/
