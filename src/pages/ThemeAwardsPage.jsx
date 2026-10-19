@@ -1,7 +1,18 @@
 import { useEffect, useMemo, useState } from "react"
+import { useSeason } from "../context/SeasonContext"
 
-const SHEET_CSV_URL =
-  "https://docs.google.com/spreadsheets/d/1_gypBxbR8I68ey9CBMXMaQ3lhTWrXlJtV2katNoAyuc/export?format=csv&gid=0"
+const WAR_ROOM_SHEET_ID = "1_gypBxbR8I68ey9CBMXMaQ3lhTWrXlJtV2katNoAyuc"
+
+function getSheetCsvUrl(sheetName) {
+  // Row 2 contains the era names; row 1 contains the era managers.
+  const params = new URLSearchParams({
+    tqx: "out:csv",
+    headers: "1",
+    sheet: sheetName,
+    range: `'${sheetName}'!A2:ZZ`,
+  })
+  return `https://docs.google.com/spreadsheets/d/${WAR_ROOM_SHEET_ID}/gviz/tq?${params}`
+}
 
 function parseCsv(text = "") {
   const rows = []
@@ -162,49 +173,68 @@ function PodiumCard({ place, teams, wins }) {
 }
 
 export default function ThemeAwardsPage() {
+  const { season } = useSeason()
+  const sheetName = season.isCurrent ? "Sheet1" : season.key
+  const seasonLabel = season.label || season.key
   const [rows, setRows] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [loadedSheetName, setLoadedSheetName] = useState("")
   const [sortConfig, setSortConfig] = useState({ key: "total", direction: "desc" })
 
   useEffect(() => {
     let cancelled = false
+    const controller = new AbortController()
 
     async function load() {
       try {
         setLoading(true)
         setError("")
+        setRows([])
+        setSortConfig({ key: "total", direction: "desc" })
 
-        const res = await fetch(SHEET_CSV_URL)
+        const res = await fetch(getSheetCsvUrl(sheetName), {
+          signal: controller.signal,
+          cache: "no-store",
+        })
         const text = await res.text()
 
         if (!res.ok) {
-          throw new Error(`Sheet fetch failed (${res.status})`)
+          throw new Error(`War Room data could not be loaded for ${seasonLabel} (${res.status}).`)
         }
 
-        if (!cancelled) {
-          setRows(parseCsv(text))
+        const nextRows = parseCsv(text).filter((row) => row.some((cell) => clean(cell)))
+        if (
+          nextRows.length &&
+          !nextRows[0].some((cell) => clean(cell).toLowerCase() === "total")
+        ) {
+          throw new Error(`War Room data could not be read for ${seasonLabel}.`)
         }
+
+        if (!cancelled) setRows(nextRows)
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Unknown error")
+          setError(err instanceof Error ? err.message : "War Room data could not be loaded.")
           setRows([])
         }
       } finally {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+          setLoadedSheetName(sheetName)
+        }
       }
     }
 
     load()
     return () => {
       cancelled = true
+      controller.abort()
     }
-  }, [])
+  }, [sheetName, seasonLabel])
 
   const data = useMemo(() => {
     if (!rows.length) {
       return {
-        title: "",
         headerRow: [],
         eras: [],
         teamRows: [],
@@ -215,10 +245,9 @@ export default function ThemeAwardsPage() {
       }
     }
 
-    const title = clean(rows[0]?.[0]) || "Theme Awards"
-    const headerRow = rows[1] || []
+    const headerRow = rows[0] || []
 
-    const rawBody = rows.slice(2).filter((row) => row.some((cell) => clean(cell)))
+    const rawBody = rows.slice(1).filter((row) => row.some((cell) => clean(cell)))
 
     const totalsRowRaw =
       rawBody.find((row) => clean(row[0]).toUpperCase() === "ALL") || null
@@ -315,7 +344,6 @@ export default function ThemeAwardsPage() {
       totalsRowRaw && totalColIndex >= 0 ? num(totalsRowRaw[totalColIndex]) : 0
 
     return {
-      title,
       headerRow,
       eras,
       teamRows,
@@ -346,12 +374,15 @@ export default function ThemeAwardsPage() {
         <p style={heroSub}>
         Τις βγάλαμε, τις παίξαμε, τις παρουσιάζουμε.
         </p>
+        <div style={heroSeason}>Season {seasonLabel}</div>
       </section>
 
-      {loading ? (
-        <div style={infoBox}>Loading sheet...</div>
+      {loading || loadedSheetName !== sheetName ? (
+        <div style={infoBox} role="status">Loading {seasonLabel} results...</div>
       ) : error ? (
-        <div style={errorBox}>{error}</div>
+        <div style={errorBox} role="alert">{error}</div>
+      ) : !data.teamRows.length ? (
+        <div style={infoBox} role="status">No War Room results yet for {seasonLabel}.</div>
       ) : (
         <>
           <section style={summaryGrid}>
@@ -565,6 +596,12 @@ const heroSub = {
   fontSize: 16,
   opacity: 0.96,
   maxWidth: 760,
+}
+
+const heroSeason = {
+  marginTop: 16,
+  fontSize: 14,
+  fontWeight: 800,
 }
 
 const infoBox = {
