@@ -18,3 +18,7 @@ __pycache__/
 /src/pages/StandingsPage.with-playoffs.jsx
 
 /dist/
+
+# Local Fantrax diagnostics and login session
+/probe_sideleague_player_stats.py
+/fantraxloggedin.cookie
