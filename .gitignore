@@ -7,3 +7,12 @@ dist/
 fantraxloggedin.cookie
 __pycache__/
 *.pyc
+
+# Local browser profile and diagnostic output
+/.playwright/
+/probe-output/
+
+# Spare script and page copies
+/export_sideleague_results - Copy.py
+/src/pages/StandingsPage.google-sheet-playoffs.jsx
+/src/pages/StandingsPage.with-playoffs.jsx
